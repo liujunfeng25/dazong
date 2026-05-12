@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary": "#ebb2ff",
+                    "inverse-on-surface": "#2c303d",
+                    "on-primary-fixed-variant": "#004f58",
+                    "surface-variant": "#313442",
+                    "surface-dim": "#0f131f",
+                    "surface-container-highest": "#313442",
+                    "on-secondary-fixed-variant": "#721199",
+                    "tertiary-container": "#51e7cb",
+                    "on-secondary-container": "#e299ff",
+                    "on-surface-variant": "#bac9cc",
+                    "outline": "#849396",
+                    "on-background": "#dfe2f3",
+                    "on-tertiary-fixed": "#00201a",
+                    "tertiary-fixed": "#68fadd",
+                    "secondary-fixed-dim": "#ebb2ff",
+                    "primary-container": "#00e5ff",
+                    "on-surface": "#dfe2f3",
+                    "inverse-primary": "#006875",
+                    "on-secondary-fixed": "#320047",
+                    "surface-container": "#1b1f2c",
+                    "primary": "#c3f5ff",
+                    "outline-variant": "#3b494c",
+                    "surface-container-low": "#171b28",
+                    "secondary-container": "#721199",
+                    "surface-container-high": "#262a37",
+                    "tertiary-fixed-dim": "#44ddc1",
+                    "on-tertiary-container": "#006556",
+                    "on-error": "#690005",
+                    "on-error-container": "#ffdad6",
+                    "on-primary": "#00363d",
+                    "surface": "#0f131f",
+                    "on-tertiary-fixed-variant": "#005145",
+                    "error-container": "#93000a",
+                    "error": "#ffb4ab",
+                    "tertiary": "#9affe8",
+                    "surface-bright": "#353946",
+                    "primary-fixed-dim": "#00daf3",
+                    "on-tertiary": "#00382f",
+                    "secondary-fixed": "#f8d8ff",
+                    "on-primary-fixed": "#001f24",
+                    "on-primary-container": "#00626e",
+                    "surface-container-lowest": "#0a0e1a",
+                    "surface-tint": "#00daf3",
+                    "on-secondary": "#520071",
+                    "background": "#0f131f",
+                    "primary-fixed": "#9cf0ff",
+                    "inverse-surface": "#dfe2f3"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "20px",
+                    "sm": "8px",
+                    "margin-desktop": "40px",
+                    "unit": "4px",
+                    "xs": "4px",
+                    "xl": "32px",
+                    "md": "16px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Space Grotesk"],
+                    "headline-lg": ["Space Grotesk"],
+                    "headline-lg-mobile": ["Space Grotesk"],
+                    "body-lg": ["Inter"],
+                    "label-mono": ["JetBrains Mono"],
+                    "display-lg": ["Space Grotesk"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-mono": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glow-sm { text-shadow: 0 0 10px rgba(0, 218, 243, 0.5); }
+        .glass-panel {
+            background: rgba(22, 27, 34, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(195, 245, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .glass-panel::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(195, 245, 255, 0.1) 0%, transparent 40%);
+            pointer-events: none;
+        }
+        .pulse-ring {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.05); }
+        }
+        .scanline {
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 229, 255, 0.1);
+            position: absolute;
+            animation: scan 4s linear infinite;
+        }
+        @keyframes scan {
+            from { top: 0; }
+            to { top: 100%; }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-md overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="bg-surface-dim/60 backdrop-blur-md text-primary-fixed-dim font-headline-md text-headline-md docked full-width top-0 border-b border-outline-variant/30 shadow-[0_4px_30px_rgba(0,0,0,0.1)] flex items-center justify-between px-margin-desktop h-20 w-full z-50">
+<div class="flex items-center gap-md">
+<span class="font-display-lg text-display-lg text-primary tracking-tighter glow-sm">NEURAL CORE</span>
+</div>
+<nav class="hidden md:flex items-center space-x-xl">
+<a class="text-on-surface-variant hover:text-primary hover:bg-primary-container/10 transition-all duration-300 active:scale-95 cursor-pointer" href="#">概览</a>
+<a class="text-on-surface-variant hover:text-primary hover:bg-primary-container/10 transition-all duration-300 active:scale-95 cursor-pointer" href="#">神经路径</a>
+<a class="text-on-surface-variant hover:text-primary hover:bg-primary-container/10 transition-all duration-300 active:scale-95 cursor-pointer" href="#">异常</a>
+<a class="text-on-surface-variant hover:text-primary hover:bg-primary-container/10 transition-all duration-300 active:scale-95 cursor-pointer" href="#">历史记录</a>
+</nav>
+<div class="flex items-center space-x-md">
+<button class="material-symbols-outlined text-primary-fixed-dim p-sm hover:bg-primary-container/10 rounded-full transition-all cursor-pointer">notifications_active</button>
+<button class="material-symbols-outlined text-primary-fixed-dim p-sm hover:bg-primary-container/10 rounded-full transition-all cursor-pointer">settings</button>
+<button class="material-symbols-outlined text-primary-fixed-dim p-sm hover:bg-primary-container/10 rounded-full transition-all cursor-pointer">account_circle</button>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="bg-surface-container-lowest/40 backdrop-blur-xl text-tertiary-fixed-dim font-label-mono text-label-mono fixed left-0 top-20 h-[calc(100vh-80px)] flex flex-col items-center py-lg space-y-md z-40 border-r border-outline-variant/20 shadow-xl w-24">
+<div class="flex flex-col items-center mb-xl">
+<span class="text-[10px] text-on-surface-variant/50 tracking-widest uppercase">AI 状态</span>
+<span class="text-[10px] text-tertiary-fixed font-bold">运行中</span>
+</div>
+<div class="flex flex-col space-y-lg w-full px-xs">
+<div class="bg-tertiary-container/20 text-tertiary-fixed rounded-xl ring-1 ring-tertiary/50 flex flex-col items-center py-md cursor-pointer transition-all">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">AI 状态</span>
+<span class="text-[10px] uppercase">指挥</span>
+</div>
+<div class="text-on-surface-variant/70 hover:bg-surface-variant/50 hover:text-tertiary flex flex-col items-center py-md cursor-pointer transition-colors duration-200">
+<span class="material-symbols-outlined mb-1">AI 状态</span>
+<span class="text-[10px] uppercase">分析</span>
+</div>
+<div class="text-on-surface-variant/70 hover:bg-surface-variant/50 hover:text-tertiary flex flex-col items-center py-md cursor-pointer transition-colors duration-200">
+<span class="material-symbols-outlined mb-1">AI 状态</span>
+<span class="text-[10px] uppercase">神经链接</span>
+</div>
+<div class="text-on-surface-variant/70 hover:bg-surface-variant/50 hover:text-tertiary flex flex-col items-center py-md cursor-pointer transition-colors duration-200">
+<span class="material-symbols-outlined mb-1">AI 状态</span>
+<span class="text-[10px] uppercase">数据网格</span>
+</div>
+<div class="text-on-surface-variant/70 hover:bg-surface-variant/50 hover:text-tertiary flex flex-col items-center py-md cursor-pointer transition-colors duration-200">
+<span class="material-symbols-outlined mb-1">AI 状态</span>
+<span class="text-[10px] uppercase">同步状态</span>
+</div>
+<div class="text-on-surface-variant/70 hover:bg-surface-variant/50 hover:text-tertiary flex flex-col items-center py-md cursor-pointer transition-colors duration-200">
+<span class="material-symbols-outlined mb-1">AI 状态</span>
+<span class="text-[10px] uppercase">安全</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-24 pt-20 p-xl min-h-screen">
+<div class="grid grid-cols-12 gap-gutter max-w-[1600px] mx-auto">
+<!-- Broadcast Header -->
+<div class="col-span-12 mb-lg flex justify-between items-end">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-primary glow-sm uppercase tracking-wider">全域指挥广播中心</h1>
+<p class="font-label-mono text-label-mono text-on-surface-variant">监管访问权限：ALPHA-1</p>
+</div>
+<div class="flex gap-sm">
+<span class="flex items-center gap-2 bg-primary-container/10 border border-primary/20 px-md py-xs rounded-full">
+<span class="w-2 h-2 rounded-full bg-primary-fixed pulse-ring"></span>
+<span class="font-label-mono text-primary text-[10px]">9 节点活跃</span>
+</span>
+</div>
+</div>
+<!-- Central Hub: Broadcast Origin (Top Left) -->
+<div class="col-span-12 lg:col-span-7 glass-panel rounded-xl h-[400px] flex items-center justify-center relative border border-primary/20">
+<div class="scanline"></div>
+<div class="relative z-10 flex flex-col items-center">
+<div class="relative mb-xl">
+<div class="absolute inset-0 bg-primary/20 blur-3xl rounded-full"></div>
+<div class="relative w-48 h-48 border-2 border-primary/40 rounded-full flex items-center justify-center">
+<div class="w-40 h-40 border border-primary/20 rounded-full flex items-center justify-center animate-[spin_10s_linear_infinite]">
+<div class="w-full h-px bg-primary/30"></div>
+</div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-[64px] text-primary-fixed glow-sm" style="font-variation-settings: 'FILL' 1;">graphic_eq</span>
+</div>
+</div>
+</div>
+<div class="text-center">
+<p class="font-label-mono text-primary tracking-[0.3em] mb-xs uppercase">传输中心</p>
+<h2 class="font-headline-md text-headline-md text-on-surface">AETHERIS 指挥流</h2>
+<div class="mt-md flex justify-center gap-xs">
+<div class="w-1 h-4 bg-primary/20"></div>
+<div class="w-1 h-6 bg-primary/40"></div>
+<div class="w-1 h-10 bg-primary/60"></div>
+<div class="w-1 h-12 bg-primary animate-pulse"></div>
+<div class="w-1 h-8 bg-primary/60"></div>
+<div class="w-1 h-4 bg-primary/40"></div>
+<div class="w-1 h-2 bg-primary/20"></div>
+</div>
+</div>
+</div>
+<!-- Abstract map projection background -->
+<div class="absolute inset-0 opacity-10 pointer-events-none">
+<img class="w-full h-full object-cover" data-alt="A cinematic, high-resolution view of Earth from space at night, showing glowing city networks connected by thin cyan data lines. The image has a deep navy and electric blue color grade with a soft lens flare and atmospheric haze, creating a futuristic, global connectivity aesthetic. The lighting is low-key with intense highlights on the technological hubs." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiE6tA3UHvtO_lNo1X7nQ246aA6EdNgSM9jzqfr3JALr4jW6wyOOFcLfrUrhsisARJ1ty0aayXz7F0aWI4bPExFYHjyMM4JFCVEx8-EEjdGjxOYODhP_reyOkgIJFIRRXz4T4ijrRU3iVsGxSqcO2MhGIZf3hbkV-dUKHD5Q-ocpo_6PE7Iko86tLQYzQzG4Xcsv8J14k6Jx37ssfKCOhZ8J6HPOsebXxEJjQwILPwXp1Uwqx0ygMeKvVmL3XsPIzzTYHlbMvUm0k"/>
+</div>
+</div>
+<!-- Terminal Node Status (Top Right) -->
+<div class="col-span-12 lg:col-span-5 glass-panel rounded-xl p-lg border border-outline-variant/30 flex flex-col">
+<div class="flex justify-between items-center mb-md border-b border-outline-variant/30 pb-sm">
+<h3 class="font-label-mono text-on-surface uppercase">终端网格</h3>
+<span class="text-[10px] text-primary opacity-70">同步: 100%</span>
+</div>
+<div class="grid grid-cols-3 gap-md flex-grow">
+<!-- 9 Nodes -->
+<div class="border border-outline-variant/20 bg-surface-container-low/40 rounded-lg p-md flex flex-col items-center justify-center text-center hover:bg-primary/5 transition-all group">
+<span class="material-symbols-outlined text-primary mb-1 group-hover:scale-110 transition-transform">dns</span>
+<p class="font-label-mono text-[10px] text-on-surface">NODE-001</p>
+<span class="text-[8px] text-tertiary">稳定</span>
+</div>
+<div class="border border-outline-variant/20 bg-surface-container-low/40 rounded-lg p-md flex flex-col items-center justify-center text-center hover:bg-primary/5 transition-all group">
+<span class="material-symbols-outlined text-primary mb-1 group-hover:scale-110 transition-transform">dns</span>
+<p class="font-label-mono text-[10px] text-on-surface">NODE-002</p>
+<span class="text-[8px] text-tertiary">稳定</span>
+</div>
+<div class="border border-outline-variant/20 bg-surface-container-low/40 rounded-lg p-md flex flex-col items-center justify-center text-center hover:bg-primary/5 transition-all group">
+<span class="material-symbols-outlined text-error mb-1 animate-pulse">report</span>
+<p class="font-label-mono text-[10px] text-on-surface">NODE-003</p>
+<span class="text-[8px] text-error">延迟</span>
+</div>
+<div class="border border-outline-variant/20 bg-surface-container-low/40 rounded-lg p-md flex flex-col items-center justify-center text-center hover:bg-primary/5 transition-all group">
+<span class="material-symbols-outlined text-primary mb-1 group-hover:scale-110 transition-transform">dns</span>
+<p class="font-label-mono text-[10px] text-on-surface">NODE-004</p>
+<span class="text-[8px] text-tertiary">稳定</span>
+</div>
+<div class="border border-outline-variant/20 bg-surface-container-low/40 rounded-lg p-md flex flex-col items-center justify-center text-center hover:bg-primary/5 transition-all group">
+<span class="material-symbols-outlined text-primary-fixed mb-1 pulse-ring">radar</span>
+<p class="font-label-mono text-[10px] text-on-surface">NODE-005</p>
+<span class="text-[8px] text-primary-fixed">活跃</span>
+</div>
+<div class="border border-outline-variant/20 bg-surface-container-low/40 rounded-lg p-md flex flex-col items-center justify-center text-center hover:bg-primary/5 transition-all group">
+<span class="material-symbols-outlined text-primary mb-1 group-hover:scale-110 transition-transform">dns</span>
+<p class="font-label-mono text-[10px] text-on-surface">NODE-006</p>
+<span class="text-[8px] text-tertiary">稳定</span>
+</div>
+<div class="border border-outline-variant/20 bg-surface-container-low/40 rounded-lg p-md flex flex-col items-center justify-center text-center hover:bg-primary/5 transition-all group">
+<span class="material-symbols-outlined text-primary mb-1 group-hover:scale-110 transition-transform">dns</span>
+<p class="font-label-mono text-[10px] text-on-surface">NODE-007</p>
+<span class="text-[8px] text-tertiary">稳定</span>
+</div>
+<div class="border border-outline-variant/20 bg-surface-container-low/40 rounded-lg p-md flex flex-col items-center justify-center text-center hover:bg-primary/5 transition-all group">
+<span class="material-symbols-outlined text-primary mb-1 group-hover:scale-110 transition-transform">dns</span>
+<p class="font-label-mono text-[10px] text-on-surface">NODE-008</p>
+<span class="text-[8px] text-tertiary">稳定</span>
+</div>
+<div class="border border-outline-variant/20 bg-surface-container-low/40 rounded-lg p-md flex flex-col items-center justify-center text-center hover:bg-primary/5 transition-all group">
+<span class="material-symbols-outlined text-primary mb-1 group-hover:scale-110 transition-transform">dns</span>
+<p class="font-label-mono text-[10px] text-on-surface">NODE-009</p>
+<span class="text-[8px] text-tertiary">稳定</span>
+</div>
+</div>
+</div>
+<!-- Command Input Console (Bottom Left) -->
+<div class="col-span-12 lg:col-span-8 glass-panel rounded-xl p-xl border-l-4 border-l-primary-container">
+<div class="flex items-center gap-md mb-lg">
+<span class="material-symbols-outlined text-primary-container">campaign</span>
+<h3 class="font-headline-md text-headline-md text-on-surface uppercase">全局指令输入</h3>
+</div>
+<div class="space-y-lg">
+<div class="relative">
+<label class="absolute -top-3 left-4 bg-surface-dim px-sm font-label-mono text-[10px] text-primary">优先级</label>
+<div class="flex gap-md pt-sm">
+<button class="flex-1 bg-primary-container/20 text-on-primary-container border border-primary/40 py-sm rounded font-label-mono text-[12px] hover:bg-primary-container/40 transition-colors uppercase tracking-widest">标准</button>
+<button class="flex-1 border border-outline-variant/40 text-on-surface-variant py-sm rounded font-label-mono text-[12px] hover:border-primary/40 transition-all uppercase tracking-widest">高警</button>
+<button class="flex-1 border border-error/40 text-error/70 py-sm rounded font-label-mono text-[12px] hover:bg-error/10 transition-all uppercase tracking-widest">紧急 (关键)</button>
+</div>
+</div>
+<div class="relative group">
+<textarea class="w-full bg-surface-container-highest/20 border-b-2 border-outline-variant focus:border-primary-container transition-all focus:ring-0 text-primary-fixed-dim font-label-mono p-md outline-none placeholder:text-outline-variant/40" placeholder="输入全局指令字符串..." rows="4"></textarea>
+<div class="absolute bottom-4 right-4 flex items-center gap-md">
+<span class="text-[10px] font-label-mono text-outline-variant">CHAR: 0/140</span>
+<button class="bg-primary-container text-on-primary-container px-xl py-md rounded-xl font-headline-md uppercase text-[14px] flex items-center gap-sm shadow-[0_0_15px_rgba(0,229,255,0.3)] hover:scale-105 active:scale-95 transition-all"><span class="material-symbols-outlined text-[18px]">send</span>执行广播</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Transmission History (Bottom Right) -->
+<div class="col-span-12 lg:col-span-4 glass-panel rounded-xl p-lg flex flex-col border border-outline-variant/20">
+<div class="flex items-center justify-between mb-lg">
+<h3 class="font-label-mono text-on-surface uppercase">最近日志</h3>
+<button class="material-symbols-outlined text-on-surface-variant text-[20px]">filter_list</button>
+</div>
+<div class="space-y-md overflow-y-auto max-h-[250px] pr-sm scrollbar-thin scrollbar-thumb-primary/20">
+<div class="border-l-2 border-primary-fixed/40 pl-md py-sm hover:bg-surface-variant/20 transition-colors">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[10px] font-label-mono text-primary-fixed">14:22:08</span>
+<span class="text-[9px] bg-primary/10 text-primary px-xs rounded">已执行</span>
+</div>
+<p class="text-[12px] text-on-surface-variant font-label-mono leading-tight">监管访问权限：ALPHA-1</p>
+</div>
+<div class="border-l-2 border-tertiary-fixed/40 pl-md py-sm hover:bg-surface-variant/20 transition-colors">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[10px] font-label-mono text-tertiary-fixed">12:15:45</span>
+<span class="text-[9px] bg-tertiary/10 text-tertiary px-xs rounded">已存档</span>
+</div>
+<p class="text-[12px] text-on-surface-variant font-label-mono leading-tight">监管访问权限：ALPHA-1</p>
+</div>
+<div class="border-l-2 border-error/40 pl-md py-sm hover:bg-surface-variant/20 transition-colors">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[10px] font-label-mono text-error">09:11:32</span>
+<span class="text-[9px] bg-error/10 text-error px-xs rounded">失败</span>
+</div>
+<p class="text-[12px] text-on-surface-variant font-label-mono leading-tight">监管访问权限：ALPHA-1</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<footer class="md:hidden bg-surface-container-high/60 backdrop-blur-lg text-primary-container font-label-mono text-label-mono fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-md border-t border-primary/20 shadow-[0_-4px_20px_rgba(0,229,255,0.1)]">
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">sensors</span>
+<span class="text-[10px]">Live Feed</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">trending_up</span>
+<span class="text-[10px]">Trends</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">account_tree</span>
+<span class="text-[10px]">Node Map</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container/20 text-on-primary-container rounded-lg px-4 py-1">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">code</span>
+<span class="text-[10px]">Terminal</span>
+</div>
+</footer>
+</body></html>

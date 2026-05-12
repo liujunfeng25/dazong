@@ -1,0 +1,354 @@
+:root {
+  --brand-50: #eef4ff;
+  --brand-100: #dbe7ff;
+  --brand-500: #4f7cff;
+  --brand-600: #3f69e8;
+  --brand-700: #3657c5;
+
+  --surface-page: #f3f6fb;
+  --surface-card: rgba(255, 255, 255, 0.78);
+  --surface-card-strong: #ffffff;
+  --surface-sidebar: #0f172a;
+  --surface-sidebar-glow: rgba(255, 255, 255, 0.08);
+
+  --text-primary: #0f172a;
+  --text-secondary: #4a5568;
+  --text-inverse: #f8fafc;
+
+  --state-success: #16a34a;
+  --state-warning: #f59e0b;
+  --state-danger: #ef4444;
+  --state-info: #3b82f6;
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --shadow-soft: 0 12px 36px rgba(15, 23, 42, 0.08);
+  --shadow-card: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --border-soft: rgba(148, 163, 184, 0.24);
+
+  --el-color-primary: var(--brand-500);
+  --el-color-primary-light-3: #6a90ff;
+  --el-color-primary-light-5: #8aacff;
+  --el-color-primary-light-7: #b2c8ff;
+  --el-color-primary-light-8: #c7d7ff;
+  --el-color-primary-light-9: #dce7ff;
+  --el-border-radius-base: var(--radius-sm);
+  --el-border-color: var(--border-soft);
+  --el-text-color-primary: var(--text-primary);
+  --el-bg-color: #ffffff;
+  --el-fill-color-light: #f6f8fc;
+  --el-box-shadow-light: var(--shadow-card);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--text-primary);
+  background:
+    radial-gradient(circle at 15% 10%, rgba(79, 124, 255, 0.14), transparent 34%),
+    radial-gradient(circle at 85% 90%, rgba(129, 140, 248, 0.14), transparent 32%),
+    linear-gradient(160deg, #f8fbff 0%, #eef3fb 56%, #edf2ff 100%);
+}
+
+#app {
+  min-height: 100vh;
+}
+
+/*
+ * 采购端选食堂中转层不在 .app-content-area 内，不走「业务区按钮可读性」规则；
+ * @unocss/reset 会给原生 button 设 background:transparent，易与 EP 主按钮样式叠加导致字色/底色异常。
+ */
+.client-canteen-gate .el-button.el-button--primary:not(.is-link):not(.is-text):not(.is-plain) {
+  color: #ffffff !important;
+  background-color: var(--el-color-primary) !important;
+  border-color: var(--el-color-primary) !important;
+  font-weight: 600;
+}
+
+.client-canteen-gate .el-button.el-button--primary:not(.is-link):not(.is-text):not(.is-plain) > span {
+  color: #ffffff !important;
+}
+
+.client-canteen-gate .el-button.el-button--primary.is-disabled:not(.is-link):not(.is-text) {
+  color: rgba(255, 255, 255, 0.92) !important;
+  background-color: color-mix(in srgb, var(--el-color-primary) 42%, #94a3b8) !important;
+  border-color: transparent !important;
+}
+
+.glass-card {
+  background: var(--surface-card);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+  border-radius: var(--radius-lg);
+}
+
+.app-content-area .el-card {
+  background: var(--surface-card);
+  border-color: var(--border-soft);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.app-content-area .el-card__header {
+  border-bottom-color: rgba(148, 163, 184, 0.22);
+}
+
+.app-content-area .el-table {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+.app-content-area .el-table th.el-table__cell {
+  background: #f6f8fd;
+  color: #273449;
+  font-weight: 600;
+}
+
+.app-content-area .el-form-item__label {
+  color: #334155;
+  font-weight: 600;
+}
+
+/* Global button readability guardrail */
+.app-content-area .el-button {
+  font-weight: 600;
+}
+
+.app-content-area .el-button > span {
+  color: inherit;
+}
+
+.app-content-area .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.is-link):not(.is-text) {
+  color: #334155;
+  border-color: #cbd5e1;
+  background: #fff;
+}
+
+.app-content-area .el-button--primary {
+  color: #fff;
+  border-color: var(--el-color-primary);
+  background: var(--el-color-primary);
+}
+
+.app-content-area .el-button--success {
+  color: #fff;
+}
+
+.app-content-area .el-button--warning {
+  color: #fff;
+}
+
+.app-content-area .el-button--danger {
+  color: #fff;
+}
+
+.app-content-area .el-button--danger:not(.is-plain):not(.is-text):not(.is-link) {
+  color: #fff;
+  background: #ef4444;
+  border-color: #ef4444;
+}
+
+.app-content-area .el-button--danger.is-plain {
+  color: #dc2626;
+  background: #fff;
+  border-color: #fca5a5;
+}
+
+.app-content-area .el-button.is-plain {
+  color: var(--el-color-primary);
+  border-color: color-mix(in srgb, var(--el-color-primary) 35%, #ffffff 65%);
+  background: color-mix(in srgb, var(--el-color-primary) 8%, #ffffff 92%);
+}
+
+.app-content-area .el-button.is-text,
+.app-content-area .el-button.is-link,
+.app-content-area .el-button--text,
+.app-content-area .el-button--link {
+  color: var(--el-color-primary);
+  border-color: transparent;
+  background: transparent;
+}
+
+.brand-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: var(--text-inverse);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+/* MessageBox is teleported to body; keep confirm text visible */
+.danger-confirm-dialog .danger-confirm-btn {
+  min-width: 92px;
+  color: #fff !important;
+  background: var(--el-color-primary) !important;
+  border-color: var(--el-color-primary) !important;
+}
+
+.danger-confirm-dialog .danger-confirm-btn > span {
+  color: #fff !important;
+}
+
+/* Award confirm dialog button text visibility */
+.award-confirm-dialog .award-confirm-btn {
+  min-width: 92px;
+  color: #fff !important;
+  background: var(--el-color-primary) !important;
+  border-color: var(--el-color-primary) !important;
+}
+
+.award-confirm-dialog .award-confirm-btn > span {
+  color: #fff !important;
+}
+
+.award-confirm-dialog .award-cancel-btn {
+  min-width: 76px;
+  color: #334155 !important;
+  background: #fff !important;
+  border-color: #cbd5e1 !important;
+}
+
+.award-confirm-dialog .award-cancel-btn > span {
+  color: #334155 !important;
+}
+
+/* Client order abnormal confirm dialog */
+.order-abnormal-confirm-dialog .order-abnormal-confirm-btn {
+  min-width: 92px;
+  color: #fff !important;
+  background: var(--el-color-primary) !important;
+  border-color: var(--el-color-primary) !important;
+}
+
+.order-abnormal-confirm-dialog .order-abnormal-confirm-btn > span {
+  color: #fff !important;
+}
+
+.order-abnormal-confirm-dialog .order-abnormal-cancel-btn {
+  min-width: 92px;
+  color: #334155 !important;
+  background: #fff !important;
+  border-color: #cbd5e1 !important;
+}
+
+.order-abnormal-confirm-dialog .order-abnormal-cancel-btn > span {
+  color: #334155 !important;
+}
+
+/* Notification popover styling (teleported) */
+.notify-popover-panel {
+  border-radius: 14px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.14) !important;
+  padding: 10px !important;
+}
+
+.notify-popover-panel .notify-popover {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notify-popover-panel .notify-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.notify-popover-panel .notify-headline {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.notify-popover-panel .notify-subtitle {
+  margin-top: 2px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.notify-popover-panel .notify-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.notify-popover-panel .notify-list {
+  max-height: 360px;
+  overflow: auto;
+}
+
+.notify-popover-panel .notify-empty {
+  color: #94a3b8;
+  font-size: 12px;
+  text-align: center;
+  padding: 12px 4px;
+}
+
+.notify-popover-panel .notify-item {
+  cursor: pointer;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: #fff;
+}
+
+.notify-popover-panel .notify-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.notify-popover-panel .notify-item.unread .notify-title {
+  color: #0f3dbe;
+}
+
+.notify-popover-panel .notify-item.unread {
+  border-left: 3px solid #3b82f6;
+  background: #f8fbff;
+}
+
+.notify-popover-panel .notify-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.notify-popover-panel .notify-content {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.notify-popover-panel .notify-time {
+  font-size: 12px;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.notify-popover-panel .notify-meta {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #475569;
+}
+
+.notify-popover-panel .notify-footer {
+  padding-top: 4px;
+  border-top: 1px solid #e2e8f0;
+  text-align: center;
+}

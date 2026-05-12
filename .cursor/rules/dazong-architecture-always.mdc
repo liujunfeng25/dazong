@@ -1,0 +1,78 @@
+---
+description: dazong 八端一库架构与跨端联动（始终生效）
+alwaysApply: true
+---
+
+# dazong 多终端架构
+
+## 八端与代码落点（单库 `MYSQL_DB`，数据在端间流转）
+
+标准八端为：**配送商端、客户端、工厂端、供货商端、运营端、司机端、智能秤端、监管端**（与代码里 `User.role` 及路由一一对应；其中 **供货商端**即 `supplier`，**不要**与「客户端」混淆；若口播/文档里出现两个「客户端」，第二个应视为 **供货商端** 之笔误）。
+
+| 端 | 角色 / 说明 | 前端主路径（Vue） | 后端要点 |
+|---|-------------|------------------|----------|
+| 运营端 | 配置、商品、分类、账号、工单 | `frontend/src/views/operation/**` | `routers/operation.py` |
+| 客户端 | 招标、合约、下单、对账 | `frontend/src/views/client/**` | `routers/client.py`、`routers/contracts.py` |
+| 配送商端 | 投标、合约、分播路线、管理侧「供应商」子能力等 | `frontend/src/views/delivery/**` | `routers/delivery.py`、`contracts` 投标 |
+| 供货商端 | 供货订单、账单（角色 `supplier`，≠ 客户端） | `frontend/src/views/supplier/**` | `routers/supplier.py` |
+| 工厂端 | 质检/报告上传 | `frontend/src/views/factory/**` | `routers/factory.py`、`quality_reports` |
+| 监管端 | 大盘、物流、预警、报表 | `frontend/src/views/monitor/**` | `routers/monitor.py`、WS |
+| 司机端 | 在途/车辆/配送执行（无独立 `/driver` 壳，落在配送域） | `delivery` 下订单/物流/路线等 | `models/deliveries.py`、`routers/orders.py` 等 |
+| 智能秤端 | 分播/称重/物联网数据 | `SmartSplit.vue`、监控与 IoT | `routers/iot.py`、`ws.py` |
+
+## 联动原则（改任何一端必查）
+
+- 改 **模型 / 表字段 / 公共枚举**：核对所有相关 `routers/`、各端 `views/**`、种子数据 `database.py`。
+- 改 **分类、浮动率、合约、招标**：运营配置 → 客户端招标 → 配送投标 → 合约落库 → 订单计价；禁止只改单端 UI。
+- 语言：对用户说明与代码注释使用 **简体中文**（若项目已有约定）。
+- 改动前端代码后（尤其是 `frontend/src/**` 的 UI/交互变更），默认由 Agent 直接执行 `docker compose up -d --build frontend`（若网络导致构建失败则回退执行 `docker compose up -d frontend`），不等待用户再次提醒重启。
+
+## 在 Cursor 里配置「多个 Agent」（界面操作）
+
+Cursor 的自定义 Agent 在 **产品 UI** 里创建；本仓库用 **规则文件** 对应各端人设。建议为每个业务 Agent 命名并绑定说明：
+
+1. 打开 Cursor **Settings → Cursor Settings → Rules / Agents**（或侧栏 **New Agent** / **Composer Agent** 入口，以你当前 Cursor 版本为准）。
+2. 新建 Agent，名称示例：`dazong-工厂端`、`dazong-监管端`、`dazong-供货商端`、`dazong-司机端`、`dazong-智能秤端`（你已有运营/客户/配送时可只补这 5 个）。
+3. 在 Agent 的 **Instructions** 中粘贴：对应 `.cursor/rules/dazong-terminal-*.mdc` 全文，或写「遵守项目内 `dazong-terminal-xxx` 规则」。
+4. 工作区根目录选 **本仓库 `dazong`**，保证能读到 `.cursor/rules/`。
+
+规则文件已按端拆分，打开对应目录文件时会自动叠加该端规则（见各文件 `globs`）。
+---
+description: dazong 八端一库架构与跨端联动（始终生效）
+alwaysApply: true
+---
+
+# dazong 多终端架构
+
+## 八端与代码落点（单库 `MYSQL_DB`，数据在端间流转）
+
+标准八端为：**配送商端、客户端、工厂端、供货商端、运营端、司机端、智能秤端、监管端**（与代码里 `User.role` 及路由一一对应；其中 **供货商端**即 `supplier`，**不要**与「客户端」混淆；若口播/文档里出现两个「客户端」，第二个应视为 **供货商端** 之笔误）。
+
+| 端 | 角色 / 说明 | 前端主路径（Vue） | 后端要点 |
+|---|-------------|------------------|----------|
+| 运营端 | 配置、商品、分类、账号、工单 | `frontend/src/views/operation/**` | `routers/operation.py` |
+| 客户端 | 招标、合约、下单、对账 | `frontend/src/views/client/**` | `routers/client.py`、`routers/contracts.py` |
+| 配送商端 | 投标、合约、分播路线、管理侧「供应商」子能力等 | `frontend/src/views/delivery/**` | `routers/delivery.py`、`contracts` 投标 |
+| 供货商端 | 供货订单、账单（角色 `supplier`，≠ 客户端） | `frontend/src/views/supplier/**` | `routers/supplier.py` |
+| 工厂端 | 质检/报告上传 | `frontend/src/views/factory/**` | `routers/factory.py`、`quality_reports` |
+| 监管端 | 大盘、物流、预警、报表 | `frontend/src/views/monitor/**` | `routers/monitor.py`、WS |
+| 司机端 | 在途/车辆/配送执行（无独立 `/driver` 壳，落在配送域） | `delivery` 下订单/物流/路线等 | `models/deliveries.py`、`routers/orders.py` 等 |
+| 智能秤端 | 分播/称重/物联网数据 | `SmartSplit.vue`、监控与 IoT | `routers/iot.py`、`ws.py` |
+
+## 联动原则（改任何一端必查）
+
+- 改 **模型 / 表字段 / 公共枚举**：核对所有相关 `routers/`、各端 `views/**`、种子数据 `database.py`。
+- 改 **分类、浮动率、合约、招标**：运营配置 → 客户端招标 → 配送投标 → 合约落库 → 订单计价；禁止只改单端 UI。
+- 语言：对用户说明与代码注释使用 **简体中文**（若项目已有约定）。
+- 改动前端代码后（尤其是 `frontend/src/**` 的 UI/交互变更），默认由 Agent 直接执行 `docker compose up -d --build frontend`（若网络导致构建失败则回退执行 `docker compose up -d frontend`），不等待用户再次提醒重启。
+
+## 在 Cursor 里配置「多个 Agent」（界面操作）
+
+Cursor 的自定义 Agent 在 **产品 UI** 里创建；本仓库用 **规则文件** 对应各端人设。建议为每个业务 Agent 命名并绑定说明：
+
+1. 打开 Cursor **Settings → Cursor Settings → Rules / Agents**（或侧栏 **New Agent** / **Composer Agent** 入口，以你当前 Cursor 版本为准）。
+2. 新建 Agent，名称示例：`dazong-工厂端`、`dazong-监管端`、`dazong-供货商端`、`dazong-司机端`、`dazong-智能秤端`（你已有运营/客户/配送时可只补这 5 个）。
+3. 在 Agent 的 **Instructions** 中粘贴：对应 `.cursor/rules/dazong-terminal-*.mdc` 全文，或写「遵守项目内 `dazong-terminal-xxx` 规则」。
+4. 工作区根目录选 **本仓库 `dazong`**，保证能读到 `.cursor/rules/`。
+
+规则文件已按端拆分，打开对应目录文件时会自动叠加该端规则（见各文件 `globs`）。

@@ -1,0 +1,12 @@
+---
+description: dazong 司机端 — 配送执行、在途、车辆（落在配送域）
+globs: frontend/src/views/delivery/OrderDetail.vue,frontend/src/views/delivery/SmartRouting.vue,frontend/src/views/delivery/RoutePlanPanel.vue,frontend/src/views/monitor/Logistics.vue,backend/models/deliveries.py,backend/routers/orders.py
+alwaysApply: false
+---
+
+# 司机端 Agent 人设（物流执行视角）
+
+本仓库 **无单独 `/driver` SPA**；司机相关能力分布在 **配送端订单/路线** 与 **监管物流**。
+
+- **关注点**：运力、路由、签收节点、`deliveries`/`orders` 状态；改动时同步 **配送 UI** 与 **监管可视化** 所需字段。
+- **与其它端**：客户端「收货」、配送「出库」、监管「车辆」共用同一数据库事实。

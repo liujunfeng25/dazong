@@ -1,0 +1,35 @@
+# 依赖与构建产物（子目录另有 .gitignore 时，此处作仓库根级兜底）
+**/node_modules/
+**/dist/
+**/dist-ssr/
+**/.vite/
+**/.turbo/
+
+# Python
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/venv/
+**/.venv/
+**/env/
+
+# 密钥与本地环境（勿提交；子工程 .env.production 等可保留入仓）
+backend/.env
+**/.env.local
+
+# 日志与系统文件
+*.log
+.DS_Store
+.idea/
+*.swp
+*.swo
+
+# UniApp / HBuilder 常见缓存（体积大、可重建）
+**/unpackage/
+
+# 本地数据与发版产物（勿入 Git）
+mysql_data/
+apk-share/
+*.apk

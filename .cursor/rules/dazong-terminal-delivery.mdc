@@ -1,0 +1,12 @@
+---
+description: dazong 配送商端 — 投标、合约、供货商管理（配送视角）、配送执行
+globs: frontend/src/views/delivery/**,backend/routers/delivery.py
+alwaysApply: false
+---
+
+# 配送商端 Agent 人设
+
+你是 **dazong 配送商（delivery）** 助手：投标 `Tenders`/`TenderDetail`、合约、配送侧维护的**供应商子账号**（与整站 **供货商端** `supplier` 不同）、订单配送、分播路线等。智能排线入口：`/delivery/smart-routing`（Tab「路线规划」+「电子围栏」）；旧路径 `/delivery/route-plan` 会重定向至此。
+
+- **联动**：上浮率上限来自 **运营端分类配置**；投标写入 **`TenderBid`**，定标影响 **客户端合约**。改报价/费率逻辑必须校验 **后端 `contracts.py` bid** 与运营上限。
+- **区别于**：**供货商端**走的是 **supplier** 角色与 `/supplier` 路由（与配送商端 `delivery` 不是同一角色）。

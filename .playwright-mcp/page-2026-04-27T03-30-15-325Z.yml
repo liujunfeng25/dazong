@@ -1,0 +1,938 @@
+- generic [ref=e1]:
+  - generic [ref=e53]:
+    - complementary [ref=e54]:
+      - generic [ref=e55]:
+        - generic [ref=e56]: DAZONG PLATFORM
+        - generic [ref=e57]: 运营端
+      - menubar [ref=e58]:
+        - menuitem "运营看板" [ref=e59] [cursor=pointer]
+        - menuitem "分类管理" [ref=e60] [cursor=pointer]
+        - menuitem "商品管理" [ref=e61] [cursor=pointer]
+        - menuitem "账号管理" [ref=e62] [cursor=pointer]
+        - menuitem "订单监控" [ref=e63] [cursor=pointer]
+        - menuitem "工单处理" [ref=e64] [cursor=pointer]
+    - generic [ref=e65]:
+      - generic [ref=e67]:
+        - generic [ref=e68]:
+          - generic [ref=e69]: 大宗物资供应链管理系统
+          - generic [ref=e70]: 2026/4/27 11:30:14
+        - generic [ref=e71]:
+          - button "通知" [ref=e73] [cursor=pointer]:
+            - generic [ref=e74]: 通知
+          - generic [ref=e75]: 运营端
+          - button "退出登录" [ref=e76] [cursor=pointer]:
+            - generic [ref=e77]: 退出登录
+      - generic [ref=e78]:
+        - generic [ref=e178]:
+          - generic [ref=e179]:
+            - textbox "搜索商品" [ref=e184]
+            - button "搜索" [ref=e187] [cursor=pointer]:
+              - generic [ref=e188]: 搜索
+          - button "新增商品" [ref=e190] [cursor=pointer]:
+            - generic [ref=e191]: 新增商品
+        - generic [ref=e195]:
+          - table [ref=e197]:
+            - rowgroup [ref=e207]:
+              - row "编号 商品 分类 参考价 品类类型 所属厂家 状态 操作" [ref=e208]:
+                - columnheader "编号" [ref=e209]:
+                  - generic [ref=e210]: 编号
+                - columnheader "商品" [ref=e211]:
+                  - generic [ref=e212]: 商品
+                - columnheader "分类" [ref=e213]:
+                  - generic [ref=e214]: 分类
+                - columnheader "参考价" [ref=e215]:
+                  - generic [ref=e216]: 参考价
+                - columnheader "品类类型" [ref=e217]:
+                  - generic [ref=e218]: 品类类型
+                - columnheader "所属厂家" [ref=e219]:
+                  - generic [ref=e220]: 所属厂家
+                - columnheader "状态" [ref=e221]:
+                  - generic [ref=e222]: 状态
+                - columnheader "操作" [ref=e223]:
+                  - generic [ref=e224]: 操作
+          - table [ref=e229]:
+            - rowgroup [ref=e239]:
+              - row "36 复合调味C 调味品 / 复合调味 ¥16.3 标品 某食品厂 启用 编辑 删除" [ref=e240]:
+                - cell "36" [ref=e241]:
+                  - generic [ref=e242]: "36"
+                - cell "复合调味C" [ref=e243]:
+                  - generic [ref=e244]: 复合调味C
+                - cell "调味品 / 复合调味" [ref=e245]:
+                  - generic [ref=e246]: 调味品 / 复合调味
+                - cell "¥16.3" [ref=e247]:
+                  - generic [ref=e248]: ¥16.3
+                - cell "标品" [ref=e249]:
+                  - generic [ref=e252]: 标品
+                - cell "某食品厂" [ref=e253]:
+                  - generic [ref=e254]: 某食品厂
+                - cell "启用" [ref=e255]:
+                  - generic [ref=e258]: 启用
+                - cell "编辑 删除" [ref=e259]:
+                  - generic [ref=e261]:
+                    - button "编辑" [ref=e262] [cursor=pointer]:
+                      - generic [ref=e263]: 编辑
+                    - button "删除" [ref=e264] [cursor=pointer]:
+                      - generic [ref=e265]: 删除
+              - row "35 复合调味B 调味品 / 复合调味 ¥12.6 标品 非指定 启用 编辑 删除" [ref=e266]:
+                - cell "35" [ref=e267]:
+                  - generic [ref=e268]: "35"
+                - cell "复合调味B" [ref=e269]:
+                  - generic [ref=e270]: 复合调味B
+                - cell "调味品 / 复合调味" [ref=e271]:
+                  - generic [ref=e272]: 调味品 / 复合调味
+                - cell "¥12.6" [ref=e273]:
+                  - generic [ref=e274]: ¥12.6
+                - cell "标品" [ref=e275]:
+                  - generic [ref=e278]: 标品
+                - cell "非指定" [ref=e279]:
+                  - generic [ref=e280]: 非指定
+                - cell "启用" [ref=e281]:
+                  - generic [ref=e284]: 启用
+                - cell "编辑 删除" [ref=e285]:
+                  - generic [ref=e287]:
+                    - button "编辑" [ref=e288] [cursor=pointer]:
+                      - generic [ref=e289]: 编辑
+                    - button "删除" [ref=e290] [cursor=pointer]:
+                      - generic [ref=e291]: 删除
+              - row "34 复合调味A 调味品 / 复合调味 ¥8.8 标品 非指定 启用 编辑 删除" [ref=e292]:
+                - cell "34" [ref=e293]:
+                  - generic [ref=e294]: "34"
+                - cell "复合调味A" [ref=e295]:
+                  - generic [ref=e296]: 复合调味A
+                - cell "调味品 / 复合调味" [ref=e297]:
+                  - generic [ref=e298]: 调味品 / 复合调味
+                - cell "¥8.8" [ref=e299]:
+                  - generic [ref=e300]: ¥8.8
+                - cell "标品" [ref=e301]:
+                  - generic [ref=e304]: 标品
+                - cell "非指定" [ref=e305]:
+                  - generic [ref=e306]: 非指定
+                - cell "启用" [ref=e307]:
+                  - generic [ref=e310]: 启用
+                - cell "编辑 删除" [ref=e311]:
+                  - generic [ref=e313]:
+                    - button "编辑" [ref=e314] [cursor=pointer]:
+                      - generic [ref=e315]: 编辑
+                    - button "删除" [ref=e316] [cursor=pointer]:
+                      - generic [ref=e317]: 删除
+              - row "33 基础调味C 调味品 / 基础调味 ¥16.3 标品 非指定 启用 编辑 删除" [ref=e318]:
+                - cell "33" [ref=e319]:
+                  - generic [ref=e320]: "33"
+                - cell "基础调味C" [ref=e321]:
+                  - generic [ref=e322]: 基础调味C
+                - cell "调味品 / 基础调味" [ref=e323]:
+                  - generic [ref=e324]: 调味品 / 基础调味
+                - cell "¥16.3" [ref=e325]:
+                  - generic [ref=e326]: ¥16.3
+                - cell "标品" [ref=e327]:
+                  - generic [ref=e330]: 标品
+                - cell "非指定" [ref=e331]:
+                  - generic [ref=e332]: 非指定
+                - cell "启用" [ref=e333]:
+                  - generic [ref=e336]: 启用
+                - cell "编辑 删除" [ref=e337]:
+                  - generic [ref=e339]:
+                    - button "编辑" [ref=e340] [cursor=pointer]:
+                      - generic [ref=e341]: 编辑
+                    - button "删除" [ref=e342] [cursor=pointer]:
+                      - generic [ref=e343]: 删除
+              - row "32 基础调味B 调味品 / 基础调味 ¥12.6 标品 非指定 启用 编辑 删除" [ref=e344]:
+                - cell "32" [ref=e345]:
+                  - generic [ref=e346]: "32"
+                - cell "基础调味B" [ref=e347]:
+                  - generic [ref=e348]: 基础调味B
+                - cell "调味品 / 基础调味" [ref=e349]:
+                  - generic [ref=e350]: 调味品 / 基础调味
+                - cell "¥12.6" [ref=e351]:
+                  - generic [ref=e352]: ¥12.6
+                - cell "标品" [ref=e353]:
+                  - generic [ref=e356]: 标品
+                - cell "非指定" [ref=e357]:
+                  - generic [ref=e358]: 非指定
+                - cell "启用" [ref=e359]:
+                  - generic [ref=e362]: 启用
+                - cell "编辑 删除" [ref=e363]:
+                  - generic [ref=e365]:
+                    - button "编辑" [ref=e366] [cursor=pointer]:
+                      - generic [ref=e367]: 编辑
+                    - button "删除" [ref=e368] [cursor=pointer]:
+                      - generic [ref=e369]: 删除
+              - row "31 基础调味A 调味品 / 基础调味 ¥8.8 标品 非指定 启用 编辑 删除" [ref=e370]:
+                - cell "31" [ref=e371]:
+                  - generic [ref=e372]: "31"
+                - cell "基础调味A" [ref=e373]:
+                  - generic [ref=e374]: 基础调味A
+                - cell "调味品 / 基础调味" [ref=e375]:
+                  - generic [ref=e376]: 调味品 / 基础调味
+                - cell "¥8.8" [ref=e377]:
+                  - generic [ref=e378]: ¥8.8
+                - cell "标品" [ref=e379]:
+                  - generic [ref=e382]: 标品
+                - cell "非指定" [ref=e383]:
+                  - generic [ref=e384]: 非指定
+                - cell "启用" [ref=e385]:
+                  - generic [ref=e388]: 启用
+                - cell "编辑 删除" [ref=e389]:
+                  - generic [ref=e391]:
+                    - button "编辑" [ref=e392] [cursor=pointer]:
+                      - generic [ref=e393]: 编辑
+                    - button "删除" [ref=e394] [cursor=pointer]:
+                      - generic [ref=e395]: 删除
+              - row "30 海产品C 水产 / 海产品 ¥16.3 标品 非指定 启用 编辑 删除" [ref=e396]:
+                - cell "30" [ref=e397]:
+                  - generic [ref=e398]: "30"
+                - cell "海产品C" [ref=e399]:
+                  - generic [ref=e400]: 海产品C
+                - cell "水产 / 海产品" [ref=e401]:
+                  - generic [ref=e402]: 水产 / 海产品
+                - cell "¥16.3" [ref=e403]:
+                  - generic [ref=e404]: ¥16.3
+                - cell "标品" [ref=e405]:
+                  - generic [ref=e408]: 标品
+                - cell "非指定" [ref=e409]:
+                  - generic [ref=e410]: 非指定
+                - cell "启用" [ref=e411]:
+                  - generic [ref=e414]: 启用
+                - cell "编辑 删除" [ref=e415]:
+                  - generic [ref=e417]:
+                    - button "编辑" [ref=e418] [cursor=pointer]:
+                      - generic [ref=e419]: 编辑
+                    - button "删除" [ref=e420] [cursor=pointer]:
+                      - generic [ref=e421]: 删除
+              - row "29 海产品B 水产 / 海产品 ¥12.6 标品 非指定 启用 编辑 删除" [ref=e422]:
+                - cell "29" [ref=e423]:
+                  - generic [ref=e424]: "29"
+                - cell "海产品B" [ref=e425]:
+                  - generic [ref=e426]: 海产品B
+                - cell "水产 / 海产品" [ref=e427]:
+                  - generic [ref=e428]: 水产 / 海产品
+                - cell "¥12.6" [ref=e429]:
+                  - generic [ref=e430]: ¥12.6
+                - cell "标品" [ref=e431]:
+                  - generic [ref=e434]: 标品
+                - cell "非指定" [ref=e435]:
+                  - generic [ref=e436]: 非指定
+                - cell "启用" [ref=e437]:
+                  - generic [ref=e440]: 启用
+                - cell "编辑 删除" [ref=e441]:
+                  - generic [ref=e443]:
+                    - button "编辑" [ref=e444] [cursor=pointer]:
+                      - generic [ref=e445]: 编辑
+                    - button "删除" [ref=e446] [cursor=pointer]:
+                      - generic [ref=e447]: 删除
+              - row "28 海产品A 水产 / 海产品 ¥8.8 标品 非指定 启用 编辑 删除" [ref=e448]:
+                - cell "28" [ref=e449]:
+                  - generic [ref=e450]: "28"
+                - cell "海产品A" [ref=e451]:
+                  - generic [ref=e452]: 海产品A
+                - cell "水产 / 海产品" [ref=e453]:
+                  - generic [ref=e454]: 水产 / 海产品
+                - cell "¥8.8" [ref=e455]:
+                  - generic [ref=e456]: ¥8.8
+                - cell "标品" [ref=e457]:
+                  - generic [ref=e460]: 标品
+                - cell "非指定" [ref=e461]:
+                  - generic [ref=e462]: 非指定
+                - cell "启用" [ref=e463]:
+                  - generic [ref=e466]: 启用
+                - cell "编辑 删除" [ref=e467]:
+                  - generic [ref=e469]:
+                    - button "编辑" [ref=e470] [cursor=pointer]:
+                      - generic [ref=e471]: 编辑
+                    - button "删除" [ref=e472] [cursor=pointer]:
+                      - generic [ref=e473]: 删除
+              - row "27 淡水鱼C 水产 / 淡水鱼 ¥16.3 标品 非指定 启用 编辑 删除" [ref=e474]:
+                - cell "27" [ref=e475]:
+                  - generic [ref=e476]: "27"
+                - cell "淡水鱼C" [ref=e477]:
+                  - generic [ref=e478]: 淡水鱼C
+                - cell "水产 / 淡水鱼" [ref=e479]:
+                  - generic [ref=e480]: 水产 / 淡水鱼
+                - cell "¥16.3" [ref=e481]:
+                  - generic [ref=e482]: ¥16.3
+                - cell "标品" [ref=e483]:
+                  - generic [ref=e486]: 标品
+                - cell "非指定" [ref=e487]:
+                  - generic [ref=e488]: 非指定
+                - cell "启用" [ref=e489]:
+                  - generic [ref=e492]: 启用
+                - cell "编辑 删除" [ref=e493]:
+                  - generic [ref=e495]:
+                    - button "编辑" [ref=e496] [cursor=pointer]:
+                      - generic [ref=e497]: 编辑
+                    - button "删除" [ref=e498] [cursor=pointer]:
+                      - generic [ref=e499]: 删除
+              - row "26 淡水鱼B 水产 / 淡水鱼 ¥12.6 标品 非指定 启用 编辑 删除" [ref=e500]:
+                - cell "26" [ref=e501]:
+                  - generic [ref=e502]: "26"
+                - cell "淡水鱼B" [ref=e503]:
+                  - generic [ref=e504]: 淡水鱼B
+                - cell "水产 / 淡水鱼" [ref=e505]:
+                  - generic [ref=e506]: 水产 / 淡水鱼
+                - cell "¥12.6" [ref=e507]:
+                  - generic [ref=e508]: ¥12.6
+                - cell "标品" [ref=e509]:
+                  - generic [ref=e512]: 标品
+                - cell "非指定" [ref=e513]:
+                  - generic [ref=e514]: 非指定
+                - cell "启用" [ref=e515]:
+                  - generic [ref=e518]: 启用
+                - cell "编辑 删除" [ref=e519]:
+                  - generic [ref=e521]:
+                    - button "编辑" [ref=e522] [cursor=pointer]:
+                      - generic [ref=e523]: 编辑
+                    - button "删除" [ref=e524] [cursor=pointer]:
+                      - generic [ref=e525]: 删除
+              - row "25 淡水鱼A 水产 / 淡水鱼 ¥8.8 标品 非指定 启用 编辑 删除" [ref=e526]:
+                - cell "25" [ref=e527]:
+                  - generic [ref=e528]: "25"
+                - cell "淡水鱼A" [ref=e529]:
+                  - generic [ref=e530]: 淡水鱼A
+                - cell "水产 / 淡水鱼" [ref=e531]:
+                  - generic [ref=e532]: 水产 / 淡水鱼
+                - cell "¥8.8" [ref=e533]:
+                  - generic [ref=e534]: ¥8.8
+                - cell "标品" [ref=e535]:
+                  - generic [ref=e538]: 标品
+                - cell "非指定" [ref=e539]:
+                  - generic [ref=e540]: 非指定
+                - cell "启用" [ref=e541]:
+                  - generic [ref=e544]: 启用
+                - cell "编辑 删除" [ref=e545]:
+                  - generic [ref=e547]:
+                    - button "编辑" [ref=e548] [cursor=pointer]:
+                      - generic [ref=e549]: 编辑
+                    - button "删除" [ref=e550] [cursor=pointer]:
+                      - generic [ref=e551]: 删除
+              - row "24 禽蛋C 肉禽蛋 / 禽蛋 ¥16.3 标品 非指定 启用 编辑 删除" [ref=e552]:
+                - cell "24" [ref=e553]:
+                  - generic [ref=e554]: "24"
+                - cell "禽蛋C" [ref=e555]:
+                  - generic [ref=e556]: 禽蛋C
+                - cell "肉禽蛋 / 禽蛋" [ref=e557]:
+                  - generic [ref=e558]: 肉禽蛋 / 禽蛋
+                - cell "¥16.3" [ref=e559]:
+                  - generic [ref=e560]: ¥16.3
+                - cell "标品" [ref=e561]:
+                  - generic [ref=e564]: 标品
+                - cell "非指定" [ref=e565]:
+                  - generic [ref=e566]: 非指定
+                - cell "启用" [ref=e567]:
+                  - generic [ref=e570]: 启用
+                - cell "编辑 删除" [ref=e571]:
+                  - generic [ref=e573]:
+                    - button "编辑" [ref=e574] [cursor=pointer]:
+                      - generic [ref=e575]: 编辑
+                    - button "删除" [ref=e576] [cursor=pointer]:
+                      - generic [ref=e577]: 删除
+              - row "23 禽蛋B 肉禽蛋 / 禽蛋 ¥12.6 标品 非指定 启用 编辑 删除" [ref=e578]:
+                - cell "23" [ref=e579]:
+                  - generic [ref=e580]: "23"
+                - cell "禽蛋B" [ref=e581]:
+                  - generic [ref=e582]: 禽蛋B
+                - cell "肉禽蛋 / 禽蛋" [ref=e583]:
+                  - generic [ref=e584]: 肉禽蛋 / 禽蛋
+                - cell "¥12.6" [ref=e585]:
+                  - generic [ref=e586]: ¥12.6
+                - cell "标品" [ref=e587]:
+                  - generic [ref=e590]: 标品
+                - cell "非指定" [ref=e591]:
+                  - generic [ref=e592]: 非指定
+                - cell "启用" [ref=e593]:
+                  - generic [ref=e596]: 启用
+                - cell "编辑 删除" [ref=e597]:
+                  - generic [ref=e599]:
+                    - button "编辑" [ref=e600] [cursor=pointer]:
+                      - generic [ref=e601]: 编辑
+                    - button "删除" [ref=e602] [cursor=pointer]:
+                      - generic [ref=e603]: 删除
+              - row "22 禽蛋A 肉禽蛋 / 禽蛋 ¥8.8 标品 非指定 启用 编辑 删除" [ref=e604]:
+                - cell "22" [ref=e605]:
+                  - generic [ref=e606]: "22"
+                - cell "禽蛋A" [ref=e607]:
+                  - generic [ref=e608]: 禽蛋A
+                - cell "肉禽蛋 / 禽蛋" [ref=e609]:
+                  - generic [ref=e610]: 肉禽蛋 / 禽蛋
+                - cell "¥8.8" [ref=e611]:
+                  - generic [ref=e612]: ¥8.8
+                - cell "标品" [ref=e613]:
+                  - generic [ref=e616]: 标品
+                - cell "非指定" [ref=e617]:
+                  - generic [ref=e618]: 非指定
+                - cell "启用" [ref=e619]:
+                  - generic [ref=e622]: 启用
+                - cell "编辑 删除" [ref=e623]:
+                  - generic [ref=e625]:
+                    - button "编辑" [ref=e626] [cursor=pointer]:
+                      - generic [ref=e627]: 编辑
+                    - button "删除" [ref=e628] [cursor=pointer]:
+                      - generic [ref=e629]: 删除
+              - row "21 猪牛羊肉C 肉禽蛋 / 猪牛羊肉 ¥16.3 标品 非指定 启用 编辑 删除" [ref=e630]:
+                - cell "21" [ref=e631]:
+                  - generic [ref=e632]: "21"
+                - cell "猪牛羊肉C" [ref=e633]:
+                  - generic [ref=e634]: 猪牛羊肉C
+                - cell "肉禽蛋 / 猪牛羊肉" [ref=e635]:
+                  - generic [ref=e636]: 肉禽蛋 / 猪牛羊肉
+                - cell "¥16.3" [ref=e637]:
+                  - generic [ref=e638]: ¥16.3
+                - cell "标品" [ref=e639]:
+                  - generic [ref=e642]: 标品
+                - cell "非指定" [ref=e643]:
+                  - generic [ref=e644]: 非指定
+                - cell "启用" [ref=e645]:
+                  - generic [ref=e648]: 启用
+                - cell "编辑 删除" [ref=e649]:
+                  - generic [ref=e651]:
+                    - button "编辑" [ref=e652] [cursor=pointer]:
+                      - generic [ref=e653]: 编辑
+                    - button "删除" [ref=e654] [cursor=pointer]:
+                      - generic [ref=e655]: 删除
+              - row "20 猪牛羊肉B 肉禽蛋 / 猪牛羊肉 ¥12.6 标品 非指定 启用 编辑 删除" [ref=e656]:
+                - cell "20" [ref=e657]:
+                  - generic [ref=e658]: "20"
+                - cell "猪牛羊肉B" [ref=e659]:
+                  - generic [ref=e660]: 猪牛羊肉B
+                - cell "肉禽蛋 / 猪牛羊肉" [ref=e661]:
+                  - generic [ref=e662]: 肉禽蛋 / 猪牛羊肉
+                - cell "¥12.6" [ref=e663]:
+                  - generic [ref=e664]: ¥12.6
+                - cell "标品" [ref=e665]:
+                  - generic [ref=e668]: 标品
+                - cell "非指定" [ref=e669]:
+                  - generic [ref=e670]: 非指定
+                - cell "启用" [ref=e671]:
+                  - generic [ref=e674]: 启用
+                - cell "编辑 删除" [ref=e675]:
+                  - generic [ref=e677]:
+                    - button "编辑" [ref=e678] [cursor=pointer]:
+                      - generic [ref=e679]: 编辑
+                    - button "删除" [ref=e680] [cursor=pointer]:
+                      - generic [ref=e681]: 删除
+              - row "19 猪牛羊肉A 肉禽蛋 / 猪牛羊肉 ¥8.8 标品 非指定 启用 编辑 删除" [ref=e682]:
+                - cell "19" [ref=e683]:
+                  - generic [ref=e684]: "19"
+                - cell "猪牛羊肉A" [ref=e685]:
+                  - generic [ref=e686]: 猪牛羊肉A
+                - cell "肉禽蛋 / 猪牛羊肉" [ref=e687]:
+                  - generic [ref=e688]: 肉禽蛋 / 猪牛羊肉
+                - cell "¥8.8" [ref=e689]:
+                  - generic [ref=e690]: ¥8.8
+                - cell "标品" [ref=e691]:
+                  - generic [ref=e694]: 标品
+                - cell "非指定" [ref=e695]:
+                  - generic [ref=e696]: 非指定
+                - cell "启用" [ref=e697]:
+                  - generic [ref=e700]: 启用
+                - cell "编辑 删除" [ref=e701]:
+                  - generic [ref=e703]:
+                    - button "编辑" [ref=e704] [cursor=pointer]:
+                      - generic [ref=e705]: 编辑
+                    - button "删除" [ref=e706] [cursor=pointer]:
+                      - generic [ref=e707]: 删除
+              - row "18 食用油C 粮油 / 食用油 ¥16.3 标品 非指定 启用 编辑 删除" [ref=e708]:
+                - cell "18" [ref=e709]:
+                  - generic [ref=e710]: "18"
+                - cell "食用油C" [ref=e711]:
+                  - generic [ref=e712]: 食用油C
+                - cell "粮油 / 食用油" [ref=e713]:
+                  - generic [ref=e714]: 粮油 / 食用油
+                - cell "¥16.3" [ref=e715]:
+                  - generic [ref=e716]: ¥16.3
+                - cell "标品" [ref=e717]:
+                  - generic [ref=e720]: 标品
+                - cell "非指定" [ref=e721]:
+                  - generic [ref=e722]: 非指定
+                - cell "启用" [ref=e723]:
+                  - generic [ref=e726]: 启用
+                - cell "编辑 删除" [ref=e727]:
+                  - generic [ref=e729]:
+                    - button "编辑" [ref=e730] [cursor=pointer]:
+                      - generic [ref=e731]: 编辑
+                    - button "删除" [ref=e732] [cursor=pointer]:
+                      - generic [ref=e733]: 删除
+              - row "17 食用油B 粮油 / 食用油 ¥12.6 标品 非指定 启用 编辑 删除" [ref=e734]:
+                - cell "17" [ref=e735]:
+                  - generic [ref=e736]: "17"
+                - cell "食用油B" [ref=e737]:
+                  - generic [ref=e738]: 食用油B
+                - cell "粮油 / 食用油" [ref=e739]:
+                  - generic [ref=e740]: 粮油 / 食用油
+                - cell "¥12.6" [ref=e741]:
+                  - generic [ref=e742]: ¥12.6
+                - cell "标品" [ref=e743]:
+                  - generic [ref=e746]: 标品
+                - cell "非指定" [ref=e747]:
+                  - generic [ref=e748]: 非指定
+                - cell "启用" [ref=e749]:
+                  - generic [ref=e752]: 启用
+                - cell "编辑 删除" [ref=e753]:
+                  - generic [ref=e755]:
+                    - button "编辑" [ref=e756] [cursor=pointer]:
+                      - generic [ref=e757]: 编辑
+                    - button "删除" [ref=e758] [cursor=pointer]:
+                      - generic [ref=e759]: 删除
+              - row "16 食用油A 粮油 / 食用油 ¥8.8 标品 非指定 启用 编辑 删除" [ref=e760]:
+                - cell "16" [ref=e761]:
+                  - generic [ref=e762]: "16"
+                - cell "食用油A" [ref=e763]:
+                  - generic [ref=e764]: 食用油A
+                - cell "粮油 / 食用油" [ref=e765]:
+                  - generic [ref=e766]: 粮油 / 食用油
+                - cell "¥8.8" [ref=e767]:
+                  - generic [ref=e768]: ¥8.8
+                - cell "标品" [ref=e769]:
+                  - generic [ref=e772]: 标品
+                - cell "非指定" [ref=e773]:
+                  - generic [ref=e774]: 非指定
+                - cell "启用" [ref=e775]:
+                  - generic [ref=e778]: 启用
+                - cell "编辑 删除" [ref=e779]:
+                  - generic [ref=e781]:
+                    - button "编辑" [ref=e782] [cursor=pointer]:
+                      - generic [ref=e783]: 编辑
+                    - button "删除" [ref=e784] [cursor=pointer]:
+                      - generic [ref=e785]: 删除
+              - row "15 大米C 粮油 / 大米 ¥16.3 标品 非指定 启用 编辑 删除" [ref=e786]:
+                - cell "15" [ref=e787]:
+                  - generic [ref=e788]: "15"
+                - cell "大米C" [ref=e789]:
+                  - generic [ref=e790]: 大米C
+                - cell "粮油 / 大米" [ref=e791]:
+                  - generic [ref=e792]: 粮油 / 大米
+                - cell "¥16.3" [ref=e793]:
+                  - generic [ref=e794]: ¥16.3
+                - cell "标品" [ref=e795]:
+                  - generic [ref=e798]: 标品
+                - cell "非指定" [ref=e799]:
+                  - generic [ref=e800]: 非指定
+                - cell "启用" [ref=e801]:
+                  - generic [ref=e804]: 启用
+                - cell "编辑 删除" [ref=e805]:
+                  - generic [ref=e807]:
+                    - button "编辑" [ref=e808] [cursor=pointer]:
+                      - generic [ref=e809]: 编辑
+                    - button "删除" [ref=e810] [cursor=pointer]:
+                      - generic [ref=e811]: 删除
+              - row "14 大米B 粮油 / 大米 ¥12.6 标品 非指定 启用 编辑 删除" [ref=e812]:
+                - cell "14" [ref=e813]:
+                  - generic [ref=e814]: "14"
+                - cell "大米B" [ref=e815]:
+                  - generic [ref=e816]: 大米B
+                - cell "粮油 / 大米" [ref=e817]:
+                  - generic [ref=e818]: 粮油 / 大米
+                - cell "¥12.6" [ref=e819]:
+                  - generic [ref=e820]: ¥12.6
+                - cell "标品" [ref=e821]:
+                  - generic [ref=e824]: 标品
+                - cell "非指定" [ref=e825]:
+                  - generic [ref=e826]: 非指定
+                - cell "启用" [ref=e827]:
+                  - generic [ref=e830]: 启用
+                - cell "编辑 删除" [ref=e831]:
+                  - generic [ref=e833]:
+                    - button "编辑" [ref=e834] [cursor=pointer]:
+                      - generic [ref=e835]: 编辑
+                    - button "删除" [ref=e836] [cursor=pointer]:
+                      - generic [ref=e837]: 删除
+              - row "13 大米A 粮油 / 大米 ¥8.8 标品 非指定 启用 编辑 删除" [ref=e838]:
+                - cell "13" [ref=e839]:
+                  - generic [ref=e840]: "13"
+                - cell "大米A" [ref=e841]:
+                  - generic [ref=e842]: 大米A
+                - cell "粮油 / 大米" [ref=e843]:
+                  - generic [ref=e844]: 粮油 / 大米
+                - cell "¥8.8" [ref=e845]:
+                  - generic [ref=e846]: ¥8.8
+                - cell "标品" [ref=e847]:
+                  - generic [ref=e850]: 标品
+                - cell "非指定" [ref=e851]:
+                  - generic [ref=e852]: 非指定
+                - cell "启用" [ref=e853]:
+                  - generic [ref=e856]: 启用
+                - cell "编辑 删除" [ref=e857]:
+                  - generic [ref=e859]:
+                    - button "编辑" [ref=e860] [cursor=pointer]:
+                      - generic [ref=e861]: 编辑
+                    - button "删除" [ref=e862] [cursor=pointer]:
+                      - generic [ref=e863]: 删除
+              - row "12 浆果类C 水果 / 浆果类 ¥16.3 标品 非指定 启用 编辑 删除" [ref=e864]:
+                - cell "12" [ref=e865]:
+                  - generic [ref=e866]: "12"
+                - cell "浆果类C" [ref=e867]:
+                  - generic [ref=e868]: 浆果类C
+                - cell "水果 / 浆果类" [ref=e869]:
+                  - generic [ref=e870]: 水果 / 浆果类
+                - cell "¥16.3" [ref=e871]:
+                  - generic [ref=e872]: ¥16.3
+                - cell "标品" [ref=e873]:
+                  - generic [ref=e876]: 标品
+                - cell "非指定" [ref=e877]:
+                  - generic [ref=e878]: 非指定
+                - cell "启用" [ref=e879]:
+                  - generic [ref=e882]: 启用
+                - cell "编辑 删除" [ref=e883]:
+                  - generic [ref=e885]:
+                    - button "编辑" [ref=e886] [cursor=pointer]:
+                      - generic [ref=e887]: 编辑
+                    - button "删除" [ref=e888] [cursor=pointer]:
+                      - generic [ref=e889]: 删除
+              - row "11 浆果类B 水果 / 浆果类 ¥12.6 标品 非指定 启用 编辑 删除" [ref=e890]:
+                - cell "11" [ref=e891]:
+                  - generic [ref=e892]: "11"
+                - cell "浆果类B" [ref=e893]:
+                  - generic [ref=e894]: 浆果类B
+                - cell "水果 / 浆果类" [ref=e895]:
+                  - generic [ref=e896]: 水果 / 浆果类
+                - cell "¥12.6" [ref=e897]:
+                  - generic [ref=e898]: ¥12.6
+                - cell "标品" [ref=e899]:
+                  - generic [ref=e902]: 标品
+                - cell "非指定" [ref=e903]:
+                  - generic [ref=e904]: 非指定
+                - cell "启用" [ref=e905]:
+                  - generic [ref=e908]: 启用
+                - cell "编辑 删除" [ref=e909]:
+                  - generic [ref=e911]:
+                    - button "编辑" [ref=e912] [cursor=pointer]:
+                      - generic [ref=e913]: 编辑
+                    - button "删除" [ref=e914] [cursor=pointer]:
+                      - generic [ref=e915]: 删除
+              - row "10 浆果类A 水果 / 浆果类 ¥8.8 标品 非指定 启用 编辑 删除" [ref=e916]:
+                - cell "10" [ref=e917]:
+                  - generic [ref=e918]: "10"
+                - cell "浆果类A" [ref=e919]:
+                  - generic [ref=e920]: 浆果类A
+                - cell "水果 / 浆果类" [ref=e921]:
+                  - generic [ref=e922]: 水果 / 浆果类
+                - cell "¥8.8" [ref=e923]:
+                  - generic [ref=e924]: ¥8.8
+                - cell "标品" [ref=e925]:
+                  - generic [ref=e928]: 标品
+                - cell "非指定" [ref=e929]:
+                  - generic [ref=e930]: 非指定
+                - cell "启用" [ref=e931]:
+                  - generic [ref=e934]: 启用
+                - cell "编辑 删除" [ref=e935]:
+                  - generic [ref=e937]:
+                    - button "编辑" [ref=e938] [cursor=pointer]:
+                      - generic [ref=e939]: 编辑
+                    - button "删除" [ref=e940] [cursor=pointer]:
+                      - generic [ref=e941]: 删除
+              - row "9 柑橘类C 水果 / 柑橘类 ¥16.3 标品 非指定 启用 编辑 删除" [ref=e942]:
+                - cell "9" [ref=e943]:
+                  - generic [ref=e944]: "9"
+                - cell "柑橘类C" [ref=e945]:
+                  - generic [ref=e946]: 柑橘类C
+                - cell "水果 / 柑橘类" [ref=e947]:
+                  - generic [ref=e948]: 水果 / 柑橘类
+                - cell "¥16.3" [ref=e949]:
+                  - generic [ref=e950]: ¥16.3
+                - cell "标品" [ref=e951]:
+                  - generic [ref=e954]: 标品
+                - cell "非指定" [ref=e955]:
+                  - generic [ref=e956]: 非指定
+                - cell "启用" [ref=e957]:
+                  - generic [ref=e960]: 启用
+                - cell "编辑 删除" [ref=e961]:
+                  - generic [ref=e963]:
+                    - button "编辑" [ref=e964] [cursor=pointer]:
+                      - generic [ref=e965]: 编辑
+                    - button "删除" [ref=e966] [cursor=pointer]:
+                      - generic [ref=e967]: 删除
+              - row "8 柑橘类B 水果 / 柑橘类 ¥12.6 标品 非指定 启用 编辑 删除" [ref=e968]:
+                - cell "8" [ref=e969]:
+                  - generic [ref=e970]: "8"
+                - cell "柑橘类B" [ref=e971]:
+                  - generic [ref=e972]: 柑橘类B
+                - cell "水果 / 柑橘类" [ref=e973]:
+                  - generic [ref=e974]: 水果 / 柑橘类
+                - cell "¥12.6" [ref=e975]:
+                  - generic [ref=e976]: ¥12.6
+                - cell "标品" [ref=e977]:
+                  - generic [ref=e980]: 标品
+                - cell "非指定" [ref=e981]:
+                  - generic [ref=e982]: 非指定
+                - cell "启用" [ref=e983]:
+                  - generic [ref=e986]: 启用
+                - cell "编辑 删除" [ref=e987]:
+                  - generic [ref=e989]:
+                    - button "编辑" [ref=e990] [cursor=pointer]:
+                      - generic [ref=e991]: 编辑
+                    - button "删除" [ref=e992] [cursor=pointer]:
+                      - generic [ref=e993]: 删除
+              - row "7 柑橘类A 水果 / 柑橘类 ¥8.8 标品 非指定 启用 编辑 删除" [ref=e994]:
+                - cell "7" [ref=e995]:
+                  - generic [ref=e996]: "7"
+                - cell "柑橘类A" [ref=e997]:
+                  - generic [ref=e998]: 柑橘类A
+                - cell "水果 / 柑橘类" [ref=e999]:
+                  - generic [ref=e1000]: 水果 / 柑橘类
+                - cell "¥8.8" [ref=e1001]:
+                  - generic [ref=e1002]: ¥8.8
+                - cell "标品" [ref=e1003]:
+                  - generic [ref=e1006]: 标品
+                - cell "非指定" [ref=e1007]:
+                  - generic [ref=e1008]: 非指定
+                - cell "启用" [ref=e1009]:
+                  - generic [ref=e1012]: 启用
+                - cell "编辑 删除" [ref=e1013]:
+                  - generic [ref=e1015]:
+                    - button "编辑" [ref=e1016] [cursor=pointer]:
+                      - generic [ref=e1017]: 编辑
+                    - button "删除" [ref=e1018] [cursor=pointer]:
+                      - generic [ref=e1019]: 删除
+              - row "6 根茎类C 蔬菜 / 根茎类 ¥16.3 标品 非指定 启用 编辑 删除" [ref=e1020]:
+                - cell "6" [ref=e1021]:
+                  - generic [ref=e1022]: "6"
+                - cell "根茎类C" [ref=e1023]:
+                  - generic [ref=e1024]: 根茎类C
+                - cell "蔬菜 / 根茎类" [ref=e1025]:
+                  - generic [ref=e1026]: 蔬菜 / 根茎类
+                - cell "¥16.3" [ref=e1027]:
+                  - generic [ref=e1028]: ¥16.3
+                - cell "标品" [ref=e1029]:
+                  - generic [ref=e1032]: 标品
+                - cell "非指定" [ref=e1033]:
+                  - generic [ref=e1034]: 非指定
+                - cell "启用" [ref=e1035]:
+                  - generic [ref=e1038]: 启用
+                - cell "编辑 删除" [ref=e1039]:
+                  - generic [ref=e1041]:
+                    - button "编辑" [ref=e1042] [cursor=pointer]:
+                      - generic [ref=e1043]: 编辑
+                    - button "删除" [ref=e1044] [cursor=pointer]:
+                      - generic [ref=e1045]: 删除
+              - row "5 根茎类B 蔬菜 / 根茎类 ¥12.6 标品 非指定 启用 编辑 删除" [ref=e1046]:
+                - cell "5" [ref=e1047]:
+                  - generic [ref=e1048]: "5"
+                - cell "根茎类B" [ref=e1049]:
+                  - generic [ref=e1050]: 根茎类B
+                - cell "蔬菜 / 根茎类" [ref=e1051]:
+                  - generic [ref=e1052]: 蔬菜 / 根茎类
+                - cell "¥12.6" [ref=e1053]:
+                  - generic [ref=e1054]: ¥12.6
+                - cell "标品" [ref=e1055]:
+                  - generic [ref=e1058]: 标品
+                - cell "非指定" [ref=e1059]:
+                  - generic [ref=e1060]: 非指定
+                - cell "启用" [ref=e1061]:
+                  - generic [ref=e1064]: 启用
+                - cell "编辑 删除" [ref=e1065]:
+                  - generic [ref=e1067]:
+                    - button "编辑" [ref=e1068] [cursor=pointer]:
+                      - generic [ref=e1069]: 编辑
+                    - button "删除" [ref=e1070] [cursor=pointer]:
+                      - generic [ref=e1071]: 删除
+              - row "4 根茎类A 蔬菜 / 根茎类 ¥8.8 标品 非指定 启用 编辑 删除" [ref=e1072]:
+                - cell "4" [ref=e1073]:
+                  - generic [ref=e1074]: "4"
+                - cell "根茎类A" [ref=e1075]:
+                  - generic [ref=e1076]: 根茎类A
+                - cell "蔬菜 / 根茎类" [ref=e1077]:
+                  - generic [ref=e1078]: 蔬菜 / 根茎类
+                - cell "¥8.8" [ref=e1079]:
+                  - generic [ref=e1080]: ¥8.8
+                - cell "标品" [ref=e1081]:
+                  - generic [ref=e1084]: 标品
+                - cell "非指定" [ref=e1085]:
+                  - generic [ref=e1086]: 非指定
+                - cell "启用" [ref=e1087]:
+                  - generic [ref=e1090]: 启用
+                - cell "编辑 删除" [ref=e1091]:
+                  - generic [ref=e1093]:
+                    - button "编辑" [ref=e1094] [cursor=pointer]:
+                      - generic [ref=e1095]: 编辑
+                    - button "删除" [ref=e1096] [cursor=pointer]:
+                      - generic [ref=e1097]: 删除
+              - row "3 叶菜类C 蔬菜 / 叶菜类 ¥16.3 标品 非指定 启用 编辑 删除" [ref=e1098]:
+                - cell "3" [ref=e1099]:
+                  - generic [ref=e1100]: "3"
+                - cell "叶菜类C" [ref=e1101]:
+                  - generic [ref=e1102]: 叶菜类C
+                - cell "蔬菜 / 叶菜类" [ref=e1103]:
+                  - generic [ref=e1104]: 蔬菜 / 叶菜类
+                - cell "¥16.3" [ref=e1105]:
+                  - generic [ref=e1106]: ¥16.3
+                - cell "标品" [ref=e1107]:
+                  - generic [ref=e1110]: 标品
+                - cell "非指定" [ref=e1111]:
+                  - generic [ref=e1112]: 非指定
+                - cell "启用" [ref=e1113]:
+                  - generic [ref=e1116]: 启用
+                - cell "编辑 删除" [ref=e1117]:
+                  - generic [ref=e1119]:
+                    - button "编辑" [ref=e1120] [cursor=pointer]:
+                      - generic [ref=e1121]: 编辑
+                    - button "删除" [ref=e1122] [cursor=pointer]:
+                      - generic [ref=e1123]: 删除
+              - row "2 叶菜类B 蔬菜 / 叶菜类 ¥12.6 标品 非指定 启用 编辑 删除" [ref=e1124]:
+                - cell "2" [ref=e1125]:
+                  - generic [ref=e1126]: "2"
+                - cell "叶菜类B" [ref=e1127]:
+                  - generic [ref=e1128]: 叶菜类B
+                - cell "蔬菜 / 叶菜类" [ref=e1129]:
+                  - generic [ref=e1130]: 蔬菜 / 叶菜类
+                - cell "¥12.6" [ref=e1131]:
+                  - generic [ref=e1132]: ¥12.6
+                - cell "标品" [ref=e1133]:
+                  - generic [ref=e1136]: 标品
+                - cell "非指定" [ref=e1137]:
+                  - generic [ref=e1138]: 非指定
+                - cell "启用" [ref=e1139]:
+                  - generic [ref=e1142]: 启用
+                - cell "编辑 删除" [ref=e1143]:
+                  - generic [ref=e1145]:
+                    - button "编辑" [ref=e1146] [cursor=pointer]:
+                      - generic [ref=e1147]: 编辑
+                    - button "删除" [ref=e1148] [cursor=pointer]:
+                      - generic [ref=e1149]: 删除
+              - row "1 叶菜类A 蔬菜 / 叶菜类 ¥8.8 标品 非指定 启用 编辑 删除" [ref=e1150]:
+                - cell "1" [ref=e1151]:
+                  - generic [ref=e1152]: "1"
+                - cell "叶菜类A" [ref=e1153]:
+                  - generic [ref=e1154]: 叶菜类A
+                - cell "蔬菜 / 叶菜类" [ref=e1155]:
+                  - generic [ref=e1156]: 蔬菜 / 叶菜类
+                - cell "¥8.8" [ref=e1157]:
+                  - generic [ref=e1158]: ¥8.8
+                - cell "标品" [ref=e1159]:
+                  - generic [ref=e1162]: 标品
+                - cell "非指定" [ref=e1163]:
+                  - generic [ref=e1164]: 非指定
+                - cell "启用" [ref=e1165]:
+                  - generic [ref=e1168]: 启用
+                - cell "编辑 删除" [ref=e1169]:
+                  - generic [ref=e1171]:
+                    - button "编辑" [ref=e1172] [cursor=pointer]:
+                      - generic [ref=e1173]: 编辑
+                    - button "删除" [ref=e1174] [cursor=pointer]:
+                      - generic [ref=e1175]: 删除
+        - dialog "编辑商品" [ref=e1178]:
+          - banner [ref=e1179]:
+            - heading "编辑商品" [level=2] [ref=e1180]
+            - button "Close this dialog" [ref=e1181] [cursor=pointer]:
+              - img [ref=e1183]
+          - generic [ref=e1186]:
+            - generic [ref=e1187]:
+              - generic [ref=e1188]: 名称
+              - textbox "名称" [ref=e1192]: 复合调味C
+            - generic [ref=e1193]:
+              - generic [ref=e1194]: 所属一级分类
+              - generic [ref=e1197] [cursor=pointer]:
+                - generic:
+                  - combobox "所属一级分类" [ref=e1199]
+                  - generic [ref=e1200]: 调味品
+                - img [ref=e1203]
+            - generic [ref=e1205]:
+              - generic [ref=e1206]: 所属二级分类
+              - generic [ref=e1209] [cursor=pointer]:
+                - generic:
+                  - combobox "所属二级分类" [ref=e1211]
+                  - generic [ref=e1212]: 复合调味
+                - img [ref=e1215]
+            - generic [ref=e1217]:
+              - generic [ref=e1218]: 单位
+              - textbox "单位" [ref=e1222]: kg
+            - generic [ref=e1223]:
+              - generic [ref=e1224]: 参考价
+              - generic [ref=e1226]:
+                - button "decrease number" [ref=e1227] [cursor=pointer]:
+                  - img [ref=e1229]
+                - button "increase number" [ref=e1231] [cursor=pointer]:
+                  - img [ref=e1233]
+                - spinbutton "参考价" [ref=e1237]: "16.3"
+            - generic [ref=e1238]:
+              - generic [ref=e1239]: 规格
+              - textbox "规格" [ref=e1243]: 标准
+            - generic [ref=e1244]:
+              - generic [ref=e1245]: 产地
+              - textbox "产地" [ref=e1249]: 中国
+            - generic [ref=e1250]:
+              - generic [ref=e1251]: 品类类型
+              - generic [ref=e1252]:
+                - generic [ref=e1254] [cursor=pointer]:
+                  - generic:
+                    - combobox "品类类型" [ref=e1256]
+                    - generic [ref=e1257]: 标品
+                  - img [ref=e1260]
+                - generic [ref=e1262]: 标品尺寸较稳定；非标品尺寸可能波动。仅用于后续排线估算，不填也不影响下单。
+            - generic [ref=e1263]:
+              - generic [ref=e1264]: 是否指定厂家
+              - generic [ref=e1265]:
+                - generic [ref=e1267] [cursor=pointer]:
+                  - generic:
+                    - combobox "是否指定厂家" [expanded] [active] [ref=e1269]
+                    - generic [ref=e1270]: 指定厂家
+                  - img [ref=e1273]
+                - generic [ref=e1275]: 特殊品类（如牛奶）可选择“指定厂家”，配送方只能按指定厂家执行。
+            - generic [ref=e1276]:
+              - generic [ref=e1277]: 指定厂家
+              - generic [ref=e1280] [cursor=pointer]:
+                - generic:
+                  - combobox "指定厂家" [ref=e1282]
+                  - generic [ref=e1283]: 某食品厂
+                - img [ref=e1286]
+            - generic [ref=e1288]:
+              - generic [ref=e1289]: 长(cm)
+              - generic [ref=e1290]:
+                - generic [ref=e1291]:
+                  - button "decrease number" [ref=e1292] [cursor=pointer]:
+                    - img [ref=e1294]
+                  - button "increase number" [ref=e1296] [cursor=pointer]:
+                    - img [ref=e1298]
+                  - spinbutton "长(cm)" [ref=e1302]
+                - generic [ref=e1303]: 单件商品长度。建议填写外包装尺寸，不填则不参与体积计算。
+            - generic [ref=e1304]:
+              - generic [ref=e1305]: 宽(cm)
+              - generic [ref=e1306]:
+                - generic [ref=e1307]:
+                  - button "decrease number" [ref=e1308] [cursor=pointer]:
+                    - img [ref=e1310]
+                  - button "increase number" [ref=e1312] [cursor=pointer]:
+                    - img [ref=e1314]
+                  - spinbutton "宽(cm)" [ref=e1318]
+                - generic [ref=e1319]: 单件商品宽度。与长、高一起用于估算装车体积。
+            - generic [ref=e1320]:
+              - generic [ref=e1321]: 高(cm)
+              - generic [ref=e1322]:
+                - generic [ref=e1323]:
+                  - button "decrease number" [ref=e1324] [cursor=pointer]:
+                    - img [ref=e1326]
+                  - button "increase number" [ref=e1328] [cursor=pointer]:
+                    - img [ref=e1330]
+                  - spinbutton "高(cm)" [ref=e1334]
+                - generic [ref=e1335]: 单件商品高度。可填常见值，后续可逐步修正。
+            - generic [ref=e1336]:
+              - generic [ref=e1337]: 单件重量(kg)
+              - generic [ref=e1338]:
+                - generic [ref=e1339]:
+                  - button "decrease number" [ref=e1340] [cursor=pointer]:
+                    - img [ref=e1342]
+                  - button "increase number" [ref=e1344] [cursor=pointer]:
+                    - img [ref=e1346]
+                  - spinbutton "单件重量(kg)" [ref=e1350]
+                - generic [ref=e1351]: 用于估算车辆载重占用。非必填，建议优先给高价值/大件商品填写。
+            - generic [ref=e1352]:
+              - generic [ref=e1353]: 体积修正系数
+              - generic [ref=e1354]:
+                - generic [ref=e1355]:
+                  - button "decrease number" [ref=e1356] [cursor=pointer]:
+                    - img [ref=e1358]
+                  - button "increase number" [ref=e1360] [cursor=pointer]:
+                    - img [ref=e1362]
+                  - spinbutton "体积修正系数" [ref=e1366]
+                - generic [ref=e1367]: 仅建议非标品填写。例如填 1.15 表示按体积上浮 15% 估算；不填默认按 1.0 计算。
+            - generic [ref=e1368]:
+              - generic [ref=e1369]: 状态
+              - generic [ref=e1372] [cursor=pointer]:
+                - generic:
+                  - combobox "状态" [ref=e1374]
+                  - generic [ref=e1375]: 启用
+                - img [ref=e1378]
+            - button "保存修改" [ref=e1380] [cursor=pointer]:
+              - generic [ref=e1381]: 保存修改
+  - tooltip "指定厂家" [ref=e1382]:
+    - listbox [ref=e1386]:
+      - option "非指定（默认）" [ref=e1387] [cursor=pointer]
+      - option "指定厂家" [selected] [ref=e1388] [cursor=pointer]

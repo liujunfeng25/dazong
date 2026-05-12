@@ -1,0 +1,51 @@
+- generic [ref=e48]:
+  - complementary [ref=e49]:
+    - generic [ref=e50]:
+      - generic [ref=e51]: DAZONG PLATFORM
+      - generic [ref=e52]: 配送商端
+    - menubar [ref=e53]:
+      - menuitem "待投标" [ref=e54] [cursor=pointer]
+      - menuitem "我的合约" [ref=e55] [cursor=pointer]
+      - menuitem "供货方管理" [ref=e56] [cursor=pointer]
+      - menuitem "配送订单" [ref=e57] [cursor=pointer]
+      - menuitem "智能分单" [ref=e58] [cursor=pointer]
+      - menuitem "路线规划" [ref=e59] [cursor=pointer]
+      - menuitem "应收账单" [ref=e60] [cursor=pointer]
+      - menuitem "消息中心" [ref=e61] [cursor=pointer]
+  - generic [ref=e62]:
+    - generic [ref=e64]:
+      - generic [ref=e65]:
+        - generic [ref=e66]: 大宗物资供应链管理系统
+        - generic [ref=e67]: 2026/4/28 14:09:39
+      - generic [ref=e68]:
+        - generic [ref=e69]:
+          - button "通知" [ref=e70] [cursor=pointer]:
+            - generic [ref=e71]: 通知
+          - superscript [ref=e72]: "5"
+        - generic [ref=e73]: 配送商端
+        - button "退出登录" [ref=e74] [cursor=pointer]:
+          - generic [ref=e75]: 退出登录
+    - generic [ref=e78]:
+      - table [ref=e80]:
+        - rowgroup [ref=e90]:
+          - row "招标编号 客户名称 一级分类 已报上浮率 状态 开始 结束 操作" [ref=e91]:
+            - columnheader "招标编号" [ref=e92]:
+              - generic [ref=e93]: 招标编号
+            - columnheader "客户名称" [ref=e94]:
+              - generic [ref=e95]: 客户名称
+            - columnheader "一级分类" [ref=e96]:
+              - generic [ref=e97]: 一级分类
+            - columnheader "已报上浮率" [ref=e98]:
+              - generic [ref=e99]: 已报上浮率
+            - columnheader "状态" [ref=e100]:
+              - generic [ref=e101]: 状态
+            - columnheader "开始" [ref=e102]:
+              - generic [ref=e103]: 开始
+            - columnheader "结束" [ref=e104]:
+              - generic [ref=e105]: 结束
+            - columnheader "操作" [ref=e106]:
+              - generic [ref=e107]: 操作
+      - generic [ref=e111]:
+        - table:
+          - rowgroup
+        - generic [ref=e113]: 暂无数据

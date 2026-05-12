@@ -1,0 +1,15 @@
+fastapi
+uvicorn[standard]
+sqlalchemy>=2.0
+greenlet
+aiomysql
+python-jose[cryptography]
+bcrypt
+pydantic-settings
+python-multipart
+minio
+alembic
+pytest
+httpx
+python-docx
+python-pptx

@@ -1,0 +1,33 @@
+plugins {
+    id "com.android.library"
+}
+
+android {
+    namespace "io.dazong.serialscale"
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 34
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    compileOnly fileTree(dir: "libs", include: ["*.aar", "*.jar"])
+    compileOnly "com.alibaba:fastjson:1.2.83"
+    implementation project(":serialport")
+    // 首衡资料 SOHE_uvc 同源：USB UVC 摄像头（双头 = 多个 UsbDevice 枚举）
+    implementation "com.herohan:UVCAndroid:1.0.7"
+}

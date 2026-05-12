@@ -1,0 +1,1 @@
+import{r as e}from"./index-JjU7_5KP.js";var t=()=>e.get(`/quality-reports`),n=t=>e.post(`/quality-reports`,t,{headers:{"Content-Type":`multipart/form-data`}});export{n,t};

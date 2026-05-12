@@ -1,0 +1,183 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: DAZONG PLATFORM
+      - generic [ref=e7]: 配送商端
+    - menubar [ref=e8]:
+      - menuitem "待投标" [ref=e9] [cursor=pointer]
+      - menuitem "我的合约" [ref=e10] [cursor=pointer]
+      - menuitem "供货方管理" [ref=e11] [cursor=pointer]
+      - menuitem "配送订单" [ref=e12] [cursor=pointer]
+      - menuitem "车辆管理" [ref=e13] [cursor=pointer]
+      - menuitem "设备管理" [ref=e14] [cursor=pointer]
+      - menuitem "智能分单" [ref=e15] [cursor=pointer]
+      - menuitem "路线规划" [ref=e16] [cursor=pointer]
+      - menuitem "应收账单" [ref=e17] [cursor=pointer]
+      - menuitem "消息中心" [ref=e18] [cursor=pointer]
+  - generic [ref=e19]:
+    - generic [ref=e21]:
+      - generic [ref=e22]:
+        - generic [ref=e23]: 大宗物资供应链管理系统
+        - generic [ref=e24]: 2026/5/6 12:15:32
+      - generic [ref=e26]: 🌤️ 天气未接入
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - button "通知" [ref=e29] [cursor=pointer]:
+            - generic [ref=e30]: 通知
+          - superscript [ref=e31]: "54"
+        - generic [ref=e32]: 配送商端
+        - button "D" [ref=e34] [cursor=pointer]:
+          - generic [ref=e35]: D
+    - generic [ref=e37]:
+      - generic [ref=e38]:
+        - alert [ref=e39]:
+          - generic [ref=e41]: 智能路线引擎：按高德驾车路径计算路段距离与 ETA；发车时间与服务时长由您指定后重算到达/离开时刻。分配车辆时优先满足客户下单时填写的「配送日期 + 时段」截止时刻（仍超窗时会提示风险）。
+        - generic [ref=e42]:
+          - generic [ref=e43]: 智能规划参数
+          - generic [ref=e45]:
+            - generic [ref=e46]:
+              - generic [ref=e47]: 计划日期
+              - generic [ref=e50]:
+                - img [ref=e53]
+                - combobox "计划日期" [ref=e55]: 2026-05-06
+            - generic [ref=e56]:
+              - generic [ref=e57]: 发车时间
+              - generic [ref=e60]:
+                - img [ref=e63]
+                - generic:
+                  - combobox "发车时间" [ref=e68]
+                  - generic [ref=e69]: 06:00
+                - img [ref=e72] [cursor=pointer]
+            - generic [ref=e74]:
+              - generic [ref=e75]: 默认服务
+              - generic [ref=e76]:
+                - generic [ref=e77]:
+                  - button "减少数值" [ref=e78] [cursor=pointer]:
+                    - img [ref=e80]
+                  - button "增加数值" [ref=e82] [cursor=pointer]:
+                    - img [ref=e84]
+                  - spinbutton "默认服务" [ref=e88]: "30"
+                - generic [ref=e89]: 分钟/站（未单独设置的订单用此值）
+            - generic [ref=e90]:
+              - generic [ref=e91]: 订单选择
+              - generic [ref=e92]:
+                - generic [ref=e94]:
+                  - generic:
+                    - combobox "订单选择" [ref=e96]
+                    - generic [ref=e97]: 请选择
+                  - img [ref=e100] [cursor=pointer]
+                - generic [ref=e102]:
+                  - button "全选" [ref=e103] [cursor=pointer]:
+                    - generic [ref=e104]: 全选
+                  - button "清空" [ref=e105] [cursor=pointer]:
+                    - generic [ref=e106]: 清空
+                  - button "展开按单服务时长" [ref=e107] [cursor=pointer]:
+                    - generic [ref=e108]: 展开按单服务时长
+                  - generic [ref=e109]: 已选 0 / 0
+                - paragraph [ref=e110]:
+                  - text: 仅展示归属当前配送商、状态为「下单」、且
+                  - strong [ref=e111]: 客户配送日
+                  - text: 等于左侧「计划日期」的订单。计划日期与发车时间为
+                  - strong [ref=e112]: 北京时间
+                  - text: 。 若改计划日期，列表会切换为对应配送日的订单；选单后请再点「生成智能路线」。
+            - generic [ref=e113]:
+              - button "生成智能路线" [ref=e114] [cursor=pointer]:
+                - generic [ref=e115]: 生成智能路线
+              - button "打开监管路线汇报" [ref=e116] [cursor=pointer]:
+                - generic [ref=e117]: 打开监管路线汇报
+        - generic [ref=e118]:
+          - generic [ref=e119]: 规划总览
+          - generic [ref=e120]:
+            - paragraph [ref=e121]: 调度主体：-
+            - paragraph [ref=e122]: 生成路线后将显示本方案出车数与车队可用车辆数。
+            - paragraph [ref=e123]: 总距离：-
+            - paragraph [ref=e124]: 预计时长：-
+            - paragraph [ref=e125]: 预测准点率：-
+        - generic [ref=e126]:
+          - generic [ref=e127]: 优化收益对比
+          - generic [ref=e128]:
+            - paragraph [ref=e129]: 优化前里程：- km
+            - paragraph [ref=e130]: 优化后里程：- km
+            - paragraph [ref=e131]: 节省里程：- km
+            - paragraph [ref=e132]: 节省时长：- 分钟
+        - generic [ref=e133]:
+          - generic [ref=e134]: 算法解释
+          - generic [ref=e135]:
+            - alert [ref=e136]:
+              - generic [ref=e138]: 停靠顺序按客户约定送达截止时刻优先、再按车辆增量成本分配；路段耗时优先高德驾车；到达=发车+累计行驶，离开=到达+服务时长。
+            - generic [ref=e139]: 坐标模式：-，坐标覆盖率：0%
+      - generic [ref=e140]:
+        - generic [ref=e143]:
+          - generic [ref=e144]: 路线可视化
+          - generic [ref=e145]:
+            - generic [ref=e147]:
+              - generic:
+                - combobox [ref=e149]
+                - generic [ref=e150]: 全部车辆
+              - img [ref=e153] [cursor=pointer]
+            - generic [ref=e155]:
+              - button "播放轨迹" [disabled] [ref=e156]:
+                - generic [ref=e157]: 播放轨迹
+              - button "停止" [disabled] [ref=e158]:
+                - generic [ref=e159]: 停止
+        - generic [ref=e162]:
+          - generic [ref=e163]: 停靠序列与约束命中（含 ETA）
+          - generic [ref=e167]:
+            - table [ref=e169]:
+              - rowgroup [ref=e189]:
+                - row "全序 本车序 订单号 车辆 客户 客户约定送达 窗内等待(分) 超窗(分) 计划到达(北京) 计划离开(北京) 本段行驶(分) 服务(分) 累计行驶(分) 前序(km) 路段来源 重量(kg) 体积(m3) 约束命中" [ref=e190]:
+                  - columnheader "全序" [ref=e191]:
+                    - generic [ref=e192]:
+                      - text: 全序
+                      - img [ref=e194]
+                  - columnheader "本车序" [ref=e196]:
+                    - generic [ref=e197]:
+                      - text: 本车序
+                      - img [ref=e199]
+                  - columnheader "订单号" [ref=e201]:
+                    - generic [ref=e202]: 订单号
+                  - columnheader "车辆" [ref=e203]:
+                    - generic [ref=e204]: 车辆
+                  - columnheader "客户" [ref=e205]:
+                    - generic [ref=e206]: 客户
+                  - columnheader "客户约定送达" [ref=e207]:
+                    - generic [ref=e208]:
+                      - text: 客户约定送达
+                      - img [ref=e210]
+                  - columnheader "窗内等待(分)" [ref=e212]:
+                    - generic [ref=e213]:
+                      - text: 窗内等待(分)
+                      - img [ref=e215]
+                  - columnheader "超窗(分)" [ref=e217]:
+                    - generic [ref=e218]:
+                      - text: 超窗(分)
+                      - img [ref=e220]
+                  - columnheader "计划到达(北京)" [ref=e222]:
+                    - generic [ref=e223]: 计划到达(北京)
+                  - columnheader "计划离开(北京)" [ref=e224]:
+                    - generic [ref=e225]: 计划离开(北京)
+                  - columnheader "本段行驶(分)" [ref=e226]:
+                    - generic [ref=e227]: 本段行驶(分)
+                  - columnheader "服务(分)" [ref=e228]:
+                    - generic [ref=e229]: 服务(分)
+                  - columnheader "累计行驶(分)" [ref=e230]:
+                    - generic [ref=e231]: 累计行驶(分)
+                  - columnheader "前序(km)" [ref=e232]:
+                    - generic [ref=e233]: 前序(km)
+                  - columnheader "路段来源" [ref=e234]:
+                    - generic [ref=e235]: 路段来源
+                  - columnheader "重量(kg)" [ref=e236]:
+                    - generic [ref=e237]: 重量(kg)
+                  - columnheader "体积(m3)" [ref=e238]:
+                    - generic [ref=e239]: 体积(m3)
+                  - columnheader "约束命中" [ref=e240]:
+                    - generic [ref=e241]: 约束命中
+            - generic [ref=e245]:
+              - table:
+                - rowgroup
+              - generic [ref=e247]: 暂无数据
+        - generic [ref=e249]:
+          - generic [ref=e250]: 风险提示
+          - generic [ref=e252]:
+            - img [ref=e254]
+            - paragraph [ref=e271]: 当前无明显风险

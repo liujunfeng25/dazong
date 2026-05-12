@@ -1,0 +1,15 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - heading "校园食品大宗采购平台管理系统" [level=3] [ref=e4]
+    - generic [ref=e5]:
+      - generic [ref=e6]: 通行证
+      - generic [ref=e7]:
+        - textbox "请输入登录账号" [ref=e11]
+        - textbox "请输入登录密码" [ref=e15]
+        - generic [ref=e16]:
+          - textbox "请输入计算结果" [ref=e20]
+          - img "验证码" [ref=e22] [cursor=pointer]
+      - button "登录" [ref=e24] [cursor=pointer]
+  - generic [ref=e26]:
+    - img [ref=e27]
+    - paragraph [ref=e29]: 正在加载中...

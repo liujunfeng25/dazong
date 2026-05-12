@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NEURAL CORE - Command Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#51e7cb",
+                        "surface-dim": "#0f131f",
+                        "surface-container-low": "#171b28",
+                        "tertiary-fixed": "#68fadd",
+                        "on-secondary-container": "#e299ff",
+                        "outline": "#849396",
+                        "on-surface-variant": "#bac9cc",
+                        "primary-container": "#00e5ff",
+                        "tertiary-fixed-dim": "#44ddc1",
+                        "background": "#0f131f",
+                        "surface-bright": "#353946",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#005145",
+                        "surface-container-high": "#262a37",
+                        "surface-variant": "#313442",
+                        "on-primary-fixed": "#001f24",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed": "#00201a",
+                        "on-surface": "#dfe2f3",
+                        "surface-container-lowest": "#0a0e1a",
+                        "inverse-primary": "#006875",
+                        "on-tertiary": "#00382f",
+                        "on-primary-fixed-variant": "#004f58",
+                        "on-secondary": "#520071",
+                        "inverse-on-surface": "#2c303d",
+                        "surface": "#0f131f",
+                        "on-secondary-fixed": "#320047",
+                        "on-primary-container": "#00626e",
+                        "surface-container-highest": "#313442",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#721199",
+                        "surface-tint": "#00daf3",
+                        "on-error": "#690005",
+                        "on-background": "#dfe2f3",
+                        "outline-variant": "#3b494c",
+                        "primary": "#c3f5ff",
+                        "inverse-surface": "#dfe2f3",
+                        "secondary-fixed": "#f8d8ff",
+                        "primary-fixed": "#9cf0ff",
+                        "on-primary": "#00363d",
+                        "secondary": "#ebb2ff",
+                        "primary-fixed-dim": "#00daf3",
+                        "tertiary": "#9affe8",
+                        "surface-container": "#1b1f2c",
+                        "on-tertiary-container": "#006556",
+                        "secondary-fixed-dim": "#ebb2ff",
+                        "secondary-container": "#721199"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "lg": "24px",
+                        "margin-desktop": "40px",
+                        "gutter": "20px",
+                        "xl": "32px",
+                        "unit": "4px",
+                        "sm": "8px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Space Grotesk"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Space Grotesk"],
+                        "label-mono": ["JetBrains Mono"],
+                        "headline-lg": ["Space Grotesk"],
+                        "headline-md": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-mono": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0f131f;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(0, 218, 243, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 10% 20%, rgba(114, 17, 153, 0.08) 0%, transparent 40%);
+            color: #dfe2f3;
+            overflow: hidden;
+        }
+        .glass-panel {
+            background: rgba(22, 27, 34, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 218, 243, 0.1);
+            position: relative;
+        }
+        .glass-panel::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: 1px solid transparent;
+            background: linear-gradient(135deg, rgba(0, 218, 243, 0.2), transparent, rgba(154, 255, 232, 0.1)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: destination-out;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+        .glow-sm { filter: drop-shadow(0 0 8px rgba(0, 218, 243, 0.5)); }
+        .neon-line { filter: drop-shadow(0 0 4px rgba(0, 218, 243, 0.8)); }
+        .scanline {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, rgba(0, 218, 243, 0.2), transparent);
+            position: absolute;
+            z-index: 10;
+        }
+        @keyframes scan {
+            from { top: 0%; }
+            to { top: 100%; }
+        }
+        .animate-scan { animation: scan 8s linear infinite; }
+        .pulsate { animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; filter: brightness(1.2) drop-shadow(0 0 8px rgba(0, 218, 243, 0.8)); }
+            50% { opacity: 0.7; filter: brightness(0.8) drop-shadow(0 0 2px rgba(0, 218, 243, 0.3)); }
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md h-screen w-screen overflow-hidden">
+<!-- Top Navigation Shell -->
+<header class="bg-surface-dim/60 backdrop-blur-md text-primary-fixed-dim font-headline-md text-headline-md docked full-width top-0 border-b border-outline-variant/30 shadow-[0_4px_30px_rgba(0,0,0,0.1)] flex items-center justify-between px-margin-desktop h-20 w-full z-50">
+<div class="flex items-center gap-md">
+<span class="font-display-lg text-display-lg text-primary tracking-tighter glow-sm">NEURAL CORE</span>
+<div class="hidden md:flex items-center gap-xl ml-xl">
+<a class="text-primary-fixed border-b-2 border-primary-fixed pb-1 cursor-pointer transition-all duration-300">总览</a>
+<a class="text-on-surface-variant hover:text-primary active:scale-95 cursor-pointer transition-all duration-300">神经路径</a>
+<a class="text-on-surface-variant hover:text-primary active:scale-95 cursor-pointer transition-all duration-300">异常检测</a>
+<a class="text-on-surface-variant hover:text-primary active:scale-95 cursor-pointer transition-all duration-300">历史记录</a>
+</div>
+</div>
+<div class="flex items-center gap-lg">
+<div class="glass-panel px-md py-xs rounded-full flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary-container text-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-label-mono text-on-surface-variant w-40 placeholder:text-outline/50" placeholder="查询节点 ID..." type="text"/>
+</div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined hover:bg-primary-container/10 hover:text-primary transition-all duration-300 p-2 rounded-lg cursor-pointer">notifications_active</span>
+<span class="material-symbols-outlined hover:bg-primary-container/10 hover:text-primary transition-all duration-300 p-2 rounded-lg cursor-pointer">settings</span>
+<span class="material-symbols-outlined hover:bg-primary-container/10 hover:text-primary transition-all duration-300 p-2 rounded-lg cursor-pointer">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Sidebar Shell -->
+<aside class="bg-surface-container-lowest/40 backdrop-blur-xl text-tertiary-fixed-dim font-label-mono text-label-mono docked left-0 h-full w-24 border-r border-outline-variant/20 shadow-xl fixed left-0 top-20 h-[calc(100vh-80px)] flex flex-col items-center py-lg space-y-md z-40">
+<div class="mb-lg text-center">
+<span class="block text-[10px] text-tertiary-fixed/60 font-bold uppercase tracking-widest">AI 状态</span>
+<div class="w-2 h-2 rounded-full bg-tertiary mx-auto mt-1 pulsate"></div>
+</div>
+<nav class="flex flex-col gap-lg items-center">
+<button class="bg-tertiary-container/20 text-tertiary-fixed rounded-xl ring-1 ring-tertiary/50 p-3 scale-100 hover:scale-105 duration-200 group">
+<span class="material-symbols-outlined text-2xl" data-weight="fill">terminal</span>
+<span class="absolute left-20 bg-surface-container-high px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">指令</span>
+</button>
+<button class="text-on-surface-variant/70 hover:bg-surface-variant/50 hover:text-tertiary transition-colors p-3 scale-100 hover:scale-105 duration-200 group">
+<span class="material-symbols-outlined text-2xl">insights</span>
+<span class="absolute left-20 bg-surface-container-high px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">分析</span>
+</button>
+<button class="text-on-surface-variant/70 hover:bg-surface-variant/50 hover:text-tertiary transition-colors p-3 scale-100 hover:scale-105 duration-200 group">
+<span class="material-symbols-outlined text-2xl">hub</span>
+<span class="absolute left-20 bg-surface-container-high px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">神经链路</span>
+</button>
+<button class="text-on-surface-variant/70 hover:bg-surface-variant/50 hover:text-tertiary transition-colors p-3 scale-100 hover:scale-105 duration-200 group">
+<span class="material-symbols-outlined text-2xl">grid_view</span>
+<span class="absolute left-20 bg-surface-container-high px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">数据网格</span>
+</button>
+<button class="text-on-surface-variant/70 hover:bg-surface-variant/50 hover:text-tertiary transition-colors p-3 scale-100 hover:scale-105 duration-200 group">
+<span class="material-symbols-outlined text-2xl">sync_alt</span>
+<span class="absolute left-20 bg-surface-container-high px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">同步状态</span>
+</button>
+<button class="text-on-surface-variant/70 hover:bg-surface-variant/50 hover:text-tertiary transition-colors p-3 scale-100 hover:scale-105 duration-200 group">
+<span class="material-symbols-outlined text-2xl">encrypted</span>
+<span class="absolute left-20 bg-surface-container-high px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">安全</span>
+</button>
+</nav>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-24 mt-20 p-md h-[calc(100vh-80px)] grid grid-cols-12 grid-rows-12 gap-gutter overflow-hidden relative">
+<div class="scanline animate-scan"></div>
+<!-- Left Metrics Column -->
+<section class="col-span-3 row-span-8 flex flex-col gap-md">
+<!-- Metric Card 1 -->
+<div class="glass-panel p-md rounded-xl flex-1 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-mono text-on-surface-variant font-bold">GPU 集群负载</span>
+<span class="material-symbols-outlined text-primary-container text-md">memory</span>
+</div>
+<div class="my-md">
+<span class="font-headline-lg text-headline-lg text-primary glow-sm">84.2<span class="text-body-md font-normal text-outline">%</span></span>
+</div>
+<div class="w-full h-1 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[84%] glow-sm"></div>
+</div>
+<div class="mt-sm flex justify-between text-[10px] text-outline font-label-mono">
+<span>NODE_01: 92%</span>
+<span>NODE_02: 76%</span>
+</div>
+</div>
+<!-- Metric Card 2 -->
+<div class="glass-panel p-md rounded-xl flex-1 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-mono text-on-surface-variant font-bold">节点平均延迟</span>
+<span class="material-symbols-outlined text-secondary text-md">speed</span>
+</div>
+<div class="my-md">
+<span class="font-headline-lg text-headline-lg text-secondary glow-sm">12.4<span class="text-body-md font-normal text-outline">ms</span></span>
+</div>
+<div class="flex items-end gap-1 h-12">
+<div class="w-full bg-secondary/30 h-1/2"></div>
+<div class="w-full bg-secondary/50 h-3/4"></div>
+<div class="w-full bg-secondary h-full shadow-[0_0_8px_rgba(235,178,255,0.4)]"></div>
+<div class="w-full bg-secondary/70 h-2/3"></div>
+<div class="w-full bg-secondary/40 h-1/3"></div>
+</div>
+</div>
+<!-- Metric Card 3 -->
+<div class="glass-panel p-md rounded-xl flex-1 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-mono text-on-surface-variant font-bold">突触速率</span>
+<span class="material-symbols-outlined text-tertiary-fixed text-md">neurology</span>
+</div>
+<div class="my-md">
+<span class="font-headline-lg text-headline-lg text-tertiary-fixed glow-sm">2.4k<span class="text-body-md font-normal text-outline"> s/ops</span></span>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div class="bg-tertiary/10 border border-tertiary/20 p-1 rounded text-center">
+<span class="block text-[8px] text-tertiary/70 font-bold">稳定性</span>
+<span class="text-label-mono text-tertiary">最佳</span>
+</div>
+<div class="bg-tertiary/10 border border-tertiary/20 p-1 rounded text-center">
+<span class="block text-[8px] text-tertiary/70 font-bold">阶段</span>
+<span class="text-label-mono text-tertiary">学习中</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Visualization Canvas -->
+<section class="col-span-6 row-span-8 glass-panel rounded-xl relative overflow-hidden flex items-center justify-center">
+<!-- Background Image: Neural Topology -->
+<img class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-screen" data-alt="A sophisticated 3D visualization of a glowing neural network with interconnected nodes and pulses of electric blue light traveling through synaptic paths. The scene is set in a dark, atmospheric virtual void with soft purple ambient glows and particles of data drifting. The overall aesthetic is futuristic, computational, and high-tech, evoking the interior of a hyper-intelligent AI core." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmZHL_Tbyu8nWiS1p3RHqmBxqT_mPsTbnyyQxPrHgFMOvX7gT93tbLeMYZIlsfZJ99wyj-vJt6aflfX4WrS8jfXyLwMf52OMJh_fSmCEb0CQ-tKpwLHsup8GJ9Jdf7xC1TWZlOU9C_t5cLNHgT0ISB6KusT6WkwfEmnWpuPKkhimBY4Ei73PHHM-HTOx8wwf_KPOwGt2G94ettB-FdC1RSpH8-WxFsXYEiip-CrJimamcqqte4hKp0VjeC5r1HoTPtYtaKkQ0N3ig"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-dim via-transparent to-surface-dim opacity-60"></div>
+<!-- Floating UI Overlay on Center Viz -->
+<div class="z-20 text-center">
+<div class="relative inline-block">
+<div class="absolute -inset-4 border-2 border-primary-container/20 rounded-full animate-[spin_10s_linear_infinite]"></div>
+<div class="absolute -inset-8 border border-secondary/10 rounded-full animate-[spin_15s_linear_infinite_reverse]"></div>
+<span class="material-symbols-outlined text-7xl text-primary glow-sm pulsate" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</div>
+<h2 class="font-display-lg text-headline-lg text-on-surface mt-lg tracking-widest">中央处理单元</h2>
+<p class="font-label-mono text-primary/70 mt-xs">核心状态：99.8% 效率</p>
+</div>
+<!-- Absolute Position Stats Labels -->
+<div class="absolute top-md left-md border-l-2 border-primary pl-md py-sm">
+<div class="text-[10px] text-outline font-bold">活跃节点</div>
+<div class="text-headline-md font-headline-md text-primary">10,244</div>
+</div>
+<div class="absolute bottom-md right-md border-r-2 border-secondary pr-md py-sm text-right">
+<div class="text-[10px] text-outline font-bold">能耗</div>
+<div class="text-headline-md font-headline-md text-secondary">42.8 kW</div>
+</div>
+</section>
+<!-- Right Insights Column -->
+<section class="col-span-3 row-span-8 flex flex-col gap-md">
+<div class="glass-panel p-md rounded-xl flex-1 flex flex-col">
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-primary text-sm">history</span>
+<span class="text-label-mono font-bold">异常日志</span>
+</div>
+<div class="space-y-md overflow-y-auto pr-sm max-h-[350px]">
+<div class="border-l-2 border-error pl-md py-xs bg-error/5">
+<span class="block text-[10px] text-error font-bold">NODE_X-42 故障</span>
+<p class="text-[11px] text-on-surface-variant leading-tight">突触链路 42 数据包溢出。正在启动重定向。</p>
+<span class="text-[9px] text-outline">14:40:02</span>
+</div>
+<div class="border-l-2 border-primary-container pl-md py-xs bg-primary-container/5">
+<span class="block text-[10px] text-primary-container font-bold">核心优化</span>
+<p class="text-[11px] text-on-surface-variant leading-tight">跨三级集群的同步负载均衡。效率提升 +2.4%。</p>
+<span class="text-[9px] text-outline">14:38:15</span>
+</div>
+<div class="border-l-2 border-secondary pl-md py-xs bg-secondary/5">
+<span class="block text-[10px] text-secondary font-bold">新连接</span>
+<p class="text-[11px] text-on-surface-variant leading-tight">已建立与 Satellite 07 的加密上行链路。</p>
+<span class="text-[9px] text-outline">14:35:44</span>
+</div>
+<div class="border-l-2 border-outline pl-md py-xs opacity-50">
+<span class="block text-[10px] text-outline font-bold">系统启动</span>
+<p class="text-[11px] text-on-surface-variant leading-tight">内核模块加载成功。</p>
+<span class="text-[9px] text-outline">14:30:00</span>
+</div>
+</div>
+</div>
+<!-- Action Controls -->
+<div class="glass-panel p-md rounded-xl h-32 flex flex-col justify-between">
+<span class="text-label-mono text-on-surface-variant font-bold uppercase text-[10px]">手动覆盖</span>
+<div class="grid grid-cols-2 gap-md">
+<button class="bg-error-container/20 border border-error/30 text-error rounded py-md flex flex-col items-center gap-xs hover:bg-error-container/30 transition-all">
+<span class="material-symbols-outlined text-md">emergency_home</span>
+<span class="text-[10px] font-bold">清理核心</span>
+</button>
+<button class="bg-primary-container/10 border border-primary-container/30 text-primary-container rounded py-md flex flex-col items-center gap-xs hover:bg-primary-container/20 transition-all">
+<span class="material-symbols-outlined text-md">refresh</span>
+<span class="text-[10px] font-bold">重启链路</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Bottom Terminal / Log Area -->
+<footer class="col-span-12 row-span-4 glass-panel rounded-xl p-md flex flex-col">
+<div class="flex items-center justify-between border-b border-outline-variant/30 pb-xs mb-sm">
+<div class="flex items-center gap-md">
+<div class="flex gap-1.5">
+<div class="w-2.5 h-2.5 rounded-full bg-error/40"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-secondary/40"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-tertiary/40"></div>
+</div>
+<span class="text-label-mono text-primary font-bold tracking-widest text-[10px]">自动化神经优化日志</span>
+</div>
+<div class="flex items-center gap-xl text-outline font-label-mono text-[10px]">
+<span>运行时间: 14D 02H 45M</span>
+<span>处理器: 512 活跃</span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto font-label-mono text-[11px] space-y-1 text-on-surface-variant/80">
+<p><span class="text-tertiary">[14:40:05]</span> <span class="text-primary-fixed">核心:</span> 正在与全局延迟时钟同步时间缓冲区...</p>
+<p><span class="text-tertiary">[14:40:06]</span> <span class="text-primary-fixed">优化器:</span> 突触修剪阶段 2 已启动。正在识别冗余路径。</p>
+<p><span class="text-tertiary">[14:40:08]</span> <span class="text-primary-fixed">内存:</span> 正在为高优先级计算栈分配 512GB 易失性存储。</p>
+<p><span class="text-tertiary">[14:40:10]</span> <span class="text-error">警告:</span> 在 Sector 7-B 检测到热尖峰。正在调整冷却液通量。</p>
+<p><span class="text-tertiary">[14:40:12]</span> <span class="text-primary-fixed">系统:</span> 验证完成。安全完整性 100%。</p>
+<p><span class="text-tertiary">[14:40:15]</span> <span class="text-primary-fixed">核心:</span> 等待下一条指令集。 <span class="animate-pulse">_</span></p>
+</div>
+</footer>
+</main>
+<!-- Bottom Navigation Shell (Mobile Responsive) -->
+<nav class="md:hidden bg-surface-container-high/60 backdrop-blur-lg text-primary-container font-label-mono text-label-mono docked bottom-0 full-width rounded-t-xl border-t border-primary/20 shadow-[0_-4px_20px_rgba(0,229,255,0.1)] fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-md">
+<div class="flex flex-col items-center justify-center bg-primary-container/20 text-on-primary-container rounded-lg px-4 py-1 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-weight="fill">sensors</span>
+<span class="text-[10px]">实时反馈</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary-fixed transition-all active:scale-90 transition-transform">
+<span class="material-symbols-outlined">trending_up</span>
+<span class="text-[10px]">趋势</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary-fixed transition-all active:scale-90 transition-transform">
+<span class="material-symbols-outlined">account_tree</span>
+<span class="text-[10px]">节点图</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary-fixed transition-all active:scale-90 transition-transform">
+<span class="material-symbols-outlined">code</span>
+<span class="text-[10px]">终端</span>
+</div>
+</nav>
+</body></html>

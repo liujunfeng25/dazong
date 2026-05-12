@@ -1,0 +1,25 @@
+{
+  "name": "大综串口读秤",
+  "id": "dazong-serial-scale",
+  "version": "1.0.0",
+  "description": "Android 打开 /dev/ttySx 串口读重量，供称重作业台调用",
+  "_dp_type": "nativeplugin",
+  "_dp_nativeplugin": {
+    "android": {
+      "plugins": [
+        {
+          "type": "module",
+          "name": "dazong-serial-scale",
+          "class": "io.dazong.serialscale.SerialScaleModule"
+        }
+      ],
+      "integrateType": "aar",
+      "compileOptions": {
+        "sourceCompatibility": "1.8",
+        "targetCompatibility": "1.8"
+      },
+      "abis": ["armeabi-v7a", "arm64-v8a"],
+      "minSdkVersion": "21"
+    }
+  }
+}

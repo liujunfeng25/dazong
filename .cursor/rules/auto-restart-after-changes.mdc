@@ -1,0 +1,13 @@
+---
+description: Automatically restart the app after meaningful code changes and verify the result
+alwaysApply: true
+---
+
+# Auto Restart After Changes
+
+- After completing meaningful backend or frontend changes, restart the relevant running service(s) when it is safe to do so.
+- Prefer restarting the app directly instead of asking the user to do it manually.
+- After restart, verify the service is up and report the visible effect or any startup errors.
+- If multiple services are involved, restart the minimum set needed to show the new behavior.
+- Do not restart if doing so would clearly risk data loss or interrupt a user-critical long-running operation.
+- If a restart fails, fix the issue or explain the blocker and continue from there.

@@ -1,0 +1,1 @@
+import{r as e}from"./index-JjU7_5KP.js";var t=t=>e.get(`/supplier/orders`,{params:t}),n=t=>e.get(`/supplier/product-quotes`,{params:t}),r=t=>e.put(`/supplier/product-quotes`,t);export{r as n,t as r,n as t};

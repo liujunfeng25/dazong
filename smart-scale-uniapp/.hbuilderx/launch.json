@@ -1,0 +1,11 @@
+{
+    "version" : "1.0",
+    "configurations" : [
+        {
+            "customPlaygroundType" : "device",
+            "localRepoPath" : "/Users/Admin/Project/dazong/smart-scale-uniapp",
+            "playground" : "standard",
+            "type" : "uni-app:app-android"
+        }
+    ]
+}

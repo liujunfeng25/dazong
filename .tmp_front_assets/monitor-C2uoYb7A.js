@@ -1,0 +1,1 @@
+import{r as e}from"./index-JjU7_5KP.js";var t=()=>e.get(`/monitor/dashboard`),n=t=>e.get(`/monitor/orders`,{params:t}),r=()=>e.get(`/monitor/logistics`),i=t=>e.get(`/monitor/alerts`,{params:t}),a=t=>e.put(`/monitor/alerts/${t}/close`),o=t=>e.get(`/monitor/reports`,{params:t});export{n as a,r as i,i as n,o,t as r,a as t};

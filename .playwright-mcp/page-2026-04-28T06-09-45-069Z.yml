@@ -1,0 +1,65 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: DAZONG PLATFORM
+      - generic [ref=e7]: 配送商端
+    - menubar [ref=e8]:
+      - menuitem "待投标" [ref=e9] [cursor=pointer]
+      - menuitem "我的合约" [ref=e10] [cursor=pointer]
+      - menuitem "供货方管理" [ref=e11] [cursor=pointer]
+      - menuitem "配送订单" [ref=e12] [cursor=pointer]
+      - menuitem "智能分单" [ref=e13] [cursor=pointer]
+      - menuitem "路线规划" [ref=e14] [cursor=pointer]
+      - menuitem "应收账单" [ref=e15] [cursor=pointer]
+      - menuitem "消息中心" [ref=e16] [cursor=pointer]
+  - generic [ref=e17]:
+    - generic [ref=e19]:
+      - generic [ref=e20]:
+        - generic [ref=e21]: 大宗物资供应链管理系统
+        - generic [ref=e22]: 2026/4/28 14:09:44
+      - generic [ref=e23]:
+        - generic [ref=e24]:
+          - button "通知" [ref=e25] [cursor=pointer]:
+            - generic [ref=e26]: 通知
+          - superscript [ref=e27]: "5"
+        - generic [ref=e28]: 配送商端
+        - button "退出登录" [ref=e29] [cursor=pointer]:
+          - generic [ref=e30]: 退出登录
+    - generic [ref=e31]:
+      - button "新增供货方" [ref=e36] [cursor=pointer]:
+        - generic [ref=e37]: 新增供货方
+      - generic [ref=e41]:
+        - table [ref=e43]:
+          - rowgroup [ref=e51]:
+            - row "编号 用户名 企业 联系方式 状态 操作" [ref=e52]:
+              - columnheader "编号" [ref=e53]:
+                - generic [ref=e54]: 编号
+              - columnheader "用户名" [ref=e55]:
+                - generic [ref=e56]: 用户名
+              - columnheader "企业" [ref=e57]:
+                - generic [ref=e58]: 企业
+              - columnheader "联系方式" [ref=e59]:
+                - generic [ref=e60]: 联系方式
+              - columnheader "状态" [ref=e61]:
+                - generic [ref=e62]: 状态
+              - columnheader "操作" [ref=e63]:
+                - generic [ref=e64]: 操作
+        - table [ref=e69]:
+          - rowgroup [ref=e77]:
+            - row "2 supplier001 新发地蔬菜批发档口 13800000000 启用 编辑 删除" [ref=e78]:
+              - cell "2" [ref=e79]:
+                - generic [ref=e80]: "2"
+              - cell "supplier001" [ref=e81]:
+                - generic [ref=e82]: supplier001
+              - cell "新发地蔬菜批发档口" [ref=e83]:
+                - generic [ref=e84]: 新发地蔬菜批发档口
+              - cell "13800000000" [ref=e85]:
+                - generic [ref=e86]: "13800000000"
+              - cell "启用" [ref=e87]:
+                - generic [ref=e88]: 启用
+              - cell "编辑 删除" [ref=e89]:
+                - generic [ref=e91]:
+                  - button "编辑" [ref=e92] [cursor=pointer]:
+                    - generic [ref=e93]: 编辑
+                  - button "删除" [ref=e94] [cursor=pointer]:
+                    - generic [ref=e95]: 删除

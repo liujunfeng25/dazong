@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- This filter will match any USB camera device -->
+    <!-- USB Video Class (UVC) devices -->
+    <usb-device class="239" subclass="2" protocol="1" />
+    
+    <!-- Alternative: Match all USB devices (less restrictive) -->
+    <!-- You can also specify specific vendor-id and product-id -->
+    <!-- <usb-device vendor-id="1234" product-id="5678" /> -->
+</resources>
+

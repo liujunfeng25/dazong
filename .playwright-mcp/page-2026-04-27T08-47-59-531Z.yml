@@ -1,0 +1,15 @@
+- generic [ref=e50]:
+  - generic [ref=e51]: 选择食堂
+  - generic [ref=e52]:
+    - generic [ref=e53]: 教师食堂
+    - radiogroup "radio-group" [ref=e55]:
+      - generic [ref=e57] [cursor=pointer]:
+        - radio "测试二中（演示用）" [ref=e59]
+        - generic [ref=e61]: 测试二中（演示用）
+  - generic [ref=e62]:
+    - generic [ref=e63]: 学生食堂
+    - radiogroup "radio-group" [ref=e65]:
+      - generic [ref=e67] [cursor=pointer]:
+        - radio "测试一中（演示用）" [ref=e69]
+        - generic [ref=e71]: 测试一中（演示用）
+  - button "登录食堂" [ref=e73] [cursor=pointer]

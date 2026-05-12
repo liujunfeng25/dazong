@@ -1,0 +1,87 @@
+- generic [ref=e53]:
+  - complementary [ref=e54]:
+    - generic [ref=e55]:
+      - generic [ref=e56]: DAZONG PLATFORM
+      - generic [ref=e57]: 运营端
+    - menubar [ref=e58]:
+      - menuitem "运营看板" [ref=e59] [cursor=pointer]
+      - menuitem "分类管理" [ref=e60] [cursor=pointer]
+      - menuitem "商品管理" [ref=e61] [cursor=pointer]
+      - menuitem "账号管理" [ref=e62] [cursor=pointer]
+      - menuitem "订单监控" [ref=e63] [cursor=pointer]
+      - menuitem "工单处理" [ref=e64] [cursor=pointer]
+  - generic [ref=e65]:
+    - generic [ref=e67]:
+      - generic [ref=e68]:
+        - generic [ref=e69]: 大宗物资供应链管理系统
+        - generic [ref=e70]: 2026/4/27 11:28:58
+      - generic [ref=e71]:
+        - button "通知" [ref=e73] [cursor=pointer]:
+          - generic [ref=e74]: 通知
+        - generic [ref=e75]: 运营端
+        - button "退出登录" [ref=e76] [cursor=pointer]:
+          - generic [ref=e77]: 退出登录
+    - generic [ref=e79]:
+      - generic [ref=e81]:
+        - generic [ref=e82]: 早安，运营管理员
+        - generic [ref=e83]: 当前时间：2026/4/27 11:28:57
+      - generic [ref=e84]:
+        - generic [ref=e87]:
+          - generic [ref=e88]: 今日订单
+          - generic [ref=e89]: "0"
+        - generic [ref=e92]:
+          - generic [ref=e93]: 今日 GMV
+          - generic [ref=e94]: ¥0
+        - generic [ref=e97]:
+          - generic [ref=e98]: 异常数
+          - generic [ref=e99]: "0"
+        - generic [ref=e102]:
+          - generic [ref=e103]: 工单数
+          - generic [ref=e104]: "0"
+      - generic [ref=e105]:
+        - generic [ref=e106]:
+          - generic [ref=e107]:
+            - generic [ref=e108]: 最近订单
+            - generic [ref=e111]:
+              - table [ref=e113]:
+                - rowgroup [ref=e119]:
+                  - row "订单号 状态 金额 更新时间" [ref=e120]:
+                    - columnheader "订单号" [ref=e121]:
+                      - generic [ref=e122]: 订单号
+                    - columnheader "状态" [ref=e123]:
+                      - generic [ref=e124]: 状态
+                    - columnheader "金额" [ref=e125]:
+                      - generic [ref=e126]: 金额
+                    - columnheader "更新时间" [ref=e127]:
+                      - generic [ref=e128]: 更新时间
+              - generic [ref=e132]:
+                - table:
+                  - rowgroup
+                - generic [ref=e134]: No Data
+          - generic [ref=e136]:
+            - generic [ref=e137]: 异常工单列表
+            - generic [ref=e140]:
+              - table [ref=e142]:
+                - rowgroup [ref=e148]:
+                  - row "工单ID 类别 状态 描述" [ref=e149]:
+                    - columnheader "工单ID" [ref=e150]:
+                      - generic [ref=e151]: 工单ID
+                    - columnheader "类别" [ref=e152]:
+                      - generic [ref=e153]: 类别
+                    - columnheader "状态" [ref=e154]:
+                      - generic [ref=e155]: 状态
+                    - columnheader "描述" [ref=e156]:
+                      - generic [ref=e157]: 描述
+              - generic [ref=e161]:
+                - table:
+                  - rowgroup
+                - generic [ref=e163]: No Data
+        - generic [ref=e166]:
+          - generic [ref=e167]: 快捷入口
+          - generic [ref=e169]:
+            - button "账号管理" [ref=e170] [cursor=pointer]:
+              - generic [ref=e171]: 账号管理
+            - button "商品管理" [ref=e172] [cursor=pointer]:
+              - generic [ref=e173]: 商品管理
+            - button "工单处理" [ref=e174] [cursor=pointer]:
+              - generic [ref=e175]: 工单处理

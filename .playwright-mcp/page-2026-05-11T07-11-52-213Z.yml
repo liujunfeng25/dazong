@@ -1,0 +1,127 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: DAZONG PLATFORM
+      - generic [ref=e7]: 运营端
+    - menubar [ref=e8]:
+      - menuitem "运营看板" [ref=e9] [cursor=pointer]
+      - menuitem "分类管理" [ref=e10] [cursor=pointer]
+      - menuitem "商品管理" [ref=e11] [cursor=pointer]
+      - menuitem "合约查看" [ref=e12] [cursor=pointer]
+      - menuitem "账号管理" [ref=e13] [cursor=pointer]
+      - menuitem "客户食堂" [ref=e14] [cursor=pointer]
+      - menuitem "订单监控" [ref=e15] [cursor=pointer]
+      - menuitem "账期配置" [ref=e16] [cursor=pointer]
+      - menuitem "工单处理" [ref=e17] [cursor=pointer]
+      - menuitem "消息中心" [ref=e18] [cursor=pointer]
+  - generic [ref=e19]:
+    - generic [ref=e21]:
+      - generic [ref=e22]:
+        - generic [ref=e23]: 大宗物资供应链管理系统
+        - generic [ref=e24]: 2026/5/11 15:11:52
+      - generic [ref=e25]:
+        - button "通知" [ref=e27] [cursor=pointer]:
+          - generic [ref=e28]: 通知
+        - generic [ref=e29]: 运营端
+        - button "O" [ref=e31] [cursor=pointer]:
+          - generic [ref=e32]: O
+    - generic [ref=e34]:
+      - generic [ref=e37]:
+        - generic [ref=e38]:
+          - generic [ref=e39]: 账期配置
+          - generic [ref=e40]: 配置客户端、配送商、供货商的账期模板，支持自动生成账单批次
+        - generic [ref=e41]:
+          - button "刷新" [ref=e42] [cursor=pointer]:
+            - generic [ref=e43]: 刷新
+          - button "生成演示账单" [ref=e44] [cursor=pointer]:
+            - generic [ref=e45]: 生成演示账单
+      - generic [ref=e46]:
+        - generic [ref=e48]:
+          - generic [ref=e50]: 新建账期
+          - generic [ref=e52]:
+            - generic [ref=e53]:
+              - generic [ref=e54]: 账务角色
+              - generic [ref=e57] [cursor=pointer]:
+                - generic:
+                  - combobox "账务角色" [ref=e59]
+                  - generic [ref=e60]: 客户端
+                - img [ref=e63]
+            - generic [ref=e65]:
+              - generic [ref=e66]: 范围类型
+              - textbox "范围类型" [ref=e70]: canteen
+            - generic [ref=e71]:
+              - generic [ref=e72]: 范围ID
+              - generic [ref=e74]:
+                - button "减少数值" [ref=e75]:
+                  - img [ref=e77]
+                - button "增加数值" [ref=e79] [cursor=pointer]:
+                  - img [ref=e81]
+                - spinbutton "范围ID" [ref=e85]: "0"
+            - generic [ref=e86]:
+              - generic [ref=e87]: 周期类型
+              - generic [ref=e90] [cursor=pointer]:
+                - generic:
+                  - combobox "周期类型" [ref=e92]
+                  - generic [ref=e93]: 按月
+                - img [ref=e96]
+            - generic [ref=e98]:
+              - generic [ref=e99]: 出账日
+              - generic [ref=e101]:
+                - button "减少数值" [ref=e102]:
+                  - img [ref=e104]
+                - button "增加数值" [ref=e106] [cursor=pointer]:
+                  - img [ref=e108]
+                - spinbutton "出账日" [ref=e112]: "1"
+            - generic [ref=e113]:
+              - generic [ref=e114]: 确认天数
+              - generic [ref=e116]:
+                - button "减少数值" [ref=e117] [cursor=pointer]:
+                  - img [ref=e119]
+                - button "增加数值" [ref=e121] [cursor=pointer]:
+                  - img [ref=e123]
+                - spinbutton "确认天数" [ref=e127]: "3"
+            - generic [ref=e128]:
+              - generic [ref=e129]: 付款天数
+              - generic [ref=e131]:
+                - button "减少数值" [ref=e132] [cursor=pointer]:
+                  - img [ref=e134]
+                - button "增加数值" [ref=e136] [cursor=pointer]:
+                  - img [ref=e138]
+                - spinbutton "付款天数" [ref=e142]: "7"
+            - button "创建账期" [ref=e145] [cursor=pointer]:
+              - generic [ref=e146]: 创建账期
+        - generic [ref=e148]:
+          - generic [ref=e150]: 账期列表
+          - generic [ref=e152]:
+            - generic [ref=e153]:
+              - table [ref=e155]:
+                - rowgroup [ref=e163]:
+                  - row "账期编码 角色 周期 开始 结束 状态" [ref=e164]:
+                    - columnheader "账期编码" [ref=e165]:
+                      - generic [ref=e166]: 账期编码
+                    - columnheader "角色" [ref=e167]:
+                      - generic [ref=e168]: 角色
+                    - columnheader "周期" [ref=e169]:
+                      - generic [ref=e170]: 周期
+                    - columnheader "开始" [ref=e171]:
+                      - generic [ref=e172]: 开始
+                    - columnheader "结束" [ref=e173]:
+                      - generic [ref=e174]: 结束
+                    - columnheader "状态" [ref=e175]:
+                      - generic [ref=e176]: 状态
+              - table [ref=e181]:
+                - rowgroup [ref=e189]:
+                  - row "CYC-CLIENT-5-canteen-0-20260511 client monthly 2026-05-01 2026-05-11 待确认" [ref=e190]:
+                    - cell "CYC-CLIENT-5-canteen-0-20260511" [ref=e191]:
+                      - generic [ref=e192]: CYC-CLIENT-5-canteen-0-20260511
+                    - cell "client" [ref=e193]:
+                      - generic [ref=e194]: client
+                    - cell "monthly" [ref=e195]:
+                      - generic [ref=e196]: monthly
+                    - cell "2026-05-01" [ref=e197]:
+                      - generic [ref=e198]: 2026-05-01
+                    - cell "2026-05-11" [ref=e199]:
+                      - generic [ref=e200]: 2026-05-11
+                    - cell "待确认" [ref=e201]:
+                      - generic [ref=e204]: 待确认
+            - img [ref=e208]

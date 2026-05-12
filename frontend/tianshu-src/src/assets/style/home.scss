@@ -1,0 +1,1252 @@
+@import "./font.scss";
+body {
+  font-family: "SourceHanSansCN", "-apple-system", "BlinkMacSystemFont", "Helvetica Neue", Helvetica, "Segoe UI",
+    "Arial", "Roboto", "PingFang SC", "miui", "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
+  background: radial-gradient(ellipse 120% 80% at 50% 0%, #0c1a30 0%, #03050a 55%, #000 100%);
+  -webkit-user-select: none; /*webkit浏览器*/
+  user-select: none;
+}
+.loading {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(ellipse 90% 70% at 50% 40%, #0a1628 0%, #020408 72%);
+  pointer-events: none;
+  z-index: 99;
+  &-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    font-family: "D-DIN", Arial, sans-serif;
+    letter-spacing: 10px;
+    span {
+      font-size: 2vw;
+      animation: blurAni 1.5s calc(var(--index) / 5 * 1s) alternate infinite;
+    }
+  }
+  &-ai-caption {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin-top: -6.4vw;
+    font-family: "D-DIN", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: clamp(10px, 0.78vw, 14px);
+    font-weight: 600;
+    letter-spacing: 0.34em;
+    color: rgba(103, 232, 249, 0.72);
+    text-shadow:
+      0 0 16px rgba(56, 189, 248, 0.28),
+      0 0 32px rgba(37, 99, 235, 0.12);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 101;
+    animation: tianshuLoadingCaptionPulse 2.8s ease-in-out infinite;
+  }
+  &-progress {
+    font-size: 2vw;
+    color: #fff;
+    font-family: "D-DIN", Arial, sans-serif;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transform-origin: center;
+    margin-top: -3vw;
+    .unit {
+      padding-left: 10px;
+      font-size: 1vw;
+    }
+  }
+  &-bar {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin-top: 1.2vw;
+    width: min(440px, 46vw);
+    height: 3px;
+    border-radius: 999px;
+    background: rgba(103, 232, 249, 0.1);
+    box-shadow: inset 0 0 0 1px rgba(103, 232, 249, 0.12);
+    overflow: hidden;
+    z-index: 100;
+    &__fill {
+      position: relative;
+      height: 100%;
+      border-radius: inherit;
+      overflow: hidden;
+      background: linear-gradient(
+        90deg,
+        rgba(56, 189, 248, 0.15) 0%,
+        rgba(103, 232, 249, 0.95) 48%,
+        rgba(56, 189, 248, 0.45) 100%
+      );
+      box-shadow: 0 0 18px rgba(103, 232, 249, 0.45);
+      transition: width 0.32s ease-out;
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+        transform: translateX(-120%);
+        animation: tianshuLoadShimmer 1.45s ease-in-out infinite;
+      }
+    }
+  }
+}
+@keyframes tianshuLoadShimmer {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+@keyframes blurAni {
+  to {
+    filter: blur(3px);
+  }
+}
+@keyframes tianshuLoadingCaptionPulse {
+  0%,
+  100% {
+    opacity: 0.72;
+    letter-spacing: 0.34em;
+  }
+  50% {
+    opacity: 1;
+    letter-spacing: 0.38em;
+  }
+}
+
+.large-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 110% 72% at 50% -6%, rgba(56, 189, 248, 0.22) 0%, transparent 54%),
+    radial-gradient(ellipse 52% 42% at 92% 88%, rgba(37, 99, 235, 0.18) 0%, transparent 58%),
+    linear-gradient(165deg, #03060c 0%, #0a1424 36%, #0d1c34 66%, #0a1528 100%);
+  margin: 0 auto;
+  font-size: 14px;
+  .map {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+  }
+
+  &-wrap {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    /* 高于 Three.js canvas（.map 为 2），避免部分环境下大屏像被「盖没」 */
+    z-index: 10;
+    pointer-events: none;
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 72% 58% at 50% 38%, transparent 0%, rgba(2, 6, 14, 0.35) 62%, rgba(0, 0, 0, 0.72) 100%),
+        radial-gradient(ellipse 78% 68% at 50% 40%, transparent 0%, rgba(4, 10, 22, 0.55) 100%);
+      mix-blend-mode: multiply;
+    }
+    &:after {
+      content: "";
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+      opacity: 0.11;
+      mix-blend-mode: soft-light;
+      background: url("@/assets/images/bg.png") no-repeat;
+      background-size: cover;
+      pointer-events: none;
+    }
+    .top-count-card {
+      position: absolute;
+      left: 560px;
+      right: 560px;
+      top: 130px;
+      display: flex;
+      justify-content: center;
+      z-index: 9;
+      display: flex;
+      & > div {
+        padding: 0 50px;
+      }
+      /* 今日 GMV 左移、今日下单右移，拉开间距 */
+      & > div:nth-child(1) {
+        transform: translateX(-100px);
+      }
+      & > div:nth-child(2) {
+        transform: translateX(100px);
+      }
+    }
+    .left-wrap {
+      position: absolute;
+      z-index: 4;
+      width: 398px;
+      left: 32px;
+      top: 126px;
+      bottom: 50px;
+      perspective: 500px;
+      perspective-origin: 50% 50%;
+      &-3d {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        // justify-content: space-between;
+        transform: translate3d(0px, 0px, 0px) scaleX(1) scaleY(1) rotateX(0deg) rotateY(6deg) rotateZ(0deg) skewX(0deg)
+          skewY(0deg);
+        z-index: 4;
+        .left-card {
+          flex: 1;
+          min-height: 0;
+          margin-bottom: 12px;
+        }
+      }
+    }
+
+    .right-wrap {
+      position: absolute;
+      z-index: 4;
+      width: 398px;
+      right: 32px;
+      top: 126px;
+      bottom: 50px;
+      perspective: 800px;
+      perspective-origin: 50% 50%;
+      &-3d {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        // justify-content: space-between;
+        transform: translate3d(0px, 0px, 0px) scaleX(1) scaleY(1) rotateX(0deg) rotateY(-6deg) rotateZ(0deg) skewX(0deg)
+          skewY(0deg);
+        .right-card {
+          flex: 1;
+          min-height: 0;
+          margin-bottom: 12px;
+        }
+      }
+    }
+    .bottom-tray {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      z-index: 3;
+      margin-left: -960px;
+      width: 1920px;
+      height: 90px;
+      box-sizing: border-box;
+      padding-top: 20px;
+      display: flex;
+      justify-content: center;
+      background: url("~@/assets/images/bottom-menu-bg.png") no-repeat;
+      background-size: contain;
+      &-arrow {
+        display: flex;
+        align-items: center;
+        height: 30px;
+        &.is-reverse {
+          transform: scaleX(-1);
+        }
+        img {
+          animation: arrowAnimate 2s ease-in-out infinite;
+        }
+        img:last-child {
+          animation: arrowAnimate2 2s ease-in-out infinite;
+        }
+      }
+      .bottom-menu {
+        display: flex;
+        padding: 0 20px;
+        &-item {
+          width: 100px;
+          height: 32px;
+          background: url("~@/assets/images/bottom-menu-btn.png") no-repeat;
+          background-size: 100%;
+          font-size: 15px;
+
+          letter-spacing: 1.6px;
+          text-align: center;
+          line-height: 30px;
+          cursor: pointer;
+          pointer-events: all;
+          transition:
+            filter 0.28s ease,
+            transform 0.28s ease;
+          span {
+            display: block;
+            width: 100px;
+            height: 32px;
+            font-weight: 700;
+            background: -webkit-linear-gradient(rgba(117, 232, 255, 1), rgba(255, 255, 255, 1));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          }
+          &:hover {
+            filter: drop-shadow(0 0 14px rgba(103, 232, 249, 0.42));
+            transform: translateY(-2px);
+          }
+          &:hover,
+          &.is-active {
+            background: url("~@/assets/images/bottom-menu-btn-hover.png") no-repeat;
+            background-size: 100%;
+          }
+          &.is-active {
+            filter: drop-shadow(0 0 18px rgba(103, 232, 249, 0.48));
+          }
+        }
+      }
+    }
+  }
+  &-left-zsline {
+    position: absolute;
+    left: 0;
+    z-index: 3;
+    top: 50%;
+    margin-top: -540px;
+    width: 120px;
+    height: 1080px;
+    background: url("~@/assets/images/left-kuang.svg") no-repeat;
+    background-size: contain;
+    animation: bkAnimate 6s ease-in-out infinite;
+  }
+  &-right-zsline {
+    position: absolute;
+    right: 0;
+    z-index: 3;
+    top: 50%;
+    margin-top: -540px;
+    width: 120px;
+    height: 1080px;
+    background: url("~@/assets/images/right-kuang.svg") no-repeat;
+    background-size: contain;
+    animation: bkAnimate 6s ease-in-out infinite;
+  }
+}
+
+/* 北京区县 CSS3D 标签：Label3d 的 DOM 挂在 .large-screen-wrap 内，不能仅写在 .map 下否则样式不生效 */
+.large-screen-wrap .district-label,
+.map .district-label {
+  pointer-events: none;
+  will-change: transform;
+    .district-label-inner {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: rgba(248, 250, 252, 0.96);
+    white-space: nowrap;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: linear-gradient(165deg, rgba(10, 28, 48, 0.88) 0%, rgba(6, 18, 34, 0.82) 100%);
+    border: 1px solid rgba(103, 232, 249, 0.42);
+    box-shadow:
+      0 0 16px rgba(48, 200, 255, 0.26),
+      0 6px 20px rgba(0, 0, 0, 0.42),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+  }
+}
+
+@keyframes bkAnimate {
+  0%,
+  100% {
+    opacity: 0.92;
+    filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.12));
+  }
+  50% {
+    opacity: 0.52;
+    filter: drop-shadow(0 0 22px rgba(103, 232, 249, 0.22));
+  }
+}
+
+@keyframes arrowAnimate {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes arrowAnimate2 {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(90%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+// 360旋转
+@keyframes rotate360Animate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 天枢：地图容器与 WebGL 画布同层叠；极弱底纹与场景氛围对齐 */
+.large-screen .tianshu-map-shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  background:
+    radial-gradient(ellipse 88% 70% at 50% 42%, rgba(56, 189, 248, 0.12) 0%, transparent 58%),
+    radial-gradient(ellipse 55% 40% at 50% 118%, rgba(37, 99, 235, 0.1) 0%, transparent 55%),
+    linear-gradient(180deg, rgba(6, 14, 28, 0.55) 0%, transparent 42%, rgba(4, 10, 22, 0.35) 100%);
+}
+.large-screen .tianshu-map-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.22;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0,
+    transparent 6px,
+    rgba(103, 232, 249, 0.04) 6px,
+    rgba(103, 232, 249, 0.04) 7px
+  );
+  mask-image: radial-gradient(ellipse 76% 70% at 50% 44%, black 8%, transparent 74%);
+  -webkit-mask-image: radial-gradient(ellipse 76% 70% at 50% 44%, black 8%, transparent 74%);
+  mix-blend-mode: soft-light;
+}
+.large-screen .tianshu-map-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.32;
+  background-image:
+    linear-gradient(rgba(103, 232, 249, 0.065) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(103, 232, 249, 0.065) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: radial-gradient(ellipse 74% 68% at 50% 44%, black 0%, transparent 76%);
+  -webkit-mask-image: radial-gradient(ellipse 74% 68% at 50% 44%, black 0%, transparent 76%);
+  mix-blend-mode: soft-light;
+}
+@media (prefers-reduced-motion: reduce) {
+  .large-screen .tianshu-map-shell::before {
+    opacity: 0.12;
+  }
+}
+.large-screen .tianshu-map-shell .map {
+  position: relative;
+  z-index: 1;
+}
+
+/* A1 首屏入场（错开延迟）；尊重系统减少动效 */
+.tianshu-shell-enter {
+  opacity: 0;
+  transform: translateY(20px) scale(0.988);
+  transition:
+    opacity 0.62s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.62s cubic-bezier(0.22, 1, 0.36, 1);
+  &.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.tianshu-shell-enter--map {
+  transition-delay: 0s;
+}
+.tianshu-shell-enter--kpi {
+  transition-delay: 0.07s;
+}
+.tianshu-shell-enter--col-left {
+  transition-delay: 0.13s;
+}
+.tianshu-shell-enter--col-right {
+  transition-delay: 0.22s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tianshu-shell-enter {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* A2：KPI 刷新亮度脉冲 */
+@keyframes tianshuKpiValuePulse {
+  0%,
+  100% {
+    filter: brightness(1);
+    text-shadow:
+      0 0 20px rgba(186, 244, 255, 0.32),
+      0 0 42px rgba(56, 189, 248, 0.14);
+  }
+  45% {
+    filter: brightness(1.08);
+    text-shadow:
+      0 0 26px rgba(103, 232, 249, 0.42),
+      0 0 48px rgba(56, 189, 248, 0.18);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .top-count-card.tianshu-kpi-pulse .count-card .value {
+    animation: none;
+  }
+}
+
+.top-count-card.tianshu-kpi-pulse .count-card .value {
+  animation: tianshuKpiValuePulse 0.42s ease-out;
+}
+
+@keyframes tianshuGlassBreath {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 14px 38px rgba(0, 0, 0, 0.38),
+      0 0 52px rgba(56, 189, 248, 0.07);
+    border-color: rgba(103, 232, 249, 0.3);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.13),
+      0 16px 44px rgba(0, 0, 0, 0.42),
+      0 0 68px rgba(103, 232, 249, 0.12);
+    border-color: rgba(103, 232, 249, 0.44);
+  }
+}
+/* C9：左右栏图表外包层玻璃感 */
+.large-screen-wrap .left-wrap-3d .left-card,
+.large-screen-wrap .right-wrap-3d .right-card {
+  border-radius: 14px;
+  padding: 8px 8px 10px;
+  box-sizing: border-box;
+  background: linear-gradient(158deg, rgba(14, 34, 56, 0.64) 0%, rgba(7, 16, 30, 0.46) 100%);
+  border: 1px solid rgba(103, 232, 249, 0.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 14px 38px rgba(0, 0, 0, 0.38),
+    0 0 52px rgba(56, 189, 248, 0.07);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  animation: tianshuGlassBreath 5.8s ease-in-out infinite;
+}
+@for $i from 1 through 4 {
+  .large-screen-wrap .left-wrap-3d .left-card:nth-child(#{$i}) {
+    animation-delay: #{($i - 1) * 0.55}s;
+  }
+  .large-screen-wrap .right-wrap-3d .right-card:nth-child(#{$i}) {
+    animation-delay: #{0.28 + ($i - 1) * 0.55}s;
+  }
+}
+
+/* 天枢 KPI：主数字玻璃舱（与左右栏同系，略强调层级） */
+@keyframes tianshuKpiAmbient {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.11),
+      0 18px 44px rgba(0, 0, 0, 0.42),
+      0 0 60px rgba(56, 189, 248, 0.09);
+    border-color: rgba(103, 232, 249, 0.34);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      0 20px 50px rgba(0, 0, 0, 0.46),
+      0 0 78px rgba(103, 232, 249, 0.15);
+    border-color: rgba(103, 232, 249, 0.5);
+  }
+}
+.large-screen-wrap .top-count-card .count-card {
+  padding: 14px 26px 12px 22px;
+  border-radius: 14px;
+  background: linear-gradient(148deg, rgba(12, 30, 50, 0.68) 0%, rgba(8, 18, 34, 0.5) 100%);
+  border: 1px solid rgba(103, 232, 249, 0.34);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.11),
+    0 18px 44px rgba(0, 0, 0, 0.42),
+    0 0 60px rgba(56, 189, 248, 0.09);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  animation: tianshuKpiAmbient 6.4s ease-in-out infinite;
+}
+.large-screen-wrap .top-count-card .count-card .value {
+  font-size: 30px;
+  letter-spacing: 0;
+  text-shadow:
+    0 0 20px rgba(186, 244, 255, 0.32),
+    0 0 42px rgba(56, 189, 248, 0.14);
+}
+.large-screen-wrap .top-count-card .count-card .title-zh {
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* ========== 天枢「炫技+1」：冷色极光 / 微粒 / 扫光（仍避免彩虹粗霓虹） ========== */
+.tianshu-spectacle-bg-drift {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(88px);
+    animation: tianshuBlobDrift 28s ease-in-out infinite;
+  }
+  &::before {
+    width: 58vmax;
+    height: 58vmax;
+    left: -18%;
+    top: -12%;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.4) 0%, transparent 68%);
+    opacity: 0.55;
+  }
+  &::after {
+    width: 48vmax;
+    height: 48vmax;
+    right: -14%;
+    bottom: -12%;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.36) 0%, transparent 65%);
+    opacity: 0.5;
+    animation-delay: -14s;
+  }
+}
+@keyframes tianshuBlobDrift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(5vw, 2vh) scale(1.07);
+  }
+  66% {
+    transform: translate(-4vw, 3vh) scale(0.94);
+  }
+}
+
+.tianshu-spectacle-aurora {
+  position: absolute;
+  inset: -8%;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.46;
+  background: conic-gradient(
+    from 210deg at 50% 48%,
+    transparent 0deg,
+    rgba(56, 189, 248, 0.1) 55deg,
+    transparent 100deg,
+    rgba(37, 99, 235, 0.08) 160deg,
+    transparent 220deg,
+    rgba(103, 232, 249, 0.07) 290deg,
+    transparent 360deg
+  );
+  mix-blend-mode: screen;
+  animation: tianshuAuroraSpin 42s linear infinite;
+  mask-image: radial-gradient(ellipse 88% 78% at 50% 45%, black 0%, transparent 72%);
+  -webkit-mask-image: radial-gradient(ellipse 88% 78% at 50% 45%, black 0%, transparent 72%);
+}
+@keyframes tianshuAuroraSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tianshu-spectacle-floaties {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: screen;
+  background-image:
+    radial-gradient(1.5px 1.5px at 8% 22%, rgba(220, 250, 255, 0.95), transparent),
+    radial-gradient(1px 1px at 18% 78%, rgba(103, 232, 249, 0.75), transparent),
+    radial-gradient(1.2px 1.2px at 92% 18%, rgba(186, 245, 255, 0.9), transparent),
+    radial-gradient(1px 1px at 84% 64%, rgba(56, 189, 248, 0.65), transparent),
+    radial-gradient(1.4px 1.4px at 44% 12%, rgba(255, 255, 255, 0.55), transparent),
+    radial-gradient(1px 1px at 52% 88%, rgba(103, 232, 249, 0.6), transparent),
+    radial-gradient(1.2px 1.2px at 72% 42%, rgba(165, 230, 255, 0.75), transparent),
+    radial-gradient(1px 1px at 28% 48%, rgba(103, 232, 249, 0.5), transparent);
+  background-size: 115% 115%;
+  background-position: 0% 0%;
+  animation: tianshuFloatiesShift 20s ease-in-out infinite alternate;
+  mask-image: radial-gradient(ellipse 82% 72% at 50% 46%, black 12%, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse 82% 72% at 50% 46%, black 12%, transparent 78%);
+}
+@keyframes tianshuFloatiesShift {
+  0% {
+    background-position: 0% 0%;
+    opacity: 0.38;
+  }
+  100% {
+    background-position: 8% 6%;
+    opacity: 0.6;
+  }
+}
+
+.tianshu-spectacle-map-beam {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background: linear-gradient(
+    108deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(103, 232, 249, 0.11) 50.5%,
+    transparent 61%,
+    transparent 100%
+  );
+  background-size: 240% 240%;
+  animation: tianshuMapBeamSweep 16s ease-in-out infinite;
+  mask-image: radial-gradient(ellipse 76% 70% at 50% 44%, black 0%, transparent 76%);
+  -webkit-mask-image: radial-gradient(ellipse 76% 70% at 50% 44%, black 0%, transparent 76%);
+}
+@keyframes tianshuMapBeamSweep {
+  0%,
+  100% {
+    background-position: 0% 30%;
+    opacity: 0.55;
+  }
+  50% {
+    background-position: 100% 70%;
+    opacity: 0.92;
+  }
+}
+
+/* ========== AI 原生智慧层：神经流 / 比特雾 / 遥测 / 认知轨 ========== */
+.tianshu-ai-bitwash {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.085;
+  mix-blend-mode: screen;
+  background-image: repeating-linear-gradient(
+    180deg,
+    rgba(103, 232, 249, 0.06) 0 1px,
+    transparent 1px 3px,
+    rgba(56, 189, 248, 0.04) 3px 4px,
+    transparent 4px 8px
+  );
+  background-size: 100% 8px;
+  animation: tianshuBitwashScroll 11s linear infinite;
+  mask-image: radial-gradient(ellipse 82% 72% at 50% 46%, black 10%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 82% 72% at 50% 46%, black 10%, transparent 80%);
+}
+@keyframes tianshuBitwashScroll {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 96px;
+  }
+}
+
+.tianshu-shell-enter--ops {
+  transition-delay: 0.28s;
+}
+
+/* 实时链路条：固定位置；设计稿 1920×1080 */
+.tianshu-ops-console {
+  position: absolute;
+  left: 828px;
+  bottom: 80px;
+  transform: translateX(-50%);
+  z-index: 12;
+  width: 100%;
+  max-width: min(640px, calc(100% - 920px));
+  padding: 0 10px;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+.tianshu-ops-console__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+  padding: 10px 14px 10px 12px;
+  margin: 0 auto;
+  max-width: 100%;
+  border-radius: 12px;
+  background: linear-gradient(158deg, rgba(8, 24, 48, 0.88) 0%, rgba(4, 12, 28, 0.8) 100%);
+  border: 1px solid rgba(103, 232, 249, 0.38);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 14px 44px rgba(0, 0, 0, 0.48),
+    0 0 56px rgba(56, 189, 248, 0.12);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  transition:
+    box-shadow 0.35s ease,
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: auto;
+}
+.tianshu-ops-console.is-ping-tick .tianshu-ops-console__inner {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 14px 44px rgba(0, 0, 0, 0.48),
+    0 0 72px rgba(34, 211, 238, 0.38),
+    0 0 96px rgba(250, 204, 21, 0.18),
+    0 0 0 1px rgba(186, 230, 255, 0.65);
+  transform: scale(1.012);
+}
+.tianshu-ops-console__badge {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+  margin-bottom: 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(103, 232, 249, 0.14);
+}
+.tianshu-ops-console__badge-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* 心电图：与运营指挥台 PanelOpsDataFreshness「实时通道」一致（滚动波形常显；仅 ping 时 bloom/beam 脉冲） */
+.tianshu-ops-ecg {
+  position: relative;
+  width: 100%;
+  height: 34px;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.45s ease, transform 0.5s ease;
+}
+.tianshu-ops-ecg__glass {
+  position: relative;
+  height: 100%;
+  border-radius: 8px;
+  border: 1px solid rgba(103, 232, 249, 0.22);
+  background: linear-gradient(
+    165deg,
+    rgba(10, 15, 35, 0.55) 0%,
+    rgba(8, 47, 73, 0.18) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 0 16px rgba(34, 211, 238, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.tianshu-ops-ecg__emp-bloom,
+.tianshu-ops-ecg__emp-beam {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 0;
+}
+.tianshu-ops-ecg__emp-bloom {
+  opacity: 0;
+  background: radial-gradient(
+    ellipse 90% 140% at 50% 50%,
+    rgba(103, 232, 249, 0.5) 0%,
+    rgba(34, 211, 238, 0.15) 35%,
+    transparent 70%
+  );
+  mix-blend-mode: screen;
+}
+.tianshu-ops-ecg__emp-beam {
+  opacity: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(34, 211, 238, 0) 36%,
+    rgba(34, 211, 238, 0.65) 44%,
+    rgba(250, 204, 21, 0.95) 50%,
+    rgba(103, 232, 249, 0.85) 56%,
+    rgba(34, 211, 238, 0) 64%,
+    transparent 100%
+  );
+  background-size: 52% 100%;
+  background-repeat: no-repeat;
+  background-position: -25% 50%;
+  mix-blend-mode: screen;
+  filter: blur(0.6px);
+}
+.tianshu-ops-ecg--beat .tianshu-ops-ecg__emp-bloom {
+  animation: tianshuOpsEcgBloom 1.15s ease-in-out forwards;
+}
+.tianshu-ops-ecg--beat .tianshu-ops-ecg__emp-beam {
+  animation: tianshuOpsEcgBeam 1.35s ease-in-out forwards;
+}
+@keyframes tianshuOpsEcgBloom {
+  0% {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.45);
+  }
+}
+@keyframes tianshuOpsEcgBeam {
+  0% {
+    opacity: 0;
+    background-position: -35% 50%;
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.12;
+    background-position: 140% 50%;
+  }
+}
+.tianshu-ops-ecg--live .tianshu-ops-ecg__glass {
+  border-color: rgba(74, 222, 128, 0.22);
+}
+.tianshu-ops-ecg__svg {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.tianshu-ops-ecg--beat .tianshu-ops-ecg__glass {
+  border-color: rgba(103, 232, 249, 0.65);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 0 28px rgba(34, 211, 238, 0.55),
+    0 0 44px rgba(250, 204, 21, 0.22),
+    0 0 2px 1px rgba(103, 232, 249, 0.4);
+  transform: scaleY(1.06);
+}
+.tianshu-ops-ecg--beat .tianshu-ops-ecg__wave {
+  stroke-width: 2.1;
+}
+.tianshu-ops-console__dot {
+  position: relative;
+  flex-shrink: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(100, 116, 139, 0.95);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.tianshu-ops-console__dot.is-live {
+  background: radial-gradient(circle at 30% 30%, #ecfeff, #22d3ee 45%, #0e7490);
+  box-shadow:
+    0 0 14px rgba(103, 232, 249, 0.55),
+    0 0 26px rgba(56, 189, 248, 0.22);
+  animation: tianshuOpsLinkIdle 1.35s ease-in-out infinite;
+}
+.tianshu-ops-console__dot.is-live.is-ping {
+  animation: tianshuOpsPingFlash 0.55s ease-out;
+}
+.tianshu-ops-console__dot.is-live.is-ping::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  border: 1px solid rgba(103, 232, 249, 0.65);
+  opacity: 0;
+  pointer-events: none;
+  animation: tianshuOpsRipple 0.75s ease-out;
+}
+@keyframes tianshuOpsLinkIdle {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.92;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+@keyframes tianshuOpsPingFlash {
+  0% {
+    transform: scale(1);
+    box-shadow:
+      0 0 14px rgba(103, 232, 249, 0.55),
+      0 0 26px rgba(56, 189, 248, 0.22);
+  }
+  45% {
+    transform: scale(1.35);
+    box-shadow:
+      0 0 22px rgba(103, 232, 249, 0.85),
+      0 0 48px rgba(56, 189, 248, 0.45);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 14px rgba(103, 232, 249, 0.55),
+      0 0 26px rgba(56, 189, 248, 0.22);
+  }
+}
+@keyframes tianshuOpsRipple {
+  0% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+  100% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+.tianshu-ops-console__badge-text {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(236, 254, 255, 0.95);
+  text-shadow: 0 0 18px rgba(56, 189, 248, 0.22);
+}
+.tianshu-ops-console__chip {
+  margin-left: auto;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-family: "D-DIN", ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: rgba(186, 245, 255, 0.88);
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(103, 232, 249, 0.35);
+}
+.tianshu-ops-console__metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 88px;
+}
+.tianshu-ops-console__k {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgba(148, 210, 235, 0.72);
+  white-space: nowrap;
+}
+.tianshu-ops-console__v {
+  font-family: "D-DIN", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #f0fdff;
+  text-shadow:
+    0 0 16px rgba(103, 232, 249, 0.35),
+    0 0 28px rgba(56, 189, 248, 0.12);
+  small {
+    margin-left: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(186, 230, 255, 0.62);
+  }
+}
+.tianshu-ops-console__v--heartbeat {
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  line-height: 1.25;
+  white-space: normal;
+}
+.tianshu-ops-console__viz {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 32px;
+  margin-left: auto;
+  padding-left: 6px;
+  flex: 0 0 auto;
+}
+.tianshu-ops-console__viz--clickable {
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 2px 4px;
+  margin-left: auto;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.tianshu-ops-console__viz--clickable:hover {
+  background: rgba(56, 189, 248, 0.08);
+  box-shadow: 0 0 12px rgba(103, 232, 249, 0.12);
+}
+.tianshu-ops-console__viz--clickable:focus-visible {
+  outline: 2px solid rgba(103, 232, 249, 0.55);
+  outline-offset: 2px;
+}
+.tianshu-ops-console__bar {
+  width: 4px;
+  min-height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, rgba(186, 245, 255, 0.95) 0%, rgba(56, 189, 248, 0.35) 100%);
+  box-shadow: 0 0 10px rgba(103, 232, 249, 0.25);
+  transition: height 0.35s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tianshu-spectacle-bg-drift::before,
+  .tianshu-spectacle-bg-drift::after {
+    animation: none !important;
+  }
+  .tianshu-spectacle-aurora,
+  .tianshu-spectacle-floaties,
+  .tianshu-spectacle-map-beam {
+    animation: none !important;
+  }
+  .tianshu-ai-bitwash {
+    animation: none !important;
+    opacity: 0.04;
+  }
+  .tianshu-ops-console__dot.is-live {
+    animation: none !important;
+  }
+  .tianshu-ops-console__dot.is-live.is-ping {
+    animation: none !important;
+  }
+  .tianshu-ops-console__dot.is-live.is-ping::after {
+    animation: none !important;
+  }
+  .tianshu-ops-ecg__emp-bloom,
+  .tianshu-ops-ecg__emp-beam {
+    animation: none !important;
+  }
+  .tianshu-ops-console.is-ping-tick .tianshu-ops-console__inner {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 14px 44px rgba(0, 0, 0, 0.48),
+      0 0 56px rgba(56, 189, 248, 0.12) !important;
+    transform: none !important;
+  }
+  .tianshu-ops-ecg--beat .tianshu-ops-ecg__glass {
+    transform: none !important;
+  }
+  .loading-ai-caption {
+    animation: none !important;
+  }
+  .tianshu-spectacle-aurora {
+    opacity: 0.22;
+  }
+  .tianshu-spectacle-floaties {
+    opacity: 0.28;
+  }
+  .tianshu-spectacle-map-beam {
+    opacity: 0;
+  }
+  .loading-bar__fill::after {
+    animation: none !important;
+    opacity: 0;
+  }
+  .large-screen-wrap .left-wrap-3d .left-card,
+  .large-screen-wrap .right-wrap-3d .right-card,
+  .large-screen-wrap .top-count-card .count-card {
+    animation: none !important;
+  }
+  .bottom-tray .bottom-menu .bottom-menu-item:hover {
+    transform: none;
+  }
+}
+
+/* 全屏：降低极光/微粒/扫光/比特雾与 glass 呼吸动画的合成成本，减轻与 autofit scale + WebGL 的拍频频闪 */
+.large-screen.tianshu-spectacle-fs-active {
+  .tianshu-spectacle-bg-drift::before,
+  .tianshu-spectacle-bg-drift::after {
+    animation: none !important;
+  }
+  .tianshu-spectacle-aurora,
+  .tianshu-spectacle-floaties,
+  .tianshu-spectacle-map-beam {
+    animation: none !important;
+    mix-blend-mode: normal;
+  }
+  .tianshu-ai-bitwash {
+    animation: none !important;
+    mix-blend-mode: normal;
+    opacity: 0.04;
+  }
+  .tianshu-spectacle-aurora {
+    opacity: 0.22;
+  }
+  .tianshu-spectacle-floaties {
+    opacity: 0.28;
+  }
+  .tianshu-spectacle-map-beam {
+    opacity: 0;
+  }
+  .tianshu-ops-console__dot.is-live {
+    animation: none !important;
+  }
+  .tianshu-ops-console__dot.is-live.is-ping {
+    animation: none !important;
+  }
+  .tianshu-ops-console__dot.is-live.is-ping::after {
+    animation: none !important;
+  }
+  .tianshu-ops-ecg__emp-bloom,
+  .tianshu-ops-ecg__emp-beam {
+    animation: none !important;
+  }
+  .tianshu-ops-console.is-ping-tick .tianshu-ops-console__inner {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 14px 44px rgba(0, 0, 0, 0.48),
+      0 0 56px rgba(56, 189, 248, 0.12) !important;
+    transform: none !important;
+  }
+  .tianshu-ops-ecg--beat .tianshu-ops-ecg__glass {
+    transform: none !important;
+  }
+  .large-screen-wrap .left-wrap-3d .left-card,
+  .large-screen-wrap .right-wrap-3d .right-card,
+  .large-screen-wrap .top-count-card .count-card {
+    animation: none !important;
+  }
+}

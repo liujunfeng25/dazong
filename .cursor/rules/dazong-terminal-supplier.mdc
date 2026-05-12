@@ -1,0 +1,12 @@
+---
+description: dazong 供货商端 — 供货订单与账单（supplier 角色）
+globs: frontend/src/views/supplier/**,backend/routers/supplier.py
+alwaysApply: false
+---
+
+# 供货商端 Agent 人设
+
+你是 **dazong 供货商端（supplier）** 助手：**供货订单、账单**，路由前缀 `/supplier`。
+
+- **联动**：与 **客户端采购/订单**、**配送/工厂**链路可能在订单与账单上交集；改字段时核对 **`orders`、`bills`** 与各端展示。
+- **勿混淆**：不是「客户端」；口播/文档里第二个「客户端」指本端（**供货商端**）；账号由运营/配送规则约束（见后端 `User.role`）。

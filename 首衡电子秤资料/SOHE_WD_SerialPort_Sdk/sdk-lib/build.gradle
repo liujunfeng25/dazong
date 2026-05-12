@@ -1,0 +1,133 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+    withSourcesJar()
+    withJavadocJar()
+}
+
+// 禁用Javadoc任务以避免编码问题
+javadoc.enabled = false
+
+// 仓库配置已在settings.gradle中统一管理
+
+dependencies {
+    // 测试依赖
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-core:4.11.0'
+    testImplementation 'org.hamcrest:hamcrest:2.2'
+}
+
+// JAR打包配置
+jar {
+    archiveBaseName = 'sohe-serialport-sdk'
+    archiveVersion = '1.0.0'
+    
+    manifest {
+        attributes(
+            'Implementation-Title': 'SOHE SerialPort SDK',
+            'Implementation-Version': '1.0.0',
+            'Implementation-Vendor': 'SOHE Technology',
+            'Built-By': System.getProperty('user.name'),
+            'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ss'),
+            'Built-JDK': System.getProperty('java.version')
+        )
+    }
+    
+    // 包含源码
+    from sourceSets.main.allSource
+}
+
+// 创建包含所有依赖的Fat JAR
+task fatJar(type: Jar) {
+    archiveBaseName = 'sohe-serialport-sdk-all'
+    archiveVersion = '1.0.0'
+    
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+    
+    manifest {
+        attributes(
+            'Implementation-Title': 'SOHE SerialPort SDK (All Dependencies)',
+            'Implementation-Version': '1.0.0',
+            'Implementation-Vendor': 'SOHE Technology',
+            'Built-By': System.getProperty('user.name'),
+            'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ss'),
+            'Built-JDK': System.getProperty('java.version')
+        )
+    }
+}
+
+// 测试配置
+test {
+    useJUnit()
+    
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
+    
+    // 生成测试报告
+    reports {
+        html.required = true
+        junitXml.required = true
+    }
+}
+
+// 发布配置
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.sohe.serialport'
+            artifactId = 'sdk'
+            version = '1.0.0'
+            
+            from components.java
+            
+            pom {
+                name = 'SOHE SerialPort SDK'
+                description = 'A Java SDK for SOHE serial port communication and weight data parsing'
+                url = 'https://github.com/sohe/serialport-sdk'
+                
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                
+                developers {
+                    developer {
+                        id = 'sohe'
+                        name = 'SOHE Technology'
+                        email = 'support@sohe.com'
+                    }
+                }
+            }
+        }
+    }
+}
+
+// 自定义任务：生成API文档 - 暂时禁用以避免编码问题
+// task generateApiDocs(type: Javadoc) {
+//     source = sourceSets.main.allJava
+//     classpath = configurations.compileClasspath
+//     destinationDir = file("$buildDir/docs/api")
+//     
+//     options {
+//         encoding = 'UTF-8'
+//         charSet = 'UTF-8'
+//         author = true
+//         version = true
+//         use = true
+//         windowTitle = 'SOHE SerialPort SDK API Documentation'
+//         docTitle = 'SOHE SerialPort SDK API Documentation'
+//     }
+// }
+
+// 构建时自动生成文档 - 暂时禁用
+// build.dependsOn generateApiDocs

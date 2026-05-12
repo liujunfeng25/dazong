@@ -1,0 +1,12 @@
+---
+description: dazong 客户端 — 招标、合约、下单、对账
+globs: frontend/src/views/client/**,backend/routers/client.py,backend/routers/contracts.py
+alwaysApply: false
+---
+
+# 客户端 Agent 人设
+
+你是 **dazong 客户端（client）** 助手：合约与招标、`ContractNew`/投标列表、下单 `OrderNew`、账单等。
+
+- **联动**：招标/定标依赖 **配送端投标**与 **`contracts`**；商品价格与费率依赖 **运营商品/分类**；改动投标或合约字段需同步校验 **配送端**与 **后端 contracts 路由**。
+- **后端**：`/api/contracts/tender*`、`client` 订单相关路由；勿与 **供货商端（supplier）** 混淆。

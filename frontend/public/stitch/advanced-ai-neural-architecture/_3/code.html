@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NEURAL CORE - Data Intelligence Mining Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #0f131f;
+            color: #dfe2f3;
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(22, 27, 34, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(156, 240, 255, 0.1);
+        }
+        .glow-sm {
+            text-shadow: 0 0 10px rgba(0, 218, 243, 0.5);
+        }
+        .neon-line {
+            filter: drop-shadow(0 0 4px rgba(0, 229, 255, 0.6));
+        }
+        .gradient-border {
+            border-image: linear-gradient(135deg, rgba(0, 229, 255, 0.3) 0%, transparent 40%, transparent 60%, rgba(154, 255, 232, 0.2) 100%) 1;
+        }
+        .scanline {
+            background: linear-gradient(to bottom, transparent 50%, rgba(0, 229, 255, 0.05) 50%);
+            background-size: 100% 4px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#ebb2ff",
+                        "inverse-on-surface": "#2c303d",
+                        "on-primary-fixed-variant": "#004f58",
+                        "surface-variant": "#313442",
+                        "surface-dim": "#0f131f",
+                        "surface-container-highest": "#313442",
+                        "on-secondary-fixed-variant": "#721199",
+                        "tertiary-container": "#51e7cb",
+                        "on-secondary-container": "#e299ff",
+                        "on-surface-variant": "#bac9cc",
+                        "outline": "#849396",
+                        "on-background": "#dfe2f3",
+                        "on-tertiary-fixed": "#00201a",
+                        "tertiary-fixed": "#68fadd",
+                        "secondary-fixed-dim": "#ebb2ff",
+                        "primary-container": "#00e5ff",
+                        "on-surface": "#dfe2f3",
+                        "inverse-primary": "#006875",
+                        "on-secondary-fixed": "#320047",
+                        "surface-container": "#1b1f2c",
+                        "primary": "#c3f5ff",
+                        "outline-variant": "#3b494c",
+                        "surface-container-low": "#171b28",
+                        "secondary-container": "#721199",
+                        "surface-container-high": "#262a37",
+                        "tertiary-fixed-dim": "#44ddc1",
+                        "on-tertiary-container": "#006556",
+                        "on-error": "#690005",
+                        "on-error-container": "#ffdad6",
+                        "on-primary": "#00363d",
+                        "surface": "#0f131f",
+                        "on-tertiary-fixed-variant": "#005145",
+                        "error-container": "#93000a",
+                        "error": "#ffb4ab",
+                        "tertiary": "#9affe8",
+                        "surface-bright": "#353946",
+                        "primary-fixed-dim": "#00daf3",
+                        "on-tertiary": "#00382f",
+                        "secondary-fixed": "#f8d8ff",
+                        "on-primary-fixed": "#001f24",
+                        "on-primary-container": "#00626e",
+                        "surface-container-lowest": "#0a0e1a",
+                        "surface-tint": "#00daf3",
+                        "on-secondary": "#520071",
+                        "background": "#0f131f",
+                        "primary-fixed": "#9cf0ff",
+                        "inverse-surface": "#dfe2f3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "20px",
+                        "sm": "8px",
+                        "margin-desktop": "40px",
+                        "unit": "4px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Space Grotesk"],
+                        "headline-lg": ["Space Grotesk"],
+                        "headline-lg-mobile": ["Space Grotesk"],
+                        "body-lg": ["Inter"],
+                        "label-mono": ["JetBrains Mono"],
+                        "display-lg": ["Space Grotesk"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-mono": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background font-body-md text-on-background selection:bg-primary/30">
+<!-- Top Navigation -->
+<header class="bg-surface-dim/60 backdrop-blur-md border-b border-outline-variant/30 shadow-[0_4px_30px_rgba(0,0,0,0.1)] flex items-center justify-between px-margin-desktop h-20 w-full z-50 fixed top-0">
+<div class="flex items-center gap-xl">
+<span class="font-display-lg text-display-lg text-primary tracking-tighter glow-sm uppercase">NEURAL CORE</span>
+<nav class="hidden lg:flex gap-lg">
+<a class="font-headline-md text-headline-md text-on-surface-variant hover:text-primary transition-all duration-300 active:scale-95 cursor-pointer" href="#">概览</a>
+<a class="font-headline-md text-headline-md text-on-surface-variant hover:text-primary transition-all duration-300 active:scale-95 cursor-pointer" href="#">神经路径</a>
+<a class="font-headline-md text-headline-md text-primary-fixed border-b-2 border-primary-fixed pb-1 active:scale-95 cursor-pointer" href="#">异常检测</a>
+<a class="font-headline-md text-headline-md text-on-surface-variant hover:text-primary transition-all duration-300 active:scale-95 cursor-pointer" href="#">历史记录</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary cursor-pointer p-2 transition-all">notifications_active</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer p-2 transition-all">settings</span>
+<div class="flex items-center gap-sm bg-surface-container-high px-3 py-1.5 rounded-full border border-outline-variant/50">
+<span class="material-symbols-outlined text-primary-fixed-dim" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+<span class="font-label-mono text-label-mono text-primary-fixed-dim">OP_CORE_01</span>
+</div>
+</div>
+</header>
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-20 h-[calc(100vh-80px)] w-24 bg-surface-container-lowest/40 backdrop-blur-xl border-r border-outline-variant/20 shadow-xl flex flex-col items-center py-lg space-y-md z-40">
+<div class="mb-lg text-center">
+<p class="font-label-mono text-label-mono text-on-surface-variant/70 uppercase">AI 状态</p>
+<p class="font-label-mono text-[10px] text-tertiary-fixed glow-sm">运行中</p>
+</div>
+<div class="flex flex-col gap-6 w-full px-4">
+<button class="group flex flex-col items-center gap-1 py-2 text-on-surface-variant/70 hover:bg-surface-variant/50 hover:text-tertiary transition-colors scale-100 hover:scale-105 duration-200">
+<span class="material-symbols-outlined">terminal</span>
+<span class="font-label-mono text-[10px] uppercase">指令中心</span>
+</button>
+<button class="group flex flex-col items-center gap-1 py-2 bg-tertiary-container/20 text-tertiary-fixed rounded-xl ring-1 ring-tertiary/50 scale-100 hover:scale-105 duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">insights</span>
+<span class="font-label-mono text-[10px] uppercase">数据分析</span>
+</button>
+<button class="group flex flex-col items-center gap-1 py-2 text-on-surface-variant/70 hover:bg-surface-variant/50 hover:text-tertiary transition-colors scale-100 hover:scale-105 duration-200">
+<span class="material-symbols-outlined">hub</span>
+<span class="font-label-mono text-[10px] uppercase">神经链接</span>
+</button>
+<button class="group flex flex-col items-center gap-1 py-2 text-on-surface-variant/70 hover:bg-surface-variant/50 hover:text-tertiary transition-colors scale-100 hover:scale-105 duration-200">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="font-label-mono text-[10px] uppercase">数据矩阵</span>
+</button>
+<button class="group flex flex-col items-center gap-1 py-2 text-on-surface-variant/70 hover:bg-surface-variant/50 hover:text-tertiary transition-colors scale-100 hover:scale-105 duration-200">
+<span class="material-symbols-outlined">sync_alt</span>
+<span class="font-label-mono text-[10px] uppercase">同步状态</span>
+</button>
+<button class="group flex flex-col items-center gap-1 py-2 text-on-surface-variant/70 hover:bg-surface-variant/50 hover:text-tertiary transition-colors scale-100 hover:scale-105 duration-200">
+<span class="material-symbols-outlined">encrypted</span>
+<span class="font-label-mono text-[10px] uppercase">安全防御</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-24 mt-20 p-xl min-h-screen">
+<div class="max-w-[1600px] mx-auto space-y-lg">
+<!-- Header Section -->
+<div class="flex items-end justify-between">
+<div>
+<h1 class="font-display-lg text-display-lg text-on-surface uppercase tracking-tight">数据智能挖掘中心</h1>
+<p class="font-body-lg text-on-surface-variant max-w-2xl mt-2">由 Neural Core 算法驱动的实时自主网络爬虫与价格轨迹预测模型。</p>
+</div>
+<div class="flex gap-md mb-2">
+<div class="bg-surface-container-high px-4 py-2 border-l-2 border-primary-fixed">
+<p class="font-label-mono text-[10px] text-on-surface-variant uppercase">模型置信度</p>
+<p class="font-headline-md text-headline-md text-primary-fixed">98.42%</p>
+</div>
+<div class="bg-surface-container-high px-4 py-2 border-l-2 border-tertiary">
+<p class="font-label-mono text-[10px] text-on-surface-variant uppercase">数据吞吐量</p>
+<p class="font-headline-md text-headline-md text-tertiary">1.2 TB/s</p>
+</div>
+</div>
+</div>
+<!-- Dashboard Grid -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Main Chart Area: Predictive Analytics -->
+<section class="col-span-12 lg:col-span-8 glass-panel rounded-xl p-lg relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-md flex gap-sm">
+<span class="px-3 py-1 rounded bg-primary/10 border border-primary/20 font-label-mono text-[10px] text-primary">历史记录</span>
+<span class="px-3 py-1 rounded bg-secondary/10 border border-secondary/20 font-label-mono text-[10px] text-secondary">预测性</span>
+</div>
+<div class="mb-lg">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2"><span class="material-symbols-outlined text-primary-container">trending_up</span> 价格轨迹预测</h2>
+<p class="font-label-mono text-label-mono text-on-surface-variant uppercase">资产: QUANTUM-X 指数 | 24H 预测</p>
+</div>
+<!-- Placeholder for sophisticated SVG Chart -->
+<div class="h-[400px] w-full relative border-b border-l border-outline-variant/30 flex items-end">
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none">
+<!-- Background Grid -->
+<defs>
+<pattern height="40" id="grid" patternunits="userSpaceOnUse" width="40">
+<path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(186, 201, 204, 0.05)" stroke-width="1"></path>
+</pattern>
+</defs>
+<rect fill="url(#grid)" height="100%" width="100%"></rect>
+<!-- Confidence Interval Shaded Area -->
+<path d="M0 320 Q 200 280, 400 300 T 800 220 T 1200 250 L 1200 150 T 800 120 T 400 200 T 0 250 Z" fill="rgba(235, 178, 255, 0.05)"></path>
+<!-- Historical Line -->
+<path class="neon-line" d="M0 320 Q 100 280, 200 290 T 400 310 T 600 240" fill="none" stroke="#00e5ff" stroke-width="3"></path>
+<!-- Predicted Line -->
+<path class="neon-line" d="M600 240 Q 700 220, 800 180 T 1000 150 T 1200 120" fill="none" stroke="#ebb2ff" stroke-dasharray="8 4" stroke-width="3"></path>
+<!-- Current Price Indicator -->
+<circle class="animate-pulse shadow-lg" cx="600" cy="240" fill="#00e5ff" r="6"></circle>
+</svg>
+<!-- Axis Labels -->
+<div class="absolute bottom-[-24px] w-full flex justify-between font-label-mono text-[10px] text-on-surface-variant">
+<span>08:00</span><span>12:00</span><span>16:00</span><span>20:00</span><span>00:00</span><span>04:00</span>
+</div>
+</div>
+<div class="mt-12 grid grid-cols-3 gap-md">
+<div class="bg-surface-container-low p-md border-t border-primary/20">
+<p class="font-label-mono text-[10px] text-on-surface-variant uppercase">预估高点</p>
+<p class="font-headline-md text-headline-md text-primary">$1,242.09 <span class="text-label-mono text-tertiary text-sm">+4.2%</span></p>
+</div>
+<div class="bg-surface-container-low p-md border-t border-secondary/20">
+<p class="font-label-mono text-[10px] text-on-surface-variant uppercase">波动指数</p>
+<p class="font-headline-md text-headline-md text-secondary">低 (1.4)</p>
+</div>
+<div class="bg-surface-container-low p-md border-t border-tertiary/20">
+<p class="font-label-mono text-[10px] text-on-surface-variant uppercase">信号强度</p>
+<p class="font-headline-md text-headline-md text-tertiary">强力买入</p>
+</div>
+</div>
+</section>
+<!-- Crawler Status Column -->
+<section class="col-span-12 lg:col-span-4 space-y-gutter">
+<div class="glass-panel rounded-xl p-lg relative overflow-hidden h-full">
+<div class="scanline absolute inset-0 pointer-events-none opacity-20"></div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-md">爬虫状态</h2>
+<div class="space-y-4">
+<!-- Crawler Item -->
+<div class="bg-surface-container-high/40 p-md border border-outline-variant/30 flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="w-2 h-10 bg-primary/20 flex flex-col justify-end">
+<div class="w-full bg-primary h-3/4 animate-pulse"></div>
+</div>
+<div>
+<p class="font-label-mono text-label-mono text-on-surface">NODE_OMEGA_01</p>
+<p class="font-label-mono text-[10px] text-on-surface-variant">正在扫描全球交易所</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-label-mono text-primary text-sm">活跃</p>
+<p class="font-label-mono text-[10px] text-on-surface-variant">正在扫描全球交易所</p>
+</div>
+</div>
+<!-- Crawler Item -->
+<div class="bg-surface-container-high/40 p-md border border-outline-variant/30 flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="w-2 h-10 bg-tertiary/20 flex flex-col justify-end">
+<div class="w-full bg-tertiary h-1/2 animate-pulse"></div>
+</div>
+<div>
+<p class="font-label-mono text-label-mono text-on-surface">SENTIMENT_BOT_A</p>
+<p class="font-label-mono text-[10px] text-on-surface-variant">社交媒体数据摄取</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-label-mono text-tertiary text-sm">同步中</p>
+<p class="font-label-mono text-[10px] text-on-surface-variant">社交媒体数据摄取</p>
+</div>
+</div>
+<!-- Crawler Item -->
+<div class="bg-surface-container-high/40 p-md border border-outline-variant/30 flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="w-2 h-10 bg-secondary/20 flex flex-col justify-end">
+<div class="w-full bg-secondary h-full animate-pulse"></div>
+</div>
+<div>
+<p class="font-label-mono text-label-mono text-on-surface">WHALE_TRACKER</p>
+<p class="font-label-mono text-[10px] text-on-surface-variant">链上交易追踪</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-label-mono text-secondary text-sm">峰值</p>
+<p class="font-label-mono text-[10px] text-on-surface-variant">链上交易追踪</p>
+</div>
+</div>
+</div>
+<!-- Data Flow Visualization Simulation -->
+<div class="mt-8 pt-8 border-t border-outline-variant/20">
+<div class="flex justify-between items-center mb-4">
+<p class="font-label-mono text-[10px] text-on-surface-variant uppercase">网络活动</p>
+<span class="material-symbols-outlined text-sm text-primary animate-spin">sync</span>
+</div>
+<div class="grid grid-cols-8 gap-1 h-12">
+<div class="bg-primary/40 h-1/2 self-end"></div>
+<div class="bg-primary/60 h-3/4 self-end"></div>
+<div class="bg-primary/20 h-1/4 self-end"></div>
+<div class="bg-primary/90 h-full self-end"></div>
+<div class="bg-primary/30 h-1/3 self-end"></div>
+<div class="bg-primary/50 h-2/3 self-end"></div>
+<div class="bg-primary/70 h-4/5 self-end"></div>
+<div class="bg-primary/10 h-1/5 self-end"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Algorithm Core & Insight Cards -->
+<section class="col-span-12 grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Insight Card 1 -->
+<div class="glass-panel p-lg rounded-xl flex flex-col justify-between border-t-2 border-t-primary transition-all hover:translate-y-[-4px]">
+<div>
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<h3 class="font-headline-md text-[20px] text-on-surface uppercase">最佳切入时间</h3>
+</div>
+<p class="text-on-surface-variant leading-relaxed">神经分析显示，大约 4 小时后会出现流动性浪涌。建议在 $1,180 阈值进入市场，以获得最大上涨空间。</p>
+</div>
+<div class="mt-lg">
+<button class="w-full bg-primary-container/20 text-on-primary-container font-label-mono text-xs py-2 px-4 rounded border border-primary/30 hover:bg-primary-container/40 transition-all uppercase">执行策略</button>
+</div>
+</div>
+<!-- Algorithm Core Details -->
+<div class="glass-panel p-lg rounded-xl border-t-2 border-t-tertiary bg-tertiary-container/5">
+<h3 class="font-headline-md text-[20px] text-on-surface mb-md flex items-center gap-2"><span class="material-symbols-outlined text-tertiary">memory</span> 算法核心: v4.2</h3>
+<div class="space-y-3 font-label-mono text-xs">
+<div class="flex justify-between border-b border-outline-variant/20 pb-1">
+<span class="text-on-surface-variant uppercase">逻辑模块</span>
+<span class="text-tertiary">循环神经网络</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/20 pb-1">
+<span class="text-on-surface-variant uppercase">损失函数</span>
+<span class="text-tertiary">平均绝对比例误差</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/20 pb-1">
+<span class="text-on-surface-variant uppercase">回溯周期</span>
+<span class="text-tertiary">1,440 数据点</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant uppercase">学习率</span>
+<span class="text-tertiary">0.00012 自适应</span>
+</div>
+</div>
+<div class="mt-6 flex gap-2">
+<span class="w-full h-1 bg-tertiary/20 rounded-full overflow-hidden">
+<span class="block h-full bg-tertiary w-3/4"></span>
+</span>
+</div>
+<p class="mt-2 font-label-mono text-[10px] text-on-surface-variant text-center">核心处理负载: 74%</p>
+</div>
+<!-- Insight Card 2 -->
+<div class="glass-panel p-lg rounded-xl flex flex-col justify-between border-t-2 border-t-error transition-all hover:translate-y-[-4px]">
+<div>
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">warning</span>
+<h3 class="font-headline-md text-[20px] text-on-surface uppercase">波动预警</h3>
+</div>
+<p class="text-on-surface-variant leading-relaxed">亚太节点检测到异常交易量。短期方差预计将增加 24.5%。建议将风险止损调整至 1.5%。</p>
+</div>
+<div class="mt-lg">
+<button class="w-full bg-error-container/20 text-on-error-container font-label-mono text-xs py-2 px-4 rounded border border-error/30 hover:bg-error-container/40 transition-all uppercase">审查风险配置</button>
+</div>
+</div>
+</section>
+<!-- Asymmetric Bottom Section: Geo-Mining Status -->
+<section class="col-span-12 lg:col-span-7 glass-panel rounded-xl overflow-hidden h-64 relative">
+<img alt="Cyber Map" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-screen" data-alt="A futuristic digital world map visualization with glowing data nodes and interconnected neural pathways. The aesthetic is dark blue and cyan, with thin light-refracting lines connecting global cities. The image has a cinematic shallow depth of field with floating binary particles and a high-tech UI overlay." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlEru5ydzjVE7EVaaTrMAoHRARcOoDb4G_mOaW3bHnZsoUU37wlkCZe392AgIdcN0Xt6LCq0pJZMrRY5ajNrlMW2yOqIclibt_p6lByNt-5Bw4Fznx-LEA7z-j-Vj5YU8jJko3TTc87OrCk6U8Sc6au1GEFJIq8BvZ7GchfnPJaqVb5I-koYDI-6kS9Oh1CeYT9K9SJR69Hihh1B0hTyxVHTxuBI7rE61vq6TeyQnkq2PN0joaJr5zrQuxr2nrIT6oUy6U5vG-PVo"/>
+<div class="absolute inset-0 bg-gradient-to-r from-surface-dim via-transparent to-transparent"></div>
+<div class="relative p-lg h-full flex flex-col justify-between">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary">全球挖掘节点</h2>
+<p class="font-label-mono text-label-mono text-on-surface-variant">活跃摄取点: 14,209</p>
+</div>
+<div class="flex gap-xl">
+<div class="text-center">
+<p class="text-primary-fixed-dim font-headline-md">LON</p>
+<p class="text-[10px] font-label-mono text-on-surface-variant">在线</p>
+</div>
+<div class="text-center">
+<p class="text-primary-fixed-dim font-headline-md">NYC</p>
+<p class="text-[10px] font-label-mono text-on-surface-variant">峰值</p>
+</div>
+<div class="text-center">
+<p class="text-primary-fixed-dim font-headline-md">SNG</p>
+<p class="text-[10px] font-label-mono text-on-surface-variant">在线</p>
+</div>
+<div class="text-center">
+<p class="text-error font-headline-md">TOK</p>
+<p class="text-[10px] font-label-mono text-on-surface-variant">离线</p>
+</div>
+</div>
+</div>
+</section>
+<section class="col-span-12 lg:col-span-5 glass-panel rounded-xl p-lg flex flex-col justify-center items-center text-center space-y-md bg-primary-container/5 border border-primary/20">
+<div class="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center border border-primary/40">
+<span class="material-symbols-outlined text-primary text-3xl animate-pulse">model_training</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface uppercase">模型重新校准</h3>
+<p class="font-body-md text-on-surface-variant">下一次自动轮次优化预计在 12分 43秒后进行。通过新的社交情绪权重提高预测准确性。</p>
+<button class="bg-primary text-on-primary font-headline-md px-8 py-2 hover:brightness-110 active:scale-95 transition-all rounded shadow-[0_0_20px_rgba(0,229,255,0.3)]">强制校准</button>
+</section>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation (Mobile/Tablet Pivot) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-md bg-surface-container-high/60 backdrop-blur-lg border-t border-primary/20 shadow-[0_-4px_20px_rgba(0,229,255,0.1)]">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary-fixed transition-all active:scale-90">
+<span class="material-symbols-outlined">sensors</span>
+<span class="font-label-mono text-[10px]">实时直播</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary-container/20 text-on-primary-container rounded-lg px-4 py-1 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">trending_up</span>
+<span class="font-label-mono text-[10px]">趋势</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary-fixed transition-all active:scale-90">
+<span class="material-symbols-outlined">account_tree</span>
+<span class="font-label-mono text-[10px]">节点地图</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary-fixed transition-all active:scale-90">
+<span class="material-symbols-outlined">code</span>
+<span class="font-label-mono text-[10px]">终端</span>
+</button>
+</nav>
+</body></html>

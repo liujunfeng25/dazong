@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "io.dazong.serialscale.serialplugin-merged_res-4:/layout-v21/notification_template_icon_group.xml",
+        "source": "io.dazong.serialscale.serialplugin-core-1.13.1-20:/layout-v21/notification_template_icon_group.xml"
+    },
+    {
+        "merged": "io.dazong.serialscale.serialplugin-merged_res-4:/layout-v21/notification_action.xml",
+        "source": "io.dazong.serialscale.serialplugin-core-1.13.1-20:/layout-v21/notification_action.xml"
+    },
+    {
+        "merged": "io.dazong.serialscale.serialplugin-merged_res-4:/layout-v21/notification_template_custom_big.xml",
+        "source": "io.dazong.serialscale.serialplugin-core-1.13.1-20:/layout-v21/notification_template_custom_big.xml"
+    },
+    {
+        "merged": "io.dazong.serialscale.serialplugin-merged_res-4:/layout-v21/notification_action_tombstone.xml",
+        "source": "io.dazong.serialscale.serialplugin-core-1.13.1-20:/layout-v21/notification_action_tombstone.xml"
+    }
+]

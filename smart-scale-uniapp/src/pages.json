@@ -1,0 +1,60 @@
+{
+	"pages": [
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/dashboard/dashboard",
+			"style": {
+				"navigationBarTitleText": "待收货订单"
+			}
+		},
+		{
+			"path": "pages/history/history",
+			"style": {
+				"navigationBarTitleText": "历史订单"
+			}
+		},
+		{
+			"path": "pages/terminal/terminal",
+			"style": {
+				"navigationBarTitleText": "称重作业台"
+			}
+		},
+		{
+			"path": "pages/success/success",
+			"style": {
+				"navigationBarTitleText": "完成"
+			}
+		},
+		{
+			"path": "pages/devices/devices",
+			"style": {
+				"navigationBarTitleText": "蓝牙设备"
+			}
+		},
+		{
+			"path": "pages/serial-debug/serial-debug",
+			"style": {
+				"navigationBarTitleText": "串口调试"
+			}
+		},
+		{
+			"path": "pages/uvc-debug/uvc-debug",
+			"style": {
+				"navigationBarTitleText": "UVC 拍照调试"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "大综智能收货",
+		"navigationBarBackgroundColor": "#f4f7f5",
+		"backgroundColor": "#f4f7f5",
+		"pageOrientation": "landscape"
+	}
+}

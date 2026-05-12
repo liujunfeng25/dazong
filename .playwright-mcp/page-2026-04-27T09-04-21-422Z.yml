@@ -1,0 +1,15 @@
+- generic [ref=e45]:
+  - generic [ref=e46]: 选择食堂
+  - generic [ref=e47]:
+    - generic [ref=e48]: 教师食堂
+    - radiogroup "radio-group" [ref=e50]:
+      - generic [ref=e52] [cursor=pointer]:
+        - radio "北京市顺义区赵全营中心小学校教师食堂" [ref=e54]
+        - generic [ref=e56]: 北京市顺义区赵全营中心小学校教师食堂
+  - generic [ref=e57]:
+    - generic [ref=e58]: 学生食堂
+    - radiogroup "radio-group" [ref=e60]:
+      - generic [ref=e62] [cursor=pointer]:
+        - radio "北京市顺义区赵全营中心小学校学生食堂" [ref=e64]
+        - generic [ref=e66]: 北京市顺义区赵全营中心小学校学生食堂
+  - button "登录食堂" [ref=e68] [cursor=pointer]

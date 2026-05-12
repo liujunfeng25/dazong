@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>神经核心 - AI 状态仪表盘</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#51e7cb",
+                        "surface-dim": "#0f131f",
+                        "surface-container-low": "#171b28",
+                        "tertiary-fixed": "#68fadd",
+                        "on-secondary-container": "#e299ff",
+                        "outline": "#849396",
+                        "on-surface-variant": "#bac9cc",
+                        "primary-container": "#00e5ff",
+                        "tertiary-fixed-dim": "#44ddc1",
+                        "background": "#0f131f",
+                        "surface-bright": "#353946",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#005145",
+                        "surface-container-high": "#262a37",
+                        "surface-variant": "#313442",
+                        "on-primary-fixed": "#001f24",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed": "#00201a",
+                        "on-surface": "#dfe2f3",
+                        "surface-container-lowest": "#0a0e1a",
+                        "inverse-primary": "#006875",
+                        "on-tertiary": "#00382f",
+                        "on-primary-fixed-variant": "#004f58",
+                        "on-secondary": "#520071",
+                        "inverse-on-surface": "#2c303d",
+                        "surface": "#0f131f",
+                        "on-secondary-fixed": "#320047",
+                        "on-primary-container": "#00626e",
+                        "surface-container-highest": "#313442",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#721199",
+                        "surface-tint": "#00daf3",
+                        "on-error": "#690005",
+                        "on-background": "#dfe2f3",
+                        "outline-variant": "#3b494c",
+                        "primary": "#c3f5ff",
+                        "inverse-surface": "#dfe2f3",
+                        "secondary-fixed": "#f8d8ff",
+                        "primary-fixed": "#9cf0ff",
+                        "on-primary": "#00363d",
+                        "secondary": "#ebb2ff",
+                        "primary-fixed-dim": "#00daf3",
+                        "tertiary": "#9affe8",
+                        "surface-container": "#1b1f2c",
+                        "on-tertiary-container": "#006556",
+                        "secondary-fixed-dim": "#ebb2ff",
+                        "secondary-container": "#721199"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "lg": "24px",
+                        "margin-desktop": "40px",
+                        "gutter": "20px",
+                        "xl": "32px",
+                        "unit": "4px",
+                        "sm": "8px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Space Grotesk"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Space Grotesk"],
+                        "label-mono": ["JetBrains Mono"],
+                        "headline-lg": ["Space Grotesk"],
+                        "headline-md": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-mono": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(22, 27, 34, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 218, 243, 0.15);
+        }
+        .glow-sm { text-shadow: 0 0 15px rgba(0, 218, 243, 0.4); }
+        .neon-border {
+            border: 1px solid transparent;
+            background-image: linear-gradient(rgba(15, 19, 31, 1), rgba(15, 19, 31, 1)), radial-gradient(circle at top left, #00daf3, transparent 50%);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+        }
+        .nebula-bg {
+            background: radial-gradient(circle at 20% 30%, rgba(114, 17, 153, 0.08) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 70%, rgba(0, 218, 243, 0.05) 0%, transparent 40%);
+        }
+        .grid-lines {
+            background-image: linear-gradient(rgba(59, 73, 76, 0.05) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(59, 73, 76, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+    </style>
+</head>
+<body class="bg-surface-dim text-on-surface font-body-md overflow-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="bg-surface-dim/60 backdrop-blur-md text-primary-fixed-dim font-headline-md text-headline-md docked full-width top-0 border-b border-outline-variant/30 shadow-[0_4px_30px_rgba(0,0,0,0.1)] flex items-center justify-between px-margin-desktop h-20 w-full z-50 fixed">
+<div class="flex items-center gap-xl">
+<span class="font-display-lg text-display-lg text-primary tracking-tighter glow-sm uppercase">神经核心</span>
+<nav class="hidden md:flex space-x-xl ml-xl">
+<a class="text-primary-fixed border-b-2 border-primary-fixed pb-1 font-label-mono text-label-mono hover:bg-primary-container/10 hover:text-primary transition-all duration-300 active:scale-95 cursor-pointer" href="#">概览</a>
+<a class="text-on-surface-variant hover:text-primary font-label-mono text-label-mono hover:bg-primary-container/10 transition-all duration-300 active:scale-95 cursor-pointer" href="#">神经路径</a>
+<a class="text-on-surface-variant hover:text-primary font-label-mono text-label-mono hover:bg-primary-container/10 transition-all duration-300 active:scale-95 cursor-pointer" href="#">异常检测</a>
+<a class="text-on-surface-variant hover:text-primary font-label-mono text-label-mono hover:bg-primary-container/10 transition-all duration-300 active:scale-95 cursor-pointer" href="#">历史记录</a>
+</nav>
+</div>
+<div class="flex items-center space-x-lg">
+<span class="material-symbols-outlined text-primary-fixed-dim cursor-pointer hover:bg-primary-container/10 p-sm rounded-full transition-all">notifications_active</span>
+<span class="material-symbols-outlined text-primary-fixed-dim cursor-pointer hover:bg-primary-container/10 p-sm rounded-full transition-all">settings</span>
+<span class="material-symbols-outlined text-primary-fixed-dim cursor-pointer hover:bg-primary-container/10 p-sm rounded-full transition-all">account_circle</span>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-20 h-[calc(100vh-80px)] flex flex-col items-center py-lg space-y-md z-40 bg-surface-container-lowest/40 backdrop-blur-xl text-tertiary-fixed-dim font-label-mono text-label-mono docked left-0 w-24 border-r border-outline-variant/20 shadow-xl">
+<div class="mb-xl text-center">
+<div class="font-headline-lg text-headline-lg text-tertiary-fixed glow-sm">AI</div>
+<div class="text-[8px] opacity-50 tracking-[0.2em]">AI 状态</div>
+</div>
+<div class="flex flex-col space-y-lg flex-1">
+<div class="bg-tertiary-container/20 text-tertiary-fixed rounded-xl ring-1 ring-tertiary/50 p-md flex flex-col items-center group cursor-pointer transition-all duration-200">
+<span class="material-symbols-outlined mb-xs">terminal</span>
+<span class="text-[10px] scale-90">指挥</span>
+</div>
+<div class="text-on-surface-variant/70 p-md flex flex-col items-center hover:bg-surface-variant/50 hover:text-tertiary transition-colors scale-100 hover:scale-105 duration-200 cursor-pointer">
+<span class="material-symbols-outlined mb-xs">insights</span>
+<span class="text-[10px] scale-90">分析</span>
+</div>
+<div class="text-on-surface-variant/70 p-md flex flex-col items-center hover:bg-surface-variant/50 hover:text-tertiary transition-colors scale-100 hover:scale-105 duration-200 cursor-pointer">
+<span class="material-symbols-outlined mb-xs">hub</span>
+<span class="text-[10px] scale-90">链路</span>
+</div>
+<div class="text-on-surface-variant/70 p-md flex flex-col items-center hover:bg-surface-variant/50 hover:text-tertiary transition-colors scale-100 hover:scale-105 duration-200 cursor-pointer">
+<span class="material-symbols-outlined mb-xs">grid_view</span>
+<span class="text-[10px] scale-90">数据网格</span>
+</div>
+<div class="text-on-surface-variant/70 p-md flex flex-col items-center hover:bg-surface-variant/50 hover:text-tertiary transition-colors scale-100 hover:scale-105 duration-200 cursor-pointer">
+<span class="material-symbols-outlined mb-xs">sync_alt</span>
+<span class="text-[10px] scale-90">同步</span>
+</div>
+<div class="text-on-surface-variant/70 p-md flex flex-col items-center hover:bg-surface-variant/50 hover:text-tertiary transition-colors scale-100 hover:scale-105 duration-200 cursor-pointer">
+<span class="material-symbols-outlined mb-xs">encrypted</span>
+<span class="text-[10px] scale-90">安全</span>
+</div>
+</div>
+<div class="pb-lg">
+<div class="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[16px] text-surface-dim font-bold">bolt</span>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-24 mt-20 h-[calc(100vh-80px)] relative overflow-y-auto nebula-bg grid-lines">
+<div class="p-margin-desktop space-y-xl">
+<!-- Central Neural Visualization Cluster -->
+<div class="relative flex items-center justify-center min-h-[500px]">
+<!-- Background Glow -->
+<div class="absolute w-[600px] h-[600px] bg-primary/5 rounded-full blur-[100px] animate-pulse"></div>
+<!-- Symmetric Left Panels -->
+<div class="absolute left-0 flex flex-col space-y-xl w-72">
+<div class="glass-panel p-lg rounded-xl neon-border">
+<div class="flex items-center gap-sm mb-xs">
+<span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+<span class="font-label-mono text-label-mono text-primary uppercase">神经连接率</span>
+</div>
+<div class="font-headline-lg text-headline-lg text-on-surface">98.4<span class="text-primary-fixed-dim text-lg ml-xs">%</span></div>
+<div class="w-full bg-surface-variant h-1 mt-md rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[98.4%] shadow-[0_0_10px_#00daf3]"></div>
+</div>
+</div>
+<div class="glass-panel p-lg rounded-xl neon-border">
+<div class="font-label-mono text-label-mono text-tertiary uppercase mb-xs">活跃突触</div>
+<div class="font-headline-lg text-headline-lg text-on-surface">1.2M+</div>
+<div class="text-on-surface-variant text-xs mt-xs">通信阈值稳定</div>
+</div>
+</div>
+<!-- Central Core Visualization -->
+<div class="relative z-10 w-[450px] h-[450px] flex items-center justify-center">
+<img alt="Neural Core Visual" class="w-full h-full object-contain rounded-full shadow-[0_0_100px_rgba(0,218,243,0.2)]" data-alt="A highly detailed 3D rendering of a futuristic AI robotic head centerpiece floating in a void. The robotic skull is made of semi-transparent crystalline materials and matte black metal, revealing glowing cyan fiber-optic neural pathways inside. The core glows with intense electric blue and violet light, casting a soft refraction on the surrounding air. The lighting is dramatic and high-contrast, emphasizing the sophisticated computational intelligence of the machine in a dark, high-end command center aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDs8ox9_Pp9ZjG3pC5fTxH878XBbxRYMfoxtgK6Ev0wFY-h7tkPdR_6EptpEGO2wJLUh5UoAQTMDLwybOmFxf3_MIsT5Os7i0hEqN-VdPFCgcudvWJ5kfTbS7Flfs5cQv_tDpYP7jBm7R70MYdfkxb3pscecYd2g77z6nz5QotlL6aIi7GWC2cR3KlAMyre47AGBru_v9URgP7xrG2tCCS0Kn6dKfRCqcTaf96Xtsd_UlmqFnEO8f-ipSrsogik0ke9eiSJaX-D3dA"/>
+<!-- Rotating Ring -->
+<div class="absolute inset-0 border-2 border-primary/20 rounded-full animate-[spin_10s_linear_infinite]"></div>
+<div class="absolute inset-4 border border-tertiary/10 rounded-full animate-[spin_15s_linear_infinite_reverse]"></div>
+</div>
+<!-- Symmetric Right Panels -->
+<div class="absolute right-0 flex flex-col space-y-xl w-72">
+<div class="glass-panel p-lg rounded-xl neon-border">
+<div class="font-label-mono text-label-mono text-secondary uppercase mb-xs">量子负载</div>
+<div class="font-headline-lg text-headline-lg text-on-surface">42.8<span class="text-secondary text-lg ml-xs">THz</span></div>
+<div class="flex gap-1 mt-md">
+<div class="h-4 w-2 bg-secondary rounded-sm"></div>
+<div class="h-4 w-2 bg-secondary rounded-sm"></div>
+<div class="h-4 w-2 bg-secondary/40 rounded-sm"></div>
+<div class="h-4 w-2 bg-secondary/20 rounded-sm"></div>
+</div>
+</div>
+<div class="glass-panel p-lg rounded-xl neon-border">
+<div class="font-label-mono text-label-mono text-primary uppercase mb-xs">自主决策数</div>
+<div class="font-headline-lg text-headline-lg text-on-surface">14,209</div>
+<div class="text-on-surface-variant text-xs mt-xs">实时优化已激活</div>
+</div>
+</div>
+</div>
+<!-- Bento Bottom Section (Tables) -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-lg pb-xl">
+<!-- Resource Allocation -->
+<div class="glass-panel rounded-xl overflow-hidden border border-outline-variant/30 flex flex-col">
+<div class="px-lg py-md border-b border-outline-variant/30 flex justify-between items-center bg-surface-container-high/40">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-sm">memory</span>
+<h3 class="font-headline-md text-headline-md text-on-surface uppercase tracking-wider">资源分配</h3>
+</div>
+<span class="font-label-mono text-label-mono text-on-surface-variant">实时追踪</span>
+</div>
+<div class="p-lg overflow-x-auto">
+<table class="w-full text-left font-label-mono text-label-mono">
+<thead>
+<tr class="text-on-surface-variant border-b border-outline-variant/20">
+<th class="pb-sm px-xs">节点 ID</th>
+<th class="pb-sm px-xs">内核占用</th>
+<th class="pb-sm px-xs">内存</th>
+<th class="pb-sm px-xs">状态</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="hover:bg-surface-variant/30 transition-colors">
+<td class="py-md px-xs text-primary">#ALPHA-01</td>
+<td class="py-md px-xs">
+<div class="flex items-center gap-md">
+<span>76%</span>
+<div class="w-24 bg-surface-variant h-1 rounded-full"><div class="bg-primary h-full w-[76%]"></div></div>
+</div>
+</td>
+<td class="py-md px-xs">12.4 GB</td>
+<td class="py-md px-xs"><span class="px-2 py-0.5 rounded-full bg-tertiary-container/10 text-tertiary-fixed text-[10px] border border-tertiary-fixed/20">活跃</span></td>
+</tr>
+<tr class="hover:bg-surface-variant/30 transition-colors">
+<td class="py-md px-xs text-primary">#BETA-04</td>
+<td class="py-md px-xs">
+<div class="flex items-center gap-md">
+<span>42%</span>
+<div class="w-24 bg-surface-variant h-1 rounded-full"><div class="bg-primary h-full w-[42%]"></div></div>
+</div>
+</td>
+<td class="py-md px-xs">32.1 GB</td>
+<td class="py-md px-xs"><span class="px-2 py-0.5 rounded-full bg-tertiary-container/10 text-tertiary-fixed text-[10px] border border-tertiary-fixed/20">活跃</span></td>
+</tr>
+<tr class="hover:bg-surface-variant/30 transition-colors">
+<td class="py-md px-xs text-primary">#GAMMA-09</td>
+<td class="py-md px-xs">
+<div class="flex items-center gap-md">
+<span>18%</span>
+<div class="w-24 bg-surface-variant h-1 rounded-full"><div class="bg-primary h-full w-[18%]"></div></div>
+</div>
+</td>
+<td class="py-md px-xs">8.9 GB</td>
+<td class="py-md px-xs"><span class="px-2 py-0.5 rounded-full bg-surface-variant text-on-surface-variant text-[10px]">就绪</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Process Logs -->
+<div class="glass-panel rounded-xl overflow-hidden border border-outline-variant/30 flex flex-col">
+<div class="px-lg py-md border-b border-outline-variant/30 flex justify-between items-center bg-surface-container-high/40">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary text-sm">terminal</span>
+<h3 class="font-headline-md text-headline-md text-on-surface uppercase tracking-wider">进程日志</h3>
+</div>
+<button class="text-secondary font-label-mono text-label-mono hover:underline">下载报告</button>
+</div>
+<div class="p-lg space-y-md font-label-mono text-[11px] leading-relaxed">
+<div class="flex gap-md border-l-2 border-primary pl-md">
+<span class="text-on-surface-variant whitespace-nowrap">14:22:01.04</span>
+<span class="text-primary">[INFO]</span>
+<span class="text-on-surface">与 Sector 7 建立神经桥接。优化完成。</span>
+</div>
+<div class="flex gap-md border-l-2 border-secondary pl-md">
+<span class="text-on-surface-variant whitespace-nowrap">14:21:45.12</span>
+<span class="text-secondary">[EXEC]</span>
+<span class="text-on-surface">正在将量子工作负载重新分配给节点 #BETA-04。</span>
+</div>
+<div class="flex gap-md border-l-2 border-error pl-md">
+<span class="text-on-surface-variant whitespace-nowrap">14:20:12.88</span>
+<span class="text-error">[WARN]</span>
+<span class="text-on-surface">检测到节点 #DELTA-01 延迟激增。正在启动清除。</span>
+</div>
+<div class="flex gap-md border-l-2 border-primary pl-md">
+<span class="text-on-surface-variant whitespace-nowrap">14:19:30.22</span>
+<span class="text-primary">[INFO]</span>
+<span class="text-on-surface">全局突触完整性验证，稳定性为 99.98%。</span>
+</div>
+<div class="flex gap-md border-l-2 border-primary pl-md opacity-50">
+<span class="text-on-surface-variant whitespace-nowrap">14:18:55.01</span>
+<span class="text-primary">[INFO]</span>
+<span class="text-on-surface">自主决策周期 8812 成功完成。</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<footer class="md:hidden bg-surface-container-high/60 backdrop-blur-lg text-primary-container font-label-mono text-label-mono docked bottom-0 full-width rounded-t-xl border-t border-primary/20 shadow-[0_-4px_20px_rgba(0,229,255,0.1)] fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-md">
+<div class="flex flex-col items-center justify-center bg-primary-container/20 text-on-primary-container rounded-lg px-4 py-1 active:scale-90 transition-transform cursor-pointer">
+<span class="material-symbols-outlined">sensors</span>
+<span class="text-[10px]">实时追踪</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary-fixed transition-all active:scale-90 transition-transform cursor-pointer">
+<span class="material-symbols-outlined">trending_up</span>
+<span class="text-[10px]">趋势</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary-fixed transition-all active:scale-90 transition-transform cursor-pointer">
+<span class="material-symbols-outlined">account_tree</span>
+<span class="text-[10px]">节点地图</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary-fixed transition-all active:scale-90 transition-transform cursor-pointer">
+<span class="material-symbols-outlined">code</span>
+<span class="text-[10px]">终端</span>
+</div>
+</footer>
+</body></html>

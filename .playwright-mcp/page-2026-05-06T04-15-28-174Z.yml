@@ -1,0 +1,54 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: DAZONG PLATFORM
+      - generic [ref=e7]: 配送商端
+    - menubar [ref=e8]:
+      - menuitem "待投标" [ref=e9] [cursor=pointer]
+      - menuitem "我的合约" [ref=e10] [cursor=pointer]
+      - menuitem "供货方管理" [ref=e11] [cursor=pointer]
+      - menuitem "配送订单" [ref=e12] [cursor=pointer]
+      - menuitem "车辆管理" [ref=e13] [cursor=pointer]
+      - menuitem "设备管理" [ref=e14] [cursor=pointer]
+      - menuitem "智能分单" [ref=e15] [cursor=pointer]
+      - menuitem "路线规划" [ref=e16] [cursor=pointer]
+      - menuitem "应收账单" [ref=e17] [cursor=pointer]
+      - menuitem "消息中心" [ref=e18] [cursor=pointer]
+  - generic [ref=e19]:
+    - generic [ref=e21]:
+      - generic [ref=e22]:
+        - generic [ref=e23]: 大宗物资供应链管理系统
+        - generic [ref=e24]: 2026/5/6 12:15:27
+      - generic [ref=e26]: 🌤️ 天气未接入
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - button "通知" [ref=e29] [cursor=pointer]:
+            - generic [ref=e30]: 通知
+          - superscript [ref=e31]: "54"
+        - generic [ref=e32]: 配送商端
+        - button "D" [ref=e34] [cursor=pointer]:
+          - generic [ref=e35]: D
+    - generic [ref=e38]:
+      - table [ref=e40]:
+        - rowgroup [ref=e50]:
+          - row "招标编号 客户名称 一级分类 已报上浮率 状态 开始 结束 操作" [ref=e51]:
+            - columnheader "招标编号" [ref=e52]:
+              - generic [ref=e53]: 招标编号
+            - columnheader "客户名称" [ref=e54]:
+              - generic [ref=e55]: 客户名称
+            - columnheader "一级分类" [ref=e56]:
+              - generic [ref=e57]: 一级分类
+            - columnheader "已报上浮率" [ref=e58]:
+              - generic [ref=e59]: 已报上浮率
+            - columnheader "状态" [ref=e60]:
+              - generic [ref=e61]: 状态
+            - columnheader "开始" [ref=e62]:
+              - generic [ref=e63]: 开始
+            - columnheader "结束" [ref=e64]:
+              - generic [ref=e65]: 结束
+            - columnheader "操作" [ref=e66]:
+              - generic [ref=e67]: 操作
+      - generic [ref=e71]:
+        - table:
+          - rowgroup
+        - generic [ref=e73]: 暂无数据

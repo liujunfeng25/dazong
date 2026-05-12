@@ -1,0 +1,213 @@
+- generic [ref=e58]:
+  - complementary [ref=e59]:
+    - generic [ref=e60]:
+      - generic [ref=e61]: DAZONG PLATFORM
+      - generic [ref=e62]: 运营端
+    - menubar [ref=e63]:
+      - menuitem "运营看板" [ref=e64] [cursor=pointer]
+      - menuitem "分类管理" [ref=e65] [cursor=pointer]
+      - menuitem "商品管理" [ref=e66] [cursor=pointer]
+      - menuitem "合约查看" [ref=e67] [cursor=pointer]
+      - menuitem "账号管理" [ref=e68] [cursor=pointer]
+      - menuitem "客户食堂" [ref=e69] [cursor=pointer]
+      - menuitem "订单监控" [ref=e70] [cursor=pointer]
+      - menuitem "账期配置" [ref=e71] [cursor=pointer]
+      - menuitem "工单处理" [ref=e72] [cursor=pointer]
+      - menuitem "消息中心" [ref=e73] [cursor=pointer]
+  - generic [ref=e74]:
+    - generic [ref=e76]:
+      - generic [ref=e77]:
+        - generic [ref=e78]: 大宗物资供应链管理系统
+        - generic [ref=e79]: 2026/5/11 15:11:14
+      - generic [ref=e80]:
+        - button "通知" [ref=e82] [cursor=pointer]:
+          - generic [ref=e83]: 通知
+        - generic [ref=e84]: 运营端
+        - button "O" [ref=e86] [cursor=pointer]:
+          - generic [ref=e87]: O
+    - generic [ref=e89]:
+      - generic [ref=e92]:
+        - generic [ref=e93]:
+          - generic [ref=e94]: 运营智能驾驶舱
+          - generic [ref=e95]: 当前时间：2026/5/11 15:11:14
+        - generic [ref=e96]: 决策模式
+      - generic [ref=e97]:
+        - generic [ref=e100]:
+          - generic [ref=e101]: 今日订单
+          - generic [ref=e102]: "0"
+        - generic [ref=e105]:
+          - generic [ref=e106]: 今日 GMV
+          - generic [ref=e107]: ¥0
+        - generic [ref=e110]:
+          - generic [ref=e111]: 异常订单
+          - generic [ref=e112]: "0"
+        - generic [ref=e115]:
+          - generic [ref=e116]: 待处理工单
+          - generic [ref=e117]: "0"
+      - generic [ref=e118]:
+        - generic [ref=e119]:
+          - generic [ref=e120]:
+            - generic [ref=e123]: 近7日订单趋势
+            - generic [ref=e130]: 订单状态分布
+          - generic [ref=e135]:
+            - generic [ref=e136]: 实时订单追踪
+            - generic [ref=e139]:
+              - table [ref=e141]:
+                - rowgroup [ref=e147]:
+                  - row "订单号 状态 金额 更新时间" [ref=e148]:
+                    - columnheader "订单号" [ref=e149]:
+                      - generic [ref=e150]: 订单号
+                    - columnheader "状态" [ref=e151]:
+                      - generic [ref=e152]: 状态
+                    - columnheader "金额" [ref=e153]:
+                      - generic [ref=e154]: 金额
+                    - columnheader "更新时间" [ref=e155]:
+                      - generic [ref=e156]: 更新时间
+              - generic [ref=e160]:
+                - table:
+                  - rowgroup
+                - generic [ref=e162]: 暂无数据
+          - generic [ref=e164]:
+            - generic [ref=e165]: 异常工单闭环
+            - generic [ref=e168]:
+              - table [ref=e170]:
+                - rowgroup [ref=e176]:
+                  - row "工单ID 类别 状态 描述" [ref=e177]:
+                    - columnheader "工单ID" [ref=e178]:
+                      - generic [ref=e179]: 工单ID
+                    - columnheader "类别" [ref=e180]:
+                      - generic [ref=e181]: 类别
+                    - columnheader "状态" [ref=e182]:
+                      - generic [ref=e183]: 状态
+                    - columnheader "描述" [ref=e184]:
+                      - generic [ref=e185]: 描述
+              - generic [ref=e189]:
+                - table:
+                  - rowgroup
+                - generic [ref=e191]: 暂无数据
+        - generic [ref=e193]:
+          - generic [ref=e194]:
+            - generic [ref=e195]: AI 洞察建议
+            - generic [ref=e197]:
+              - generic [ref=e198]:
+                - generic [ref=e199]: 经营趋势洞察
+                - generic [ref=e200]: 今日订单与昨日持平，建议重点关注新增客户来源与高频品类。
+              - generic [ref=e201]:
+                - generic [ref=e202]: 风险闭环建议
+                - generic [ref=e203]: 当前异常 0 单，工单 0 条，风险等级 中。建议按“高优先级工单->责任人->截止时间”推进。
+              - generic [ref=e204]:
+                - generic [ref=e205]: 履约效率提示
+                - generic [ref=e206]: 建议新增“下单-配货-发货-收货”漏斗跟踪，并对超时订单设自动预警阈值。
+          - generic [ref=e207]:
+            - generic [ref=e208]: 运营动作入口
+            - generic [ref=e210]:
+              - button "账号管理" [ref=e211] [cursor=pointer]:
+                - generic [ref=e212]: 账号管理
+              - button "商品管理" [ref=e213] [cursor=pointer]:
+                - generic [ref=e214]: 商品管理
+              - button "工单处理" [ref=e215] [cursor=pointer]:
+                - generic [ref=e216]: 工单处理
+              - button "订单监控" [ref=e217] [cursor=pointer]:
+                - generic [ref=e218]: 订单监控
+          - generic [ref=e219]:
+            - generic [ref=e221]:
+              - generic [ref=e222]: 合约履约快照
+              - button "更多" [ref=e223] [cursor=pointer]:
+                - generic [ref=e224]: 更多
+            - generic [ref=e225]:
+              - paragraph [ref=e226]: 默认展示生命周期为「生效中」的合约（双方、合约期、期内订单汇总）。
+              - generic [ref=e228]:
+                - table [ref=e230]:
+                  - rowgroup [ref=e239]:
+                    - row "合约号 采购方 配送方 合约期 生命周期 订单数 订单金额" [ref=e240]:
+                      - columnheader "合约号" [ref=e241]:
+                        - generic [ref=e242]: 合约号
+                      - columnheader "采购方" [ref=e243]:
+                        - generic [ref=e244]: 采购方
+                      - columnheader "配送方" [ref=e245]:
+                        - generic [ref=e246]: 配送方
+                      - columnheader "合约期" [ref=e247]:
+                        - generic [ref=e248]: 合约期
+                      - columnheader "生命周期" [ref=e249]:
+                        - generic [ref=e250]: 生命周期
+                      - columnheader "订单数" [ref=e251]:
+                        - generic [ref=e252]: 订单数
+                      - columnheader "订单金额" [ref=e253]:
+                        - generic [ref=e254]: 订单金额
+                - table [ref=e259]:
+                  - rowgroup [ref=e268]:
+                    - row "CTA000019 首都医科大学附属北京安贞医院 中农食迅物流 2026-04-01 ~ 2026-05-31 生效中 0 ¥0" [ref=e269] [cursor=pointer]:
+                      - cell "CTA000019" [ref=e270]:
+                        - generic [ref=e271]: CTA000019
+                      - cell "首都医科大学附属北京安贞医院" [ref=e272]:
+                        - generic [ref=e273]: 首都医科大学附属北京安贞医院
+                      - cell "中农食迅物流" [ref=e274]:
+                        - generic [ref=e275]: 中农食迅物流
+                      - cell "2026-04-01 ~ 2026-05-31" [ref=e276]:
+                        - generic [ref=e277]: 2026-04-01 ~ 2026-05-31
+                      - cell "生效中" [ref=e278]:
+                        - generic [ref=e281]: 生效中
+                      - cell "0" [ref=e282]:
+                        - generic [ref=e283]: "0"
+                      - cell "¥0" [ref=e284]:
+                        - generic [ref=e285]: ¥0
+                    - row "CTA000018 北京妇产医院 中农食迅物流 2026-04-01 ~ 2026-05-31 生效中 0 ¥0" [ref=e286] [cursor=pointer]:
+                      - cell "CTA000018" [ref=e287]:
+                        - generic [ref=e288]: CTA000018
+                      - cell "北京妇产医院" [ref=e289]:
+                        - generic [ref=e290]: 北京妇产医院
+                      - cell "中农食迅物流" [ref=e291]:
+                        - generic [ref=e292]: 中农食迅物流
+                      - cell "2026-04-01 ~ 2026-05-31" [ref=e293]:
+                        - generic [ref=e294]: 2026-04-01 ~ 2026-05-31
+                      - cell "生效中" [ref=e295]:
+                        - generic [ref=e298]: 生效中
+                      - cell "0" [ref=e299]:
+                        - generic [ref=e300]: "0"
+                      - cell "¥0" [ref=e301]:
+                        - generic [ref=e302]: ¥0
+                    - row "CTA000017 北京世纪坛医院 中农食迅物流 2026-04-01 ~ 2026-05-31 生效中 0 ¥0" [ref=e303] [cursor=pointer]:
+                      - cell "CTA000017" [ref=e304]:
+                        - generic [ref=e305]: CTA000017
+                      - cell "北京世纪坛医院" [ref=e306]:
+                        - generic [ref=e307]: 北京世纪坛医院
+                      - cell "中农食迅物流" [ref=e308]:
+                        - generic [ref=e309]: 中农食迅物流
+                      - cell "2026-04-01 ~ 2026-05-31" [ref=e310]:
+                        - generic [ref=e311]: 2026-04-01 ~ 2026-05-31
+                      - cell "生效中" [ref=e312]:
+                        - generic [ref=e315]: 生效中
+                      - cell "0" [ref=e316]:
+                        - generic [ref=e317]: "0"
+                      - cell "¥0" [ref=e318]:
+                        - generic [ref=e319]: ¥0
+                    - row "CTA000016 通州区演示幼儿园 中农食迅物流 2026-04-01 ~ 2026-05-31 生效中 0 ¥0" [ref=e320] [cursor=pointer]:
+                      - cell "CTA000016" [ref=e321]:
+                        - generic [ref=e322]: CTA000016
+                      - cell "通州区演示幼儿园" [ref=e323]:
+                        - generic [ref=e324]: 通州区演示幼儿园
+                      - cell "中农食迅物流" [ref=e325]:
+                        - generic [ref=e326]: 中农食迅物流
+                      - cell "2026-04-01 ~ 2026-05-31" [ref=e327]:
+                        - generic [ref=e328]: 2026-04-01 ~ 2026-05-31
+                      - cell "生效中" [ref=e329]:
+                        - generic [ref=e332]: 生效中
+                      - cell "0" [ref=e333]:
+                        - generic [ref=e334]: "0"
+                      - cell "¥0" [ref=e335]:
+                        - generic [ref=e336]: ¥0
+                    - row "CTA000015 朝阳区第二演示小学 中农食迅物流 2026-04-01 ~ 2026-05-31 生效中 0 ¥0" [ref=e337] [cursor=pointer]:
+                      - cell "CTA000015" [ref=e338]:
+                        - generic [ref=e339]: CTA000015
+                      - cell "朝阳区第二演示小学" [ref=e340]:
+                        - generic [ref=e341]: 朝阳区第二演示小学
+                      - cell "中农食迅物流" [ref=e342]:
+                        - generic [ref=e343]: 中农食迅物流
+                      - cell "2026-04-01 ~ 2026-05-31" [ref=e344]:
+                        - generic [ref=e345]: 2026-04-01 ~ 2026-05-31
+                      - cell "生效中" [ref=e346]:
+                        - generic [ref=e349]: 生效中
+                      - cell "0" [ref=e350]:
+                        - generic [ref=e351]: "0"
+                      - cell "¥0" [ref=e352]:
+                        - generic [ref=e353]: ¥0

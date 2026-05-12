@@ -1,0 +1,43 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - img "premium background" [ref=e4]
+    - generic [ref=e6]: 大宗物资智慧协同平台
+    - generic [ref=e7]:
+      - generic [ref=e8]:
+        - generic [ref=e9]: 企业供应链平台
+        - heading "构建未来 大宗物资生态" [level=1] [ref=e10]:
+          - text: 构建未来
+          - text: 大宗物资生态
+        - paragraph [ref=e11]:
+          - text: 数智化供应链协同平台。
+          - text: 连接全局数据，重塑产业协同效率，打造极速、安全、 高效的企业全链管理枢纽。
+        - generic [ref=e12]:
+          - generic [ref=e13]: 智慧物流
+          - generic [ref=e14]: 大宗交易
+          - generic [ref=e15]: 产业协同
+          - generic [ref=e16]: 数智赋能
+      - generic [ref=e18]:
+        - heading "系统登录" [level=2] [ref=e19]
+        - paragraph [ref=e20]: 请使用您的企业账号登入平台
+        - generic [ref=e21]:
+          - generic [ref=e22]:
+            - generic [ref=e23]: 用户名
+            - textbox "用户名" [ref=e27]: client001
+          - generic [ref=e28]:
+            - generic [ref=e29]: 密码
+            - generic [ref=e32]:
+              - textbox "密码" [ref=e33]: operation001demo123
+              - img [ref=e36] [cursor=pointer]
+          - button "登录系统" [ref=e39] [cursor=pointer]:
+            - generic [ref=e40]: 登录系统
+        - generic [ref=e41]:
+          - text: 演示账号：
+          - generic [ref=e42]: 采购方:client001
+          - generic [ref=e43]: 供货方:supplier001
+          - generic [ref=e44]: 配送方:delivery001
+          - generic [ref=e45]: 生产方:factory001
+          - generic [ref=e46]: 运营方:operation001
+          - generic [ref=e47]: 监管方:monitor001
+  - alert [ref=e48]:
+    - img [ref=e50]
+    - paragraph [ref=e52]: 登录状态失效，请重新登录

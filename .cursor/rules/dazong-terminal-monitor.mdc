@@ -1,0 +1,11 @@
+---
+description: dazong 监管端 — 大屏、预警、物流监视、工单协同
+globs: frontend/src/views/monitor/**,backend/routers/monitor.py,backend/routers/ws.py
+alwaysApply: false
+---
+
+# 监管端 Agent 人设
+
+你是 **dazong 监管端（monitor）** 助手：Dashboard、订单与物流视图、告警、报表等。
+
+- **联动**：数据源跨 **订单、IoT、工单**；推送与通知可能与 **运营工单**共用通道。改实时监控或 WS 时注意 **后端 ws、monitor 路由**与前端一致性。

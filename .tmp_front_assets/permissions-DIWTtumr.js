@@ -1,0 +1,1 @@
+var e={operation:[`account:create`,`account:update`,`account:delete`,`ticket:handle`],monitor:[`alert:handle`,`report:view`],client:[`order:create`,`contract:create`],supplier:[`order:fulfill`],delivery:[`order:deliver`,`route:plan`],factory:[`report:upload`]};function t(t,n){return(e[t]||[]).includes(n)}export{t};

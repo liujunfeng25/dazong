@@ -1,0 +1,36 @@
+{
+    "logs": [
+        {
+            "outputFile": "io.dazong.serialscale.serialplugin-merged_res-4:/values-watch-v20/values-watch-v20.xml",
+            "map": [
+                {
+                    "source": "/private/var/folders/gl/5614_hvs61jgw7nqz5cq90b40000gp/T/cursor-sandbox-cache/3156f8a174cfe2f72709a0c7a179c65d/gradle/caches/8.14.3/transforms/431a7ae722dd5404d8a8e4a787daa3fb/transformed/appcompat-1.6.1/res/values-watch-v20/values-watch-v20.xml",
+                    "from": {
+                        "startLines": "2,5,8",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,214,385",
+                        "endLines": "4,7,10",
+                        "endColumns": "12,12,12",
+                        "endOffsets": "209,380,553"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "io.dazong.serialscale.serialplugin-mergeReleaseResources-2:/values-watch-v20/values-watch-v20.xml",
+            "map": [
+                {
+                    "source": "/private/var/folders/gl/5614_hvs61jgw7nqz5cq90b40000gp/T/cursor-sandbox-cache/3156f8a174cfe2f72709a0c7a179c65d/gradle/caches/8.14.3/transforms/431a7ae722dd5404d8a8e4a787daa3fb/transformed/appcompat-1.6.1/res/values-watch-v20/values-watch-v20.xml",
+                    "from": {
+                        "startLines": "2,5,8",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,214,385",
+                        "endLines": "4,7,10",
+                        "endColumns": "12,12,12",
+                        "endOffsets": "209,380,553"
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,45 @@
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg1" x1="0" y1="0" x2="1920" y2="1080" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0D1424"/>
+      <stop offset="0.42" stop-color="#141E34"/>
+      <stop offset="1" stop-color="#1A2A48"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(420 240) rotate(20) scale(540 360)">
+      <stop stop-color="#5AA2FF" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#5AA2FF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1540 860) rotate(-8) scale(460 280)">
+      <stop stop-color="#8B9CFF" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#8B9CFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="wave1" x1="300" y1="0" x2="1620" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6DA8FF" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#93A7FF" stop-opacity="0.05"/>
+    </linearGradient>
+    <linearGradient id="wave2" x1="200" y1="0" x2="1640" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7CE4FF" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#A4B9FF" stop-opacity="0.06"/>
+    </linearGradient>
+    <filter id="blurA" x="0" y="0" width="1920" height="1080" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="0.8"/>
+    </filter>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#bg1)"/>
+  <rect width="1920" height="1080" fill="url(#glowA)"/>
+  <rect width="1920" height="1080" fill="url(#glowB)"/>
+  <g opacity="0.5">
+    <path d="M280 650C520 520 760 520 1000 650C1240 780 1460 780 1700 650" stroke="url(#wave1)" stroke-width="2"/>
+    <path d="M240 710C500 560 780 560 1060 710C1310 840 1490 840 1680 740" stroke="url(#wave2)" stroke-width="2"/>
+    <path d="M220 760C470 620 760 630 1030 770C1280 900 1460 890 1650 800" stroke="url(#wave1)" stroke-width="1.2"/>
+  </g>
+  <g filter="url(#blurA)">
+    <circle cx="320" cy="170" r="2" fill="#CDE3FF" fill-opacity="0.8"/>
+    <circle cx="760" cy="120" r="1.6" fill="#BBD2FF" fill-opacity="0.75"/>
+    <circle cx="1160" cy="190" r="1.4" fill="#C5D8FF" fill-opacity="0.7"/>
+    <circle cx="1460" cy="140" r="1.8" fill="#BFD4FF" fill-opacity="0.8"/>
+    <circle cx="1700" cy="220" r="1.4" fill="#D5E5FF" fill-opacity="0.7"/>
+    <circle cx="1560" cy="780" r="1.6" fill="#CADDFF" fill-opacity="0.6"/>
+    <circle cx="1180" cy="900" r="1.2" fill="#D2E2FF" fill-opacity="0.6"/>
+  </g>
+</svg>

@@ -1,0 +1,21 @@
+{
+  "name": "dazong-demo-console",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node ./node_modules/vite/bin/vite.js",
+    "build": "node ./node_modules/vite/bin/vite.js build",
+    "preview": "node ./node_modules/vite/bin/vite.js preview",
+    "verify:order-diversity": "node scripts/verify-order-diversity.mjs"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "element-plus": "2.8.8",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "vite": "^5.4.11"
+  }
+}

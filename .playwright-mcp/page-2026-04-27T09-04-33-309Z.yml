@@ -1,0 +1,713 @@
+- generic [ref=e2]:
+  - generic [ref=e4]:
+    - generic [ref=e8]:
+      - link "首页" [ref=e9] [cursor=pointer]:
+        - /url: "#/list"
+      - link "合作货商" [ref=e10] [cursor=pointer]:
+        - /url: "#/bidding_startList"
+        - generic [ref=e11]: 合作货商
+      - link "购物车" [ref=e12] [cursor=pointer]:
+        - /url: "#/cart"
+        - generic [ref=e13]: 购物车
+      - button "我的" [ref=e15] [cursor=pointer]:
+        - text: 我的
+        - img [ref=e18]
+    - generic [ref=e20] [cursor=pointer]:
+      - generic [ref=e22]: 北京市顺义区赵全营中心小学校学生食堂
+      - img "logo" [ref=e24]
+  - generic [ref=e25]:
+    - generic [ref=e26]:
+      - generic [ref=e28]:
+        - generic [ref=e29]:
+          - combobox [ref=e31]
+          - generic [ref=e32]: 全部供货商
+        - img [ref=e35] [cursor=pointer]
+      - generic [ref=e39]:
+        - generic [ref=e41]:
+          - img [ref=e44]
+          - textbox "请输入商品名称" [ref=e46]
+        - button "搜索" [ref=e47] [cursor=pointer]:
+          - generic [ref=e48]: 搜索
+      - generic [ref=e50]:
+        - generic [ref=e51]: 一级分类
+        - generic [ref=e52]:
+          - generic [ref=e53] [cursor=pointer]: 全部
+          - generic [ref=e54] [cursor=pointer]: 肉
+          - generic [ref=e55] [cursor=pointer]: 米
+          - generic [ref=e56] [cursor=pointer]: 面
+          - generic [ref=e57] [cursor=pointer]: 油
+          - generic [ref=e58] [cursor=pointer]: 奶
+          - generic [ref=e59] [cursor=pointer]: 蛋
+      - generic [ref=e60]:
+        - generic [ref=e61] [cursor=pointer]: 全部
+        - generic [ref=e64] [cursor=pointer]:
+          - generic:
+            - combobox [ref=e66]
+            - generic [ref=e67]: 默认排序
+          - img [ref=e70]
+    - generic [ref=e72]:
+      - generic [ref=e73]:
+        - generic [ref=e74]:
+          - generic [ref=e75]:
+            - img "收藏" [ref=e78]
+            - img [ref=e80]
+            - generic [ref=e82]: 中粮鲜四号肉丁
+          - generic [ref=e85]:
+            - generic [ref=e86]:
+              - text: 售 价
+              - generic [ref=e87]: "-"
+              - text: /斤
+            - generic [ref=e88]: 限高价 12.54/斤
+        - generic [ref=e89]:
+          - generic [ref=e90]:
+            - img "收藏" [ref=e93]
+            - img [ref=e95]
+            - generic [ref=e97]: 中粮鲜2：8肉馅
+          - generic [ref=e100]:
+            - generic [ref=e101]:
+              - text: 售 价
+              - generic [ref=e102]: "-"
+              - text: /斤
+            - generic [ref=e103]: 限高价 12.32/斤
+        - generic [ref=e104]:
+          - generic [ref=e105]:
+            - img "收藏" [ref=e108]
+            - img [ref=e110]
+            - generic [ref=e112]: 金龙鱼精选稻花香25kg/袋
+          - generic [ref=e114]:
+            - generic [ref=e115]:
+              - generic [ref=e116]:
+                - text: 售 价
+                - generic [ref=e117]: "190.00"
+                - text: /袋
+              - generic [ref=e118]: 限高价 192.50/袋
+            - generic [ref=e120] [cursor=pointer]: +
+        - generic [ref=e121]:
+          - generic [ref=e122]:
+            - img "收藏" [ref=e125]
+            - img [ref=e127]
+            - generic [ref=e129]: 正大爆浆鸡排0.64kg*10袋/箱
+          - generic [ref=e132]:
+            - generic [ref=e133]:
+              - text: 售 价
+              - generic [ref=e134]: "-"
+              - text: /箱
+            - generic [ref=e135]: 限高价 176.00/箱
+        - generic [ref=e136]:
+          - generic [ref=e137]:
+            - img "收藏" [ref=e140]
+            - img [ref=e142]
+            - generic [ref=e144]: 三元益菌多草莓果粒酸奶125ml*8杯/盒
+          - generic [ref=e146]:
+            - generic [ref=e147]:
+              - generic [ref=e148]:
+                - text: 售 价
+                - generic [ref=e149]: "12.50"
+                - text: /盒
+              - generic [ref=e150]: 限高价 12.98/盒
+            - generic [ref=e152] [cursor=pointer]: +
+        - generic [ref=e153]:
+          - generic [ref=e154]:
+            - img "收藏" [ref=e157]
+            - img [ref=e161]
+            - generic [ref=e163]: 福成鲜A腹肉
+          - generic [ref=e166]:
+            - generic [ref=e167]:
+              - text: 售 价
+              - generic [ref=e168]: "-"
+              - text: /斤
+            - generic [ref=e169]: 限高价 55.00/斤
+        - generic [ref=e170]:
+          - generic [ref=e171]:
+            - img "收藏" [ref=e174]
+            - img [ref=e178]
+            - generic [ref=e180]: 贺淇麦芯颗粒粉10kg/袋
+          - generic [ref=e183]:
+            - generic [ref=e184]:
+              - text: 售 价
+              - generic [ref=e185]: "-"
+              - text: /袋
+            - generic [ref=e186]: 限高价 41.80/袋
+        - generic [ref=e187]:
+          - generic [ref=e188]:
+            - img "收藏" [ref=e191]
+            - img [ref=e195]
+            - generic [ref=e197]: 贺淇麦芯颗粒粉25kg/袋
+          - generic [ref=e200]:
+            - generic [ref=e201]:
+              - text: 售 价
+              - generic [ref=e202]: "-"
+              - text: /袋
+            - generic [ref=e203]: 限高价 101.20/袋
+        - generic [ref=e204]:
+          - generic [ref=e205]:
+            - img "收藏" [ref=e208]
+            - img [ref=e212]
+            - generic [ref=e214]: 粒青香咸鸭蛋6枚/盒
+          - generic [ref=e217]:
+            - generic [ref=e218]:
+              - text: 售 价
+              - generic [ref=e219]: "-"
+              - text: /盒
+            - generic [ref=e220]: 限高价 12.41/盒
+        - generic [ref=e221]:
+          - generic [ref=e222]:
+            - img "收藏" [ref=e225]
+            - img [ref=e229]
+            - generic [ref=e231]: 福成精羊肉卷2.5kg/卷
+          - generic [ref=e234]:
+            - generic [ref=e235]:
+              - text: 售 价
+              - generic [ref=e236]: "-"
+              - text: /卷
+            - generic [ref=e237]: 限高价 203.50/卷
+        - generic [ref=e238]:
+          - generic [ref=e239]:
+            - img "收藏" [ref=e242]
+            - img [ref=e246]
+            - generic [ref=e248]: 福成肥牛3号（冻方砖）4.2kg/块
+          - generic [ref=e251]:
+            - generic [ref=e252]:
+              - text: 售 价
+              - generic [ref=e253]: "-"
+              - text: /块
+            - generic [ref=e254]: 限高价 323.40/块
+        - generic [ref=e255]:
+          - generic [ref=e256]:
+            - img "收藏" [ref=e259]
+            - img [ref=e263]
+            - generic [ref=e265]: 福成冻去骨羊后腿
+          - generic [ref=e268]:
+            - generic [ref=e269]:
+              - text: 售 价
+              - generic [ref=e270]: "-"
+              - text: /斤
+            - generic [ref=e271]: 限高价 44.00/斤
+        - generic [ref=e272]:
+          - generic [ref=e273]:
+            - img "收藏" [ref=e276]
+            - img [ref=e280]
+            - generic [ref=e282]: 福成冻羊肉块
+          - generic [ref=e285]:
+            - generic [ref=e286]:
+              - text: 售 价
+              - generic [ref=e287]: "-"
+              - text: /斤
+            - generic [ref=e288]: 限高价 45.65/斤
+        - generic [ref=e289]:
+          - generic [ref=e290]:
+            - img "收藏" [ref=e293]
+            - img [ref=e297]
+            - generic [ref=e299]: 福成鲜A腹肉块
+          - generic [ref=e302]:
+            - generic [ref=e303]:
+              - text: 售 价
+              - generic [ref=e304]: "-"
+              - text: /斤
+            - generic [ref=e305]: 限高价 60.50/斤
+        - generic [ref=e306]:
+          - generic [ref=e307]:
+            - img "收藏" [ref=e310]
+            - img [ref=e314]
+            - generic [ref=e316]: 福成鲜A腹肉条
+          - generic [ref=e319]:
+            - generic [ref=e320]:
+              - text: 售 价
+              - generic [ref=e321]: "-"
+              - text: /斤
+            - generic [ref=e322]: 限高价 74.25/斤
+        - generic [ref=e323]:
+          - generic [ref=e324]:
+            - img "收藏" [ref=e327]
+            - img [ref=e331]
+            - generic [ref=e333]: 福成鲜牛后腿肉（臀肉）
+          - generic [ref=e336]:
+            - generic [ref=e337]:
+              - text: 售 价
+              - generic [ref=e338]: "-"
+              - text: /斤
+            - generic [ref=e339]: 限高价 38.50/斤
+        - generic [ref=e340]:
+          - generic [ref=e341]:
+            - img "收藏" [ref=e344]
+            - img [ref=e348]
+            - generic [ref=e350]: 福成鲜牛林片
+          - generic [ref=e353]:
+            - generic [ref=e354]:
+              - text: 售 价
+              - generic [ref=e355]: "-"
+              - text: /斤
+            - generic [ref=e356]: 限高价 44.00/斤
+        - generic [ref=e357]:
+          - generic [ref=e358]:
+            - img "收藏" [ref=e361]
+            - img [ref=e365]
+            - generic [ref=e367]: 正大四系鸭坯（酥不腻）2.1—2.19kg/只
+          - generic [ref=e370]:
+            - generic [ref=e371]:
+              - text: 售 价
+              - generic [ref=e372]: "-"
+              - text: /只
+            - generic [ref=e373]: 限高价 42.35/只
+        - generic [ref=e374]:
+          - generic [ref=e375]:
+            - img "收藏" [ref=e378]
+            - generic [ref=e383]: 正大中装鸭（8只）14.0kg/箱
+          - generic [ref=e386]:
+            - generic [ref=e387]:
+              - text: 售 价
+              - generic [ref=e388]: "-"
+              - text: /箱
+            - generic [ref=e389]: 限高价 158.84/箱
+        - generic [ref=e390]:
+          - generic [ref=e391]:
+            - img "收藏" [ref=e394]
+            - generic [ref=e399]: 正大鸡腿切块10kg/箱
+          - generic [ref=e402]:
+            - generic [ref=e403]:
+              - text: 售 价
+              - generic [ref=e404]: "-"
+              - text: /箱
+            - generic [ref=e405]: 限高价 165.00/箱
+        - generic [ref=e406]:
+          - generic [ref=e407]:
+            - img "收藏" [ref=e410]
+            - generic [ref=e415]: 正大半片鸭10kg/箱
+          - generic [ref=e418]:
+            - generic [ref=e419]:
+              - text: 售 价
+              - generic [ref=e420]: "-"
+              - text: /箱
+            - generic [ref=e421]: 限高价 104.50/箱
+        - generic [ref=e422]:
+          - generic [ref=e423]:
+            - img "收藏" [ref=e426]
+            - generic [ref=e431]: 正大原切鸭块2.5kg/袋
+          - generic [ref=e434]:
+            - generic [ref=e435]:
+              - text: 售 价
+              - generic [ref=e436]: "-"
+              - text: /袋
+            - generic [ref=e437]: 限高价 27.50/袋
+        - generic [ref=e438]:
+          - generic [ref=e439]:
+            - img "收藏" [ref=e442]
+            - generic [ref=e447]: 福成冻牛肋排段
+          - generic [ref=e450]:
+            - generic [ref=e451]:
+              - text: 售 价
+              - generic [ref=e452]: "-"
+              - text: /斤
+            - generic [ref=e453]: 限高价 37.40/斤
+        - generic [ref=e454]:
+          - generic [ref=e455]:
+            - img "收藏" [ref=e458]
+            - generic [ref=e463]: 正大煲汤老母鸡1.25kg*8只/箱
+          - generic [ref=e466]:
+            - generic [ref=e467]:
+              - text: 售 价
+              - generic [ref=e468]: "-"
+              - text: /箱
+            - generic [ref=e469]: 限高价 378.40/箱
+        - generic [ref=e470]:
+          - generic [ref=e471]:
+            - img "收藏" [ref=e474]
+            - generic [ref=e479]: 卓宸中式羔羊排
+          - generic [ref=e482]:
+            - generic [ref=e483]:
+              - text: 售 价
+              - generic [ref=e484]: "-"
+              - text: /斤
+            - generic [ref=e485]: 限高价 39.60/斤
+        - generic [ref=e486]:
+          - generic [ref=e487]:
+            - img "收藏" [ref=e490]
+            - generic [ref=e495]: 卓宸羊蝎子切段
+          - generic [ref=e498]:
+            - generic [ref=e499]:
+              - text: 售 价
+              - generic [ref=e500]: "-"
+              - text: /斤
+            - generic [ref=e501]: 限高价 26.40/斤
+        - generic [ref=e502]:
+          - generic [ref=e503]:
+            - img "收藏" [ref=e506]
+            - generic [ref=e511]: 卓宸羊尾油
+          - generic [ref=e514]:
+            - generic [ref=e515]:
+              - text: 售 价
+              - generic [ref=e516]: "-"
+              - text: /斤
+            - generic [ref=e517]: 限高价 13.20/斤
+        - generic [ref=e518]:
+          - generic [ref=e519]:
+            - img "收藏" [ref=e522]
+            - generic [ref=e527]: 卓宸鲜羊肉块
+          - generic [ref=e530]:
+            - generic [ref=e531]:
+              - text: 售 价
+              - generic [ref=e532]: "-"
+              - text: /斤
+            - generic [ref=e533]: 限高价 44.00/斤
+        - generic [ref=e534]:
+          - generic [ref=e535]:
+            - img "收藏" [ref=e538]
+            - generic [ref=e543]: 卓宸鲜羊肉丁
+          - generic [ref=e546]:
+            - generic [ref=e547]:
+              - text: 售 价
+              - generic [ref=e548]: "-"
+              - text: /斤
+            - generic [ref=e549]: 限高价 44.00/斤
+        - generic [ref=e550]:
+          - generic [ref=e551]:
+            - img "收藏" [ref=e554]
+            - generic [ref=e559]: 卓宸鲜羊前腿肉块
+          - generic [ref=e562]:
+            - generic [ref=e563]:
+              - text: 售 价
+              - generic [ref=e564]: "-"
+              - text: /斤
+            - generic [ref=e565]: 限高价 45.10/斤
+        - generic [ref=e566]:
+          - generic [ref=e567]:
+            - img "收藏" [ref=e570]
+            - generic [ref=e575]: 卓宸鲜羊排
+          - generic [ref=e578]:
+            - generic [ref=e579]:
+              - text: 售 价
+              - generic [ref=e580]: "-"
+              - text: /斤
+            - generic [ref=e581]: 限高价 41.80/斤
+        - generic [ref=e582]:
+          - generic [ref=e583]:
+            - img "收藏" [ref=e586]
+            - generic [ref=e591]: 卓宸鲜羊腩丁
+          - generic [ref=e594]:
+            - generic [ref=e595]:
+              - text: 售 价
+              - generic [ref=e596]: "-"
+              - text: /斤
+            - generic [ref=e597]: 限高价 40.70/斤
+        - generic [ref=e598]:
+          - generic [ref=e599]:
+            - img "收藏" [ref=e602]
+            - generic [ref=e607]: 卓宸鲜羊后腿肉片
+          - generic [ref=e610]:
+            - generic [ref=e611]:
+              - text: 售 价
+              - generic [ref=e612]: "-"
+              - text: /斤
+            - generic [ref=e613]: 限高价 45.10/斤
+        - generic [ref=e614]:
+          - generic [ref=e615]:
+            - img "收藏" [ref=e618]
+            - generic [ref=e623]: 卓宸鲜羊后腿肉块
+          - generic [ref=e626]:
+            - generic [ref=e627]:
+              - text: 售 价
+              - generic [ref=e628]: "-"
+              - text: /斤
+            - generic [ref=e629]: 限高价 45.10/斤
+        - generic [ref=e630]:
+          - generic [ref=e631]:
+            - img "收藏" [ref=e634]
+            - generic [ref=e639]: 卓宸鲜羊后腿肉丁
+          - generic [ref=e642]:
+            - generic [ref=e643]:
+              - text: 售 价
+              - generic [ref=e644]: "-"
+              - text: /斤
+            - generic [ref=e645]: 限高价 45.10/斤
+        - generic [ref=e646]:
+          - generic [ref=e647]:
+            - img "收藏" [ref=e650]
+            - generic [ref=e655]: 卓宸鲜羊后腿肉
+          - generic [ref=e658]:
+            - generic [ref=e659]:
+              - text: 售 价
+              - generic [ref=e660]: "-"
+              - text: /斤
+            - generic [ref=e661]: 限高价 44.00/斤
+        - generic [ref=e662]:
+          - generic [ref=e663]:
+            - img "收藏" [ref=e666]
+            - generic [ref=e671]: 卓宸鲜牛上脑块
+          - generic [ref=e674]:
+            - generic [ref=e675]:
+              - text: 售 价
+              - generic [ref=e676]: "-"
+              - text: /斤
+            - generic [ref=e677]: 限高价 44.00/斤
+        - generic [ref=e678]:
+          - generic [ref=e679]:
+            - img "收藏" [ref=e682]
+            - generic [ref=e687]: 卓宸鲜牛上脑丁
+          - generic [ref=e690]:
+            - generic [ref=e691]:
+              - text: 售 价
+              - generic [ref=e692]: "-"
+              - text: /斤
+            - generic [ref=e693]: 限高价 44.00/斤
+        - generic [ref=e694]:
+          - generic [ref=e695]:
+            - img "收藏" [ref=e698]
+            - generic [ref=e703]: 卓宸鲜牛上脑
+          - generic [ref=e706]:
+            - generic [ref=e707]:
+              - text: 售 价
+              - generic [ref=e708]: "-"
+              - text: /斤
+            - generic [ref=e709]: 限高价 41.80/斤
+        - generic [ref=e710]:
+          - generic [ref=e711]:
+            - img "收藏" [ref=e714]
+            - generic [ref=e719]: 卓宸鲜牛前腿肉块
+          - generic [ref=e722]:
+            - generic [ref=e723]:
+              - text: 售 价
+              - generic [ref=e724]: "-"
+              - text: /斤
+            - generic [ref=e725]: 限高价 39.60/斤
+        - generic [ref=e726]:
+          - generic [ref=e727]:
+            - img "收藏" [ref=e730]
+            - generic [ref=e735]: 卓宸鲜牛前腿肉
+          - generic [ref=e738]:
+            - generic [ref=e739]:
+              - text: 售 价
+              - generic [ref=e740]: "-"
+              - text: /斤
+            - generic [ref=e741]: 限高价 39.60/斤
+        - generic [ref=e742]:
+          - generic [ref=e743]:
+            - img "收藏" [ref=e746]
+            - generic [ref=e751]: 卓宸鲜牛腩
+          - generic [ref=e754]:
+            - generic [ref=e755]:
+              - text: 售 价
+              - generic [ref=e756]: "-"
+              - text: /斤
+            - generic [ref=e757]: 限高价 40.70/斤
+        - generic [ref=e758]:
+          - generic [ref=e759]:
+            - img "收藏" [ref=e762]
+            - generic [ref=e767]: 卓宸鲜牛霖块
+          - generic [ref=e770]:
+            - generic [ref=e771]:
+              - text: 售 价
+              - generic [ref=e772]: "-"
+              - text: /斤
+            - generic [ref=e773]: 限高价 41.80/斤
+        - generic [ref=e774]:
+          - generic [ref=e775]:
+            - img "收藏" [ref=e778]
+            - generic [ref=e783]: 卓宸鲜牛霖丁
+          - generic [ref=e786]:
+            - generic [ref=e787]:
+              - text: 售 价
+              - generic [ref=e788]: "-"
+              - text: /斤
+            - generic [ref=e789]: 限高价 39.60/斤
+        - generic [ref=e790]:
+          - generic [ref=e791]:
+            - img "收藏" [ref=e794]
+            - generic [ref=e799]: 卓宸鲜牛霖
+          - generic [ref=e802]:
+            - generic [ref=e803]:
+              - text: 售 价
+              - generic [ref=e804]: "-"
+              - text: /斤
+            - generic [ref=e805]: 限高价 40.70/斤
+        - generic [ref=e806]:
+          - generic [ref=e807]:
+            - img "收藏" [ref=e810]
+            - generic [ref=e815]: 卓宸鲜牛腱子
+          - generic [ref=e818]:
+            - generic [ref=e819]:
+              - text: 售 价
+              - generic [ref=e820]: "-"
+              - text: /斤
+            - generic [ref=e821]: 限高价 42.90/斤
+        - generic [ref=e822]:
+          - generic [ref=e823]:
+            - img "收藏" [ref=e826]
+            - generic [ref=e831]: 卓宸鲜牛后腿肉丁
+          - generic [ref=e834]:
+            - generic [ref=e835]:
+              - text: 售 价
+              - generic [ref=e836]: "-"
+              - text: /斤
+            - generic [ref=e837]: 限高价 41.80/斤
+        - generic [ref=e838]:
+          - generic [ref=e839]:
+            - img "收藏" [ref=e842]
+            - generic [ref=e847]: 卓宸鲜牛后腿肉
+          - generic [ref=e850]:
+            - generic [ref=e851]:
+              - text: 售 价
+              - generic [ref=e852]: "-"
+              - text: /斤
+            - generic [ref=e853]: 限高价 40.70/斤
+        - generic [ref=e854]:
+          - generic [ref=e855]:
+            - img "收藏" [ref=e858]
+            - generic [ref=e863]: 卓宸鲜精修羊排块
+          - generic [ref=e866]:
+            - generic [ref=e867]:
+              - text: 售 价
+              - generic [ref=e868]: "-"
+              - text: /斤
+            - generic [ref=e869]: 限高价 44.00/斤
+        - generic [ref=e870]:
+          - generic [ref=e871]:
+            - img "收藏" [ref=e874]
+            - generic [ref=e879]: 卓宸鲜精修羊后腿块（去油）
+          - generic [ref=e882]:
+            - generic [ref=e883]:
+              - text: 售 价
+              - generic [ref=e884]: "-"
+              - text: /斤
+            - generic [ref=e885]: 限高价 45.10/斤
+        - generic [ref=e886]:
+          - generic [ref=e887]:
+            - img "收藏" [ref=e890]
+            - generic [ref=e895]: 卓宸鲜精修牛腰窝
+          - generic [ref=e898]:
+            - generic [ref=e899]:
+              - text: 售 价
+              - generic [ref=e900]: "-"
+              - text: /斤
+            - generic [ref=e901]: 限高价 50.60/斤
+        - generic [ref=e902]:
+          - generic [ref=e903]:
+            - img "收藏" [ref=e906]
+            - generic [ref=e911]: 卓宸鲜精修牛腩块
+          - generic [ref=e914]:
+            - generic [ref=e915]:
+              - text: 售 价
+              - generic [ref=e916]: "-"
+              - text: /斤
+            - generic [ref=e917]: 限高价 44.00/斤
+        - generic [ref=e918]:
+          - generic [ref=e919]:
+            - img "收藏" [ref=e922]
+            - generic [ref=e927]: 卓宸鲜精修牛里脊丝
+          - generic [ref=e930]:
+            - generic [ref=e931]:
+              - text: 售 价
+              - generic [ref=e932]: "-"
+              - text: /斤
+            - generic [ref=e933]: 限高价 51.15/斤
+        - generic [ref=e934]:
+          - generic [ref=e935]:
+            - img "收藏" [ref=e938]
+            - generic [ref=e943]: 卓宸鲜精修牛里脊肉馅
+          - generic [ref=e946]:
+            - generic [ref=e947]:
+              - text: 售 价
+              - generic [ref=e948]: "-"
+              - text: /斤
+            - generic [ref=e949]: 限高价 44.00/斤
+        - generic [ref=e950]:
+          - generic [ref=e951]:
+            - img "收藏" [ref=e954]
+            - generic [ref=e959]: 卓宸鲜精修牛里脊片
+          - generic [ref=e962]:
+            - generic [ref=e963]:
+              - text: 售 价
+              - generic [ref=e964]: "-"
+              - text: /斤
+            - generic [ref=e965]: 限高价 51.15/斤
+        - generic [ref=e966]:
+          - generic [ref=e967]:
+            - img "收藏" [ref=e970]
+            - generic [ref=e975]: 卓宸鲜精修牛里脊
+          - generic [ref=e978]:
+            - generic [ref=e979]:
+              - text: 售 价
+              - generic [ref=e980]: "-"
+              - text: /斤
+            - generic [ref=e981]: 限高价 50.05/斤
+        - generic [ref=e982]:
+          - generic [ref=e983]:
+            - img "收藏" [ref=e986]
+            - generic [ref=e991]: 卓宸鲜精品牛尾块（中段）
+          - generic [ref=e994]:
+            - generic [ref=e995]:
+              - text: 售 价
+              - generic [ref=e996]: "-"
+              - text: /斤
+            - generic [ref=e997]: 限高价 49.50/斤
+        - generic [ref=e998]:
+          - generic [ref=e999]:
+            - img "收藏" [ref=e1002]
+            - generic [ref=e1007]: 卓宸鲜金钱腱
+          - generic [ref=e1010]:
+            - generic [ref=e1011]:
+              - text: 售 价
+              - generic [ref=e1012]: "-"
+              - text: /斤
+            - generic [ref=e1013]: 限高价 59.40/斤
+        - generic [ref=e1014]:
+          - generic [ref=e1015]:
+            - img "收藏" [ref=e1018]
+            - generic [ref=e1023]: 卓宸去骨羊后腿
+          - generic [ref=e1026]:
+            - generic [ref=e1027]:
+              - text: 售 价
+              - generic [ref=e1028]: "-"
+              - text: /斤
+            - generic [ref=e1029]: 限高价 43.45/斤
+        - generic [ref=e1030]:
+          - generic [ref=e1031]:
+            - img "收藏" [ref=e1034]
+            - generic [ref=e1039]: 卓宸牛蝎子切断
+          - generic [ref=e1042]:
+            - generic [ref=e1043]:
+              - text: 售 价
+              - generic [ref=e1044]: "-"
+              - text: /斤
+            - generic [ref=e1045]: 限高价 17.60/斤
+      - generic [ref=e1047]:
+        - button "上一页" [disabled] [ref=e1048]:
+          - generic: 上一页
+        - list [ref=e1049]:
+          - listitem "第 1 页" [ref=e1050]: "1"
+          - listitem "第 2 页" [ref=e1051] [cursor=pointer]: "2"
+          - listitem "第 3 页" [ref=e1052] [cursor=pointer]: "3"
+          - listitem "第 4 页" [ref=e1053] [cursor=pointer]: "4"
+          - listitem "第 5 页" [ref=e1054] [cursor=pointer]: "5"
+          - listitem "第 6 页" [ref=e1055] [cursor=pointer]: "6"
+          - listitem "向后 5 页" [ref=e1056] [cursor=pointer]:
+            - img
+          - listitem "第 35 页" [ref=e1057] [cursor=pointer]: "35"
+        - button "下一页" [ref=e1058] [cursor=pointer]:
+          - generic: 下一页
+        - generic [ref=e1059]:
+          - generic [ref=e1060]: 前往
+          - spinbutton "页" [ref=e1063]: "1"
+          - generic [ref=e1064]: 页
+    - generic [ref=e1065]:
+      - generic [ref=e1066] [cursor=pointer]:
+        - img [ref=e1069]
+        - generic [ref=e1070]: 主页
+      - generic [ref=e1071] [cursor=pointer]:
+        - img [ref=e1074]
+        - generic [ref=e1075]: 合作货商
+      - generic [ref=e1076] [cursor=pointer]:
+        - img [ref=e1079]
+        - generic [ref=e1080]: 购物车
+        - generic [ref=e1081]: "2"
+      - generic [ref=e1082] [cursor=pointer]:
+        - img [ref=e1085]
+        - generic [ref=e1086]: 批量下单
+      - generic [ref=e1087] [cursor=pointer]:
+        - img [ref=e1090]
+        - generic [ref=e1091]: 我的
+      - generic [ref=e1092] [cursor=pointer]:
+        - img [ref=e1095]
+        - generic [ref=e1096]: 切换食堂
+      - generic [ref=e1097] [cursor=pointer]:
+        - img [ref=e1100]
+        - generic [ref=e1101]: 回顶部

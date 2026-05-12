@@ -1,0 +1,7 @@
+从 DCloud「Uni原生插件开发」示例工程（如 HBuilder-Integrate-AS / UniPlugin-Hello-AS）的 app/libs 或 uniplugin_module 依赖目录中，复制：
+
+  uniapp-v8-release.aar  （名称以你本机 SDK 为准，需含 io.dcloud.feature.uniapp.common.UniModule）
+
+到本 libs 目录，再执行仓库根目录 scripts/build-dazong-serial-aar.sh 编译插件 AAR。
+
+若只有 .jar，可一并放入 libs 并在 build.gradle 用 compileOnly fileTree 引用（已配置）。

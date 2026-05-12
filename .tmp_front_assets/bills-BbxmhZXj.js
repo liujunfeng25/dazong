@@ -1,0 +1,1 @@
+import{r as e}from"./index-JjU7_5KP.js";var t=()=>e.get(`/bills`);export{t};
