@@ -1,29 +1,29 @@
 <template>
   <div class="page">
     <header class="hdr">
-      <h1>演示数据 API 控制台</h1>
-      <p class="sub">独立 H5 / 小屏优先 · 仅对接测试与演示环境</p>
+      <h1>开发数据操盘台</h1>
+      <p class="sub">真实链路验收 / 批量下单 / 级联清理</p>
     </header>
 
     <el-alert class="blk model-banner" type="info" :closable="false" show-icon>
-      <template #title>演示业务模型（与你的需求对齐）</template>
+      <template #title>真实业务模型（开发验收入口）</template>
       <p class="model-p">
-        <strong>多采购账号</strong>：上方多选采购方登录名批量下单（每个账号对应一所「学校/单位」）。<strong>履约食堂</strong>：对每个账号在登录后会自动调用
-        <code>GET /client/canteens</code> + <code>POST /client/canteen-session</code>，优先选名为「默认食堂」的启用食堂，否则取列表第一个启用食堂，以换取带
-        <code>canteen_id</code> 的 JWT（与主站下单一致，否则 <code>POST /orders</code> 会 403）。<strong>单配送商</strong>：全程固定
-        <code>delivery001</code>（下面「单配送商」输入框用于解析其 <code>delivery_id</code>）。<strong>多供货商</strong>：体现在订单
-        <strong>分单行</strong>的供货方（智能分单后不同行可对应 supplier001/002/003），不是「多个配送商」；接口
-        <code>orders/meta</code> 里的 <code>deliveries</code> 只是「该客户还能选谁签约」的列表，演示里通常只有一条配送商。
+        <strong>业务口径：食堂下单</strong>（与主站一致）：用<strong>采购单位账号</strong>登录后，必须先绑定<strong>履约食堂</strong>再下单；订单落库时带
+        <code>canteen_id</code>，不是「绕过食堂的客户直订」。本页用 <code>GET /client/canteens</code> +
+        <code>POST /client/canteen-session</code> 自动完成绑定（优先「默认食堂」，否则第一个启用食堂），再调商品与
+        <code>POST /orders</code>（否则 403）。<strong>多单位</strong>：多选下方登录名批量造数，每个登录名对应一所学校/单位，并各自绑定一所启用食堂。<strong>单配送商</strong>：演示固定
+        <code>delivery001</code>（「单配送商」框用于解析其 <code>delivery_id</code>）。<strong>多供货商</strong>：体现在智能分单后的<strong>分单行</strong>供货方（如
+        supplier001/002/003），与「多个配送商」无关；<code>orders/meta</code> 里 <code>deliveries</code> 仅为「该单位账号还能签约哪些配送商」，演示通常只有一条。
       </p>
     </el-alert>
 
     <el-card class="blk step-flow" shadow="never">
       <template #header>
-        <span class="step-flow__title">推荐演示流程</span>
+        <span class="step-flow__title">推荐真实链路验收流程</span>
       </template>
       <ol class="step-flow__list">
         <li>
-          本页完成「合约校验」→「批量下单」（同一客户多笔订单会<strong>错开 SKU 与数量</strong>，避免克隆单；收货坐标微偏移 + 随机时段便于排线）。
+          本页完成「合约校验」→「批量下单」（同一单位登录名多笔订单会<strong>错开 SKU 与数量</strong>，避免克隆单；收货坐标微偏移 + 随机时段便于排线）。
         </li>
         <li>
           配送商 <code>delivery001</code> 登录主站 →
@@ -31,7 +31,7 @@
         </li>
         <li>同一账号进入 <strong>智能排线</strong>（<code>/delivery/smart-routing</code>）选择订单做路线规划。</li>
         <li>
-          回到本页（监管已登录）：填入 <code>order_id</code>，使用「全部供货商一键发货」或按单家发货；清场用「一键清除库中全部订单」。
+          回到本页（监管已登录）：填入 <code>order_id</code>，使用「全部供货商一键发货」或按单家发货；清场用「一键清除全部订单链路」。
         </li>
       </ol>
       <el-alert class="step-flow__warn" type="warning" :closable="false" show-icon>
@@ -42,7 +42,7 @@
     </el-card>
 
     <el-collapse v-model="collapseActive" class="blk">
-      <el-collapse-item title="连接与账号" name="cfg">
+      <el-collapse-item title="连接与食堂造数" name="cfg">
         <el-form label-position="top" size="default">
           <el-form-item label="接口连到哪里">
             <el-select v-model="form.apiPreset" placeholder="请选择" style="width: 100%">
@@ -71,12 +71,12 @@
               </el-form-item>
             </el-col>
             <el-col :xs="24" :sm="12">
-              <el-form-item label="客户密码（各客户共用）">
+              <el-form-item label="采购端登录密码（演示各账号通常相同）">
                 <el-input v-model="form.password" type="password" show-password />
               </el-form-item>
             </el-col>
           </el-row>
-          <el-form-item label="参与下单的采购方账号">
+          <el-form-item label="以食堂名义造数：选履约食堂（库里有几所列几所）">
             <el-select
               v-model="form.clients"
               multiple
@@ -84,26 +84,28 @@
               allow-create
               default-first-option
               :loading="clientListLoading"
-              placeholder="从列表选，或输入其他登录名（role=client）"
+              placeholder="从库中加载后，每所启用食堂一行；也可只输入登录名（将自动选默认食堂）"
               style="width: 100%"
             >
               <el-option
-                v-for="c in demoClientChoices"
-                :key="c.username"
-                :label="`${c.company}（${c.username}）`"
-                :value="c.username"
+                v-for="o in demoClientSelectOptions"
+                :key="o.key"
+                :label="formatDemoClientCanteenLabel(o)"
+                :value="o.key"
               />
             </el-select>
             <p class="field-hint">
-              <template v-if="clientListFromDb">列表已从数据库加载（演示模式下全部启用采购方）。</template>
-              <template v-else>无法从数据库读取时，使用内置备用列表；仍可直接输入运营端新建的采购方登录名。</template>
-              批量下单时会对<strong>每个账号</strong>自动绑定一个启用中的食堂（见上方业务模型说明）。
+              <template v-if="clientListFromDb">
+                列表来自 <code>GET /demo/client-accounts</code>：按库中 <code>client_canteens</code> 展开，仅展示<strong>启用</strong>食堂；值形如
+                <code>登录名::食堂id</code>，下单前会按该行换食堂会话。
+              </template>
+              <template v-else>列表仅在接口成功返回后才有数据；加载失败时不会填入任何假列表，请看页面提示或检查网络 / VPN。</template>
               <el-button type="primary" link :loading="clientListLoading" @click="loadClientList">刷新</el-button>
             </p>
           </el-form-item>
           <el-row :gutter="12">
             <el-col :xs="12" :sm="6">
-              <el-form-item label="每客户订单数">
+              <el-form-item label="每账号订单数">
                 <el-input-number v-model="form.ordersPerClient" :min="1" :max="50" controls-position="right" style="width: 100%" />
               </el-form-item>
             </el-col>
@@ -152,14 +154,14 @@
             <el-space direction="vertical" alignment="flex-start" :size="10" style="width: 100%">
               <el-switch
                 v-model="form.contractCategoriesOnly"
-                active-text="仅合约内一级分类商品（推荐，按各客户自己的合约筛选）"
+                active-text="仅合约内一级分类商品（推荐，按各采购单位签约合约筛选）"
                 inactive-text="全库在售商品（不按合约筛分类）"
               />
               <el-switch v-model="form.force" active-text="无视异常商品校验（force，演示逃生）" />
               <p v-if="form.contractCategoriesOnly" class="field-hint">
-                开启后对每个客户单独拉取可下单 SKU，与 <code>POST /orders</code> 合约逻辑一致，一般<strong>无需</strong>再开 force。
+                开启后对每个单位登录名单独拉取可下单 SKU，与 <code>POST /orders</code> 合约逻辑一致，一般<strong>无需</strong>再开 force。
               </p>
-              <p v-else class="field-hint">全库选品时易遇到「分类不在合约内」，可临时开启 force，或改回上一项推荐开关。</p>
+              <p v-else class="field-hint">全库选品时易遇到「分类不在该单位合约内」，可临时开启 force，或改回上一项推荐开关。</p>
             </el-space>
           </el-form-item>
         </el-form>
@@ -171,12 +173,12 @@
         <span>合约与 meta 校验</span>
         <el-button type="primary" link style="float: right" :loading="busyValidate" @click="runValidate">校验</el-button>
       </template>
-      <el-alert v-if="validateOk === true" type="success" title="所选采购账号与配送日、配送商匹配，可执行批量下单" :closable="false" show-icon />
+      <el-alert v-if="validateOk === true" type="success" title="所选单位登录名已能绑定食堂，并与配送日、配送商匹配，可开始造单" :closable="false" show-icon />
       <el-alert v-if="validateOk === false" type="error" :title="'存在冲突：' + (validateIssues.join('；') || '请检查')" :closable="false" show-icon />
       <div v-if="metaPreview" class="meta-pre">
         <div class="meta-title">orders/meta（说明）</div>
         <p class="meta-expl">
-          <strong>deliveries</strong>：该采购账号当前可选签约的<strong>配送商</strong>，单配送商演示下通常只有
+          <strong>deliveries</strong>：该单位登录名当前可选签约的<strong>配送商</strong>，单配送商演示下通常只有
           <strong>一条</strong>，与「多供货商」无关。<strong>多供货商</strong>请看智能分单后订单的分单行
           <code>supplier_id</code>，或用下方「供货商一键发货」。
         </p>
@@ -192,7 +194,7 @@
         <el-button type="primary" :disabled="validateOk !== true" :loading="busyPlace" @click="runPlaceOrders">开始批量下单</el-button>
         <el-button :disabled="!busyPlace" @click="cancelPlace">取消</el-button>
       </el-space>
-      <p class="hint">串行执行，避免压垮测试库；完成后可在下方填入 order_id 调用演示辅助接口。</p>
+      <p class="hint">串行执行，避免压垮开发库；完成后可在下方填入 order_id 调用开发辅助接口。</p>
     </el-card>
 
     <el-card class="blk" shadow="never">
@@ -201,7 +203,7 @@
       </template>
       <div class="table-wrap">
         <el-table :data="resultRows" stripe size="small" style="width: 100%">
-          <el-table-column prop="client" label="采购账号" min-width="96" />
+          <el-table-column prop="client" label="单位登录名" min-width="96" />
           <el-table-column prop="index" label="#" width="48" />
           <el-table-column prop="orderNo" label="订单号" min-width="120" />
           <el-table-column prop="orderId" label="order_id" width="88" />
@@ -228,7 +230,7 @@
 
     <el-card class="blk monitor" shadow="never">
       <template #header>
-        <span>演示辅助（需 DEMO_MODE + 监管账号 monitor）</span>
+        <span>开发辅助（需 DEMO_MODE + 监管账号 monitor）</span>
       </template>
       <el-form label-position="top" size="default">
         <el-row :gutter="12">
@@ -255,7 +257,7 @@
           :closable="false"
           show-icon
           class="monitor-login-hint"
-          title="下方「发货」「删单」「一键清除全部订单」为灰色时：请先点击「监管登录」（默认 monitor001 / demo123）。登录成功后需后端开启 DEMO_MODE，否则会 403。"
+          title="下方「发货」「删单」「一键清除全部订单链路」为灰色时：请先点击「监管登录」（默认 monitor001 / demo123）。登录成功后需后端开启 DEMO_MODE，否则会 403。"
         />
         <el-form-item label="发货前（可选）">
           <el-switch
@@ -310,6 +312,28 @@
             单家发货：仅更新所选供货商在上方订单里的分单行。全部发货：对绑定本批订单配送商的所有供货商各执行一遍（无需切换账号）。演示接口均不校验真实标签打印。
           </p>
         </el-form-item>
+        <el-form-item label="一键推进履约链路（演示，跳过分检/排线/签字门禁）">
+          <el-button
+            class="full-chain-btn"
+            type="primary"
+            :disabled="!monitorToken"
+            :loading="busyFullChain"
+            @click="runFullChain"
+          >
+            一键跑完整履约链路（配货→发货→取货→送达→收货确认→结算）
+          </el-button>
+          <el-space wrap class="chain-step-row">
+            <el-button type="warning" plain :disabled="!monitorToken" :loading="busyAllocate" @click="allocateOrders">① 一键配货（建分单）</el-button>
+            <el-button type="warning" plain :disabled="!monitorToken" :loading="busySupplierShipAll" @click="supplierShipAllBulk">② 发货（见上方按钮）</el-button>
+            <el-button type="warning" plain :disabled="!monitorToken" :loading="busyPickup" @click="pickupOrders">③ 一键取货 → 发货</el-button>
+            <el-button type="warning" plain :disabled="!monitorToken" :loading="busyDeliver" @click="deliverOrders">④ 一键送达 → 收货</el-button>
+            <el-button type="warning" plain :disabled="!monitorToken" :loading="busyReceive" @click="receiveOrders">⑤ 一键收货确认（生成账单）</el-button>
+            <el-button type="warning" plain :disabled="!monitorToken" :loading="busySettle" @click="settleOrders">⑥ 一键结算</el-button>
+          </el-space>
+          <p class="field-hint">
+            下单后订单无分单，需先「配货」生成分单行才能发货。各步按订单状态幂等：状态不符自动跳过。完整链路按钮内部用「分单行全部标已出库」做发货，可覆盖未绑定配送商的指定厂家。
+          </p>
+        </el-form-item>
         <el-space wrap>
           <el-tooltip
             :disabled="!!monitorToken"
@@ -327,7 +351,7 @@
           </el-tooltip>
           <el-tooltip :disabled="!!monitorToken" content="请先点击上方「监管登录」" placement="top">
             <span class="btn-wrap">
-              <el-button type="danger" plain :disabled="!monitorToken" :loading="busyClearAll" @click="openClearAllDialog">一键清除库中全部订单</el-button>
+              <el-button type="danger" plain :disabled="!monitorToken" :loading="busyClearAll" @click="openClearAllDialog">一键清除全部订单链路</el-button>
             </span>
           </el-tooltip>
         </el-space>
@@ -339,7 +363,10 @@
     </el-dialog>
 
     <el-dialog v-model="deleteDialog.visible" title="确认级联删单" width="90%" style="max-width: 480px">
-      <p>将永久删除所列订单及关联分单、账单、配送记录等，仅用于演示清场。</p>
+      <p>
+        将永久删除所列订单及其牵连的分单、分检记录、发车计划/司机端任务、收货称重、退单、账单、工单、通知、监管预警和流程时间线。
+      </p>
+      <p>基础资料（账号、商品、合约、车辆、设备、食堂）不会删除。</p>
       <p>请在下方输入 <strong>DELETE</strong> 后确认。</p>
       <el-input v-model="deleteDialog.confirm" placeholder="输入 DELETE" />
       <template #footer>
@@ -349,7 +376,10 @@
     </el-dialog>
 
     <el-dialog v-model="clearAllDialog.visible" title="确认清空全部订单" width="90%" style="max-width: 480px">
-      <p>将永久删除数据库中<strong>全部</strong>订单及关联分单行、收货行、账单、配送记录、通知等，仅用于演示清场。</p>
+      <p>
+        将永久删除数据库中<strong>全部</strong>订单链路数据：分单、分检记录、发车计划/司机端任务、收货称重、退单、账单、工单、通知、监管预警和流程时间线。
+      </p>
+      <p>基础资料（账号、商品、合约、车辆、设备、食堂）不会删除。</p>
       <p>请在下方输入 <strong>CLEAR ALL</strong> 后确认。</p>
       <el-input v-model="clearAllDialog.confirm" placeholder="输入 CLEAR ALL" />
       <template #footer>
@@ -373,17 +403,91 @@ import axios from "axios";
 import { ElMessage } from "element-plus";
 import { pickProductsForOrder, lineQuantityForDemo } from "./lib/orderPick.js";
 
-/** 离线/403 时的备用列表（与常见种子一致） */
-const FALLBACK_DEMO_CLIENTS = [
-  { username: "client001", company: "北京第一实验小学" },
-  { username: "client002", company: "首都师范大学附属中学" },
-  { username: "client003", company: "丰台第五小学（演示）" },
-  { username: "client004", company: "西城区演示中学" },
-  { username: "client005", company: "朝阳区第二演示小学" },
-  { username: "client006", company: "通州区演示幼儿园" },
-];
+/** 仅来自 GET /demo/client-accounts；加载失败时保持空数组，不使用内置假数据 */
+const demoClientChoices = ref([]);
 
-const demoClientChoices = ref([...FALLBACK_DEMO_CLIENTS]);
+/** 与 el-option 对齐：每所启用食堂一行；离线无 id 时为「仅登录名」一行 */
+const demoClientSelectOptions = computed(() => {
+  const rows = demoClientChoices.value || [];
+  const out = [];
+  for (const raw of rows) {
+    const company = raw.company || raw.company_name || "未知单位";
+    const username = (raw.username || "").trim();
+    if (!username) continue;
+    const cant = Array.isArray(raw.canteens) ? raw.canteens : [];
+    const active = cant.filter((x) => String(x.status || "active") === "active");
+    if (!active.length) {
+      out.push({
+        key: username,
+        username,
+        company,
+        canteenId: null,
+        canteenName: "",
+        noCanteen: true,
+      });
+      continue;
+    }
+    for (const cc of active) {
+      const id = Number(cc.id);
+      if (!Number.isFinite(id) || id <= 0) continue;
+      out.push({
+        key: `${username}::${id}`,
+        username,
+        company,
+        canteenId: id,
+        canteenName: ((cc.name || "") + "").trim() || `食堂#${id}`,
+        noCanteen: false,
+      });
+    }
+  }
+  return out;
+});
+
+function formatDemoClientCanteenLabel(o) {
+  if (!o) return "";
+  const u = o.username || "";
+  if (o.noCanteen || o.canteenId == null) {
+    return `${o.company}（登录 ${u} · 库中无启用食堂或未加载明细）`;
+  }
+  return `${o.company} · ${o.canteenName}（登录 ${u} · 食堂 id ${o.canteenId}）`;
+}
+
+/** @returns {{ username: string, canteenId: number | null }} */
+function parseClientChoice(entry) {
+  const s = String(entry || "").trim();
+  if (!s) return { username: "", canteenId: null };
+  const idx = s.indexOf("::");
+  if (idx === -1) return { username: s, canteenId: null };
+  const username = s.slice(0, idx).trim();
+  const canteenId = Number(s.slice(idx + 2));
+  return {
+    username,
+    canteenId: Number.isFinite(canteenId) && canteenId > 0 ? canteenId : null,
+  };
+}
+
+function syncClientSelectionsToAvailableOptions() {
+  const opts = demoClientSelectOptions.value;
+  const sel = [...(form.clients || [])].map((x) => String(x).trim()).filter(Boolean);
+  if (!sel.length) return;
+  const byUser = new Map();
+  for (const o of opts) {
+    if (!byUser.has(o.username)) byUser.set(o.username, []);
+    byUser.get(o.username).push(o);
+  }
+  form.clients = sel.map((entry) => {
+    if (entry.includes("::")) {
+      if (opts.some((o) => o.key === entry)) return entry;
+      const username = entry.split("::")[0];
+      const list = byUser.get(username) || [];
+      const first = list.find((x) => x.canteenId != null);
+      return first ? first.key : username;
+    }
+    const list = byUser.get(entry) || [];
+    const first = list.find((x) => x.canteenId != null);
+    return first ? first.key : entry;
+  });
+}
 const clientListLoading = ref(false);
 const clientListFromDb = ref(false);
 /** 来自 DB 的地址/坐标，用于下单；key 为 username */
@@ -449,7 +553,7 @@ const form = reactive({
   apiBaseCustom: "",
   deliveryUsername: "delivery001",
   password: "demo123",
-  clients: ["client001", "client002", "client003"],
+  clients: [],
   ordersPerClient: 3,
   linesPerOrder: 5,
   lineQuantity: 2,
@@ -475,6 +579,12 @@ const busyMonLogin = ref(false);
 const busyMarkShipped = ref(false);
 const busyDelete = ref(false);
 const busyClearAll = ref(false);
+const busyAllocate = ref(false);
+const busyPickup = ref(false);
+const busyDeliver = ref(false);
+const busyReceive = ref(false);
+const busySettle = ref(false);
+const busyFullChain = ref(false);
 const validateOk = ref(null);
 const validateIssues = ref([]);
 const metaPreview = ref("");
@@ -530,16 +640,26 @@ function pickDemoCanteenId(rows) {
 }
 
 /**
- * @param {string} clientToken 采购方登录后的 token（可无食堂）
+ * @param {string} clientToken
  * @param {AbortSignal} [signal]
- * @returns {Promise<string>} 带食堂会话的新 token
+ * @param {number | null} [preferredCanteenId] 与下拉「登录名::食堂id」一致；缺省时优先「默认食堂」
+ * @returns {Promise<string>}
  */
-async function ensureClientCanteenToken(clientToken, signal) {
+async function ensureClientCanteenToken(clientToken, signal, preferredCanteenId) {
   const ax = clientAxios(clientToken);
   const { data: list } = await ax.get("/client/canteens", { signal });
-  const cid = pickDemoCanteenId(list);
+  const rows = Array.isArray(list) ? list : [];
+  let cid = null;
+  const want = preferredCanteenId != null ? Number(preferredCanteenId) : null;
+  if (Number.isFinite(want) && want > 0) {
+    const hit = rows.find((r) => Number(r.id) === want && String(r.status || "active") === "active");
+    if (hit) cid = want;
+  }
   if (cid == null) {
-    throw new Error("该采购账号下无可用食堂，请先在运营端「客户食堂」创建并启用");
+    cid = pickDemoCanteenId(rows);
+  }
+  if (cid == null) {
+    throw new Error("该单位登录名下无可用履约食堂，请先在运营端「客户食堂」菜单建档并启用");
   }
   const { data } = await ax.post("/client/canteen-session", { canteen_id: cid }, { signal });
   if (!data?.token) {
@@ -579,13 +699,46 @@ function parseOrderIds(text) {
     .filter((n) => Number.isFinite(n) && n > 0);
 }
 
+function cleanupSummaryText(data) {
+  const d = data || {};
+  const pairs = [
+    ["订单", d.deleted_orders],
+    ["车次", d.deleted_dispatch_trips],
+    ["车次站点", d.deleted_dispatch_stops],
+    ["装车明细", d.deleted_dispatch_items],
+    ["分单", d.deleted_allocations],
+    ["称重IoT", d.deleted_iot_data],
+    ["分检", d.deleted_sort_scan_records],
+    ["收货行", d.deleted_receiving_lines],
+    ["退单", d.deleted_returns],
+    ["退单行", d.deleted_return_lines],
+    ["账单", d.deleted_bills],
+    ["账单汇总", d.deleted_statements],
+    ["工单", d.deleted_tickets],
+    ["预警", d.deleted_alerts],
+    ["通知", d.deleted_notifications],
+    ["审计", d.deleted_audit_logs],
+    ["幂等键", d.deleted_idempotency_keys],
+    ["Outbox", d.deleted_outbox_events],
+  ];
+  const text = pairs
+    .filter(([, v]) => Number(v || 0) > 0)
+    .map(([k, v]) => `${k}${Number(v)}`)
+    .join("，");
+  if (text) return text;
+  const requested = Number(d.requested_orders || 0);
+  const matched = Number(d.matched_orders || 0);
+  if (requested && !matched) return `未匹配到可删除订单（请求 ${requested} 个）`;
+  return "未匹配到可删除数据";
+}
+
 function todayStr() {
   const d = new Date();
   const p = (n) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
 }
 
-/** Fisher–Yates 打乱副本，用于同一客户多笔订单间 SKU 分布更随机 */
+/** Fisher–Yates 打乱副本，用于同一采购账号多笔订单间 SKU 分布更随机 */
 function shuffleArray(arr) {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -632,6 +785,30 @@ function seedForClient(username) {
   );
 }
 
+/**
+ * @param {unknown} e axios 错误
+ * @param {string} label 如「采购方/食堂」「供货商列表」
+ */
+function describeDemoApiLoadError(e, label) {
+  const err = e && typeof e === "object" ? e : {};
+  const code = err.code;
+  const msg = (err.message && String(err.message)) || "";
+  if (code === "ERR_NETWORK" || msg === "Network Error") {
+    return `${label}加载失败：网络不通或请求被拦截（若正在使用 VPN / 系统代理，请检查是否把本页所连的 API 指错或拦掉）。`;
+  }
+  const resp = err.response;
+  const st = resp && resp.status;
+  const detail = resp && resp.data && resp.data.detail;
+  const detailStr = typeof detail === "string" ? detail : "";
+  if (st === 403) {
+    return `${label}加载失败：HTTP 403（演示模式未开启或无权访问）。${detailStr}`;
+  }
+  if (Number.isFinite(st) && st > 0) {
+    return `${label}加载失败：HTTP ${st}。${detailStr || msg || ""}`;
+  }
+  return `${label}加载失败：${msg || String(e)}`;
+}
+
 let clientReloadTimer = null;
 async function loadClientList() {
   clientListLoading.value = true;
@@ -640,39 +817,41 @@ async function loadClientList() {
     const { data } = await ax.get("/demo/client-accounts");
     const rows = Array.isArray(data) ? data : [];
     if (!rows.length) {
-      demoClientChoices.value = [...FALLBACK_DEMO_CLIENTS];
+      demoClientChoices.value = [];
       clientProfileByUser.value = {};
-      clientListFromDb.value = false;
-      return;
+      clientListFromDb.value = true;
+      form.clients = [];
+      ElMessage.warning("演示接口已返回：当前库中没有任何采购方（client）账号，或全部未启用。");
+    } else {
+      demoClientChoices.value = rows.map((r) => ({
+        username: r.username,
+        company: ((r.company_name || "") + "").trim() || r.username,
+        address: ((r.address || "") + "").trim(),
+        lng: r.lng != null && r.lng !== "" ? Number(r.lng) : null,
+        lat: r.lat != null && r.lat !== "" ? Number(r.lat) : null,
+        canteens: Array.isArray(r.canteens) ? r.canteens : [],
+      }));
+      const map = {};
+      for (const r of demoClientChoices.value) {
+        map[r.username] = {
+          address: r.address,
+          lng: r.lng,
+          lat: r.lat,
+          company: r.company,
+        };
+      }
+      clientProfileByUser.value = map;
+      clientListFromDb.value = true;
     }
-    demoClientChoices.value = rows.map((r) => ({
-      username: r.username,
-      company: ((r.company_name || "") + "").trim() || r.username,
-      address: ((r.address || "") + "").trim(),
-      lng: r.lng != null && r.lng !== "" ? Number(r.lng) : null,
-      lat: r.lat != null && r.lat !== "" ? Number(r.lat) : null,
-    }));
-    const map = {};
-    for (const r of demoClientChoices.value) {
-      map[r.username] = {
-        address: r.address,
-        lng: r.lng,
-        lat: r.lat,
-        company: r.company,
-      };
-    }
-    clientProfileByUser.value = map;
-    clientListFromDb.value = true;
   } catch (e) {
-    const st = e.response?.status;
-    demoClientChoices.value = [...FALLBACK_DEMO_CLIENTS];
+    demoClientChoices.value = [];
     clientProfileByUser.value = {};
     clientListFromDb.value = false;
-    if (st === 403) {
-      ElMessage.info("后端未开启演示模式或接口不可用，客户列表已切换为内置备用。");
-    }
+    form.clients = [];
+    ElMessage.error(describeDemoApiLoadError(e, "采购方/食堂"));
   } finally {
     clientListLoading.value = false;
+    syncClientSelectionsToAvailableOptions();
   }
 }
 
@@ -690,19 +869,19 @@ async function loadSupplierList() {
     const { data } = await clientAxios().get("/demo/supplier-accounts");
     const rows = Array.isArray(data) ? data : [];
     supplierChoices.value = rows;
-    if (
+    if (!rows.length) {
+      supplierShipUsername.value = "";
+      ElMessage.warning("演示接口已返回：当前库中没有任何供货商账号，或全部未启用。");
+    } else if (
       supplierShipUsername.value &&
-      !supplierChoices.value.some((x) => x.username === supplierShipUsername.value) &&
-      supplierChoices.value.length
+      !supplierChoices.value.some((x) => x.username === supplierShipUsername.value)
     ) {
       supplierShipUsername.value = supplierChoices.value[0].username;
     }
-  } catch {
-    supplierChoices.value = [
-      { username: "supplier001", company_name: "新发地蔬菜批发档口" },
-      { username: "supplier002", company_name: "天津蔬菜配送站" },
-      { username: "supplier003", company_name: "河北蛋品集散中心" },
-    ];
+  } catch (e) {
+    supplierChoices.value = [];
+    supplierShipUsername.value = "";
+    ElMessage.error(describeDemoApiLoadError(e, "供货商列表"));
   } finally {
     supplierListLoading.value = false;
   }
@@ -765,6 +944,79 @@ async function supplierShipAllBulk() {
   }
 }
 
+/** 履约链路单步：POST /demo/orders/{path}，监管 token，按 demoOrderIdsText 批量 */
+async function demoLifecycleStep(path, busyRef) {
+  const ids = parseOrderIds(demoOrderIdsText.value);
+  if (!ids.length) {
+    ElMessage.warning("请填写 order_id");
+    return null;
+  }
+  if (busyRef) busyRef.value = true;
+  try {
+    const r = await clientAxios(monitorToken.value).post(`/demo/orders/${path}`, { order_ids: ids });
+    pushLog(`demo ${path} OK ${JSON.stringify(r.data).slice(0, 160)}`);
+    return r.data;
+  } catch (e) {
+    ElMessage.error(e.response?.data?.detail || e.message);
+    pushLog(`demo ${path} FAIL`);
+    throw e;
+  } finally {
+    if (busyRef) busyRef.value = false;
+  }
+}
+
+const skipNote = (d) => (d.skipped?.length ? `，跳过 ${d.skipped.length}` : "");
+
+async function allocateOrders() {
+  const d = await demoLifecycleStep("allocate", busyAllocate).catch(() => null);
+  if (d) ElMessage.success(`配货完成：订单 ${d.orders_allocated}，分单行 ${d.allocations_created}${skipNote(d)}`);
+}
+async function pickupOrders() {
+  const d = await demoLifecycleStep("pickup", busyPickup).catch(() => null);
+  if (d) ElMessage.success(`取货→发货：推进 ${d.advanced?.length || 0}${skipNote(d)}`);
+}
+async function deliverOrders() {
+  const d = await demoLifecycleStep("deliver", busyDeliver).catch(() => null);
+  if (d) ElMessage.success(`送达→收货：推进 ${d.advanced?.length || 0}${skipNote(d)}`);
+}
+async function receiveOrders() {
+  const d = await demoLifecycleStep("receive", busyReceive).catch(() => null);
+  if (d) ElMessage.success(`收货确认：推进 ${d.advanced?.length || 0}，生成账单 ${d.bills_created || 0}${skipNote(d)}`);
+}
+async function settleOrders() {
+  const d = await demoLifecycleStep("settle", busySettle).catch(() => null);
+  if (d) ElMessage.success(`结算：推进 ${d.advanced?.length || 0}，结算账单 ${d.bills_settled || 0}/对账单 ${d.statements_settled || 0}${skipNote(d)}`);
+}
+
+/** 一键串跑：配货→发货(标已出库,含指定厂家)→取货→送达→收货确认→结算 */
+async function runFullChain() {
+  const ids = parseOrderIds(demoOrderIdsText.value);
+  if (!ids.length) {
+    ElMessage.warning("请填写 order_id");
+    return;
+  }
+  busyFullChain.value = true;
+  const steps = [
+    ["allocate", "配货"],
+    ["mark-allocations-shipped", "发货"],
+    ["pickup", "取货"],
+    ["deliver", "送达"],
+    ["receive", "收货确认"],
+    ["settle", "结算"],
+  ];
+  try {
+    for (const [path, label] of steps) {
+      const r = await clientAxios(monitorToken.value).post(`/demo/orders/${path}`, { order_ids: ids });
+      pushLog(`链路·${label} OK ${JSON.stringify(r.data).slice(0, 140)}`);
+    }
+    ElMessage.success("已跑完整履约链路：下单→配货→发货→送达→收货确认→结算");
+  } catch (e) {
+    ElMessage.error(`链路在某步中断：${e.response?.data?.detail || e.message}（可单步排查）`);
+  } finally {
+    busyFullChain.value = false;
+  }
+}
+
 onMounted(() => {
   if (!form.expectedDate) {
     form.expectedDate = todayStr();
@@ -789,17 +1041,17 @@ async function runValidate() {
     ElMessage.error("请选择期望配送日");
     return;
   }
-  const clients = (form.clients || []).map((c) => String(c).trim()).filter(Boolean);
-  if (!clients.length) {
-    ElMessage.error("请至少选择一个采购方账号");
+  const choiceKeys = (form.clients || []).map((c) => String(c).trim()).filter(Boolean);
+  if (!choiceKeys.length) {
+    ElMessage.error("请至少选择一所食堂（或输入登录名；未带食堂 id 时将自动选默认食堂）");
     return;
   }
   busyValidate.value = true;
   try {
-    const first = clients[0];
+    const { username: firstUser } = parseClientChoice(choiceKeys[0]);
     const ax0 = clientAxios();
-    const login0 = await timed(`login ${first}`, () =>
-      ax0.post("/auth/login", { username: first, password: form.password }).then((r) => r.data)
+    const login0 = await timed(`login ${firstUser}`, () =>
+      ax0.post("/auth/login", { username: firstUser, password: form.password }).then((r) => r.data)
     );
     const token0 = login0.token;
     const ax = clientAxios(token0);
@@ -807,7 +1059,7 @@ async function runValidate() {
     const du = (form.deliveryUsername || "").trim();
     const hit = (meta.deliveries || []).find((d) => d.username === du);
     if (!hit) {
-      validateIssues.value.push(`在采购账号 ${first} 的 orders/meta 中未找到配送商用户名「${du}」；请确认该账号对 ${du} 已有「已中标」且合约期含今日。`);
+      validateIssues.value.push(`在单位登录名 ${firstUser} 的 orders/meta 中未找到配送商用户名「${du}」；请确认该登录名对 ${du} 已有「已中标」且合约期含今日。`);
       validateOk.value = false;
       return;
     }
@@ -825,24 +1077,26 @@ async function runValidate() {
     }
 
     const today = todayStr();
-    for (const c of clients) {
+    for (const key of choiceKeys) {
+      const { username: u, canteenId } = parseClientChoice(key);
+      const who = canteenId != null ? `${u}（食堂 id ${canteenId}）` : u;
       try {
         const axC = clientAxios();
-        const lgRes = await axC.post("/auth/login", { username: c, password: form.password });
+        const lgRes = await axC.post("/auth/login", { username: u, password: form.password });
         const lg = lgRes.data;
         let scoped = lg.token;
         try {
-          scoped = await ensureClientCanteenToken(lg.token);
+          scoped = await ensureClientCanteenToken(lg.token, undefined, canteenId);
         } catch (e) {
           const msg = e.response?.data?.detail || e.message || String(e);
-          validateIssues.value.push(`采购账号 ${c}：无法绑定食堂会话 — ${msg}`);
+          validateIssues.value.push(`「${who}」：无法绑定食堂会话 — ${msg}`);
           continue;
         }
         const contracts = await clientAxios(scoped).get("/client/contracts").then((r) => r.data);
         const list = Array.isArray(contracts) ? contracts : [];
         const rel = list.filter((ct) => ct.delivery_id === hit.id && ct.status === "已中标");
         if (!rel.length) {
-          validateIssues.value.push(`采购账号 ${c} 没有指向 ${du} 的「已中标」合约`);
+          validateIssues.value.push(`「${who}」没有指向 ${du} 的「已中标」合约`);
           continue;
         }
         const okContract = rel.find((ct) => {
@@ -857,13 +1111,13 @@ async function runValidate() {
         });
         if (!okContract) {
           validateIssues.value.push(
-            `采购账号 ${c}：没有同时覆盖「今日(${today})」与「配送日 ${form.expectedDate}」的已中标合约（与后端下单校验一致）`
+            `「${who}」：没有同时覆盖「今日(${today})」与「配送日 ${form.expectedDate}」的已中标合约（与后端下单校验一致）`
           );
         }
       } catch (e) {
         const detail = e.response?.data?.detail;
         const msg = typeof detail === "string" ? detail : e.message || String(e);
-        validateIssues.value.push(`采购账号 ${c}：登录或获取合约失败 — ${msg}`);
+        validateIssues.value.push(`「${who}」：登录或获取合约失败 — ${msg}`);
       }
     }
 
@@ -896,7 +1150,7 @@ async function runPlaceOrders() {
     ElMessage.warning("请先通过校验");
     return;
   }
-  const clients = (form.clients || []).map((c) => String(c).trim()).filter(Boolean);
+  const choiceKeys = (form.clients || []).map((c) => String(c).trim()).filter(Boolean);
   const deliveryId = resolvedDeliveryId.value;
   const signal = new AbortController();
   placeAbort.value = signal;
@@ -904,16 +1158,18 @@ async function runPlaceOrders() {
   resultRows.value = [];
   let globalIdx = 0;
   try {
-    for (const c of clients) {
+    for (const key of choiceKeys) {
       if (signal.signal.aborted) break;
+      const { username: u, canteenId } = parseClientChoice(key);
+      const who = canteenId != null ? `${u}·#${canteenId}` : u;
       const lg0 = await clientAxios().post(
         "/auth/login",
-        { username: c, password: form.password },
+        { username: u, password: form.password },
         { signal: signal.signal }
       );
       let clientToken = lg0.data.token;
-      clientToken = await timed(`POST /client/canteen-session (${c})`, () =>
-        ensureClientCanteenToken(clientToken, signal.signal)
+      clientToken = await timed(`POST /client/canteen-session (${who})`, () =>
+        ensureClientCanteenToken(clientToken, signal.signal, canteenId)
       );
       const searchBase = { delivery_id: deliveryId };
       if (form.productKeyword.trim()) searchBase.keyword = form.productKeyword.trim();
@@ -925,12 +1181,12 @@ async function runPlaceOrders() {
         80,
         form.linesPerOrder * Math.max(form.ordersPerClient * 4, 12),
       );
-      const pool = await timed(`GET /orders/products/search 多页 (${c})`, () =>
+      const pool = await timed(`GET /orders/products/search 多页 (${who})`, () =>
         fetchMergedProductPool(clientToken, searchBase, signal.signal, wantPool)
       );
       if (pool.length < form.linesPerOrder) {
         ElMessage.error(
-          `采购账号 ${c}：合约内可下单商品不足 ${form.linesPerOrder} 条（当前 ${pool.length}）。请改关键词、换配送日或关闭「仅合约内商品」。`
+          `「${who}」：合约内可下单商品不足 ${form.linesPerOrder} 条（当前 ${pool.length}）。请改关键词、换配送日或关闭「仅合约内商品」。`
         );
         busyPlace.value = false;
         placeAbort.value = null;
@@ -938,7 +1194,7 @@ async function runPlaceOrders() {
       }
       if (pool.length < form.linesPerOrder * form.ordersPerClient) {
         pushLog(
-          `采购账号 ${c}：合约内 SKU 仅 ${pool.length} 条，少于 行数×笔数=${form.linesPerOrder * form.ordersPerClient}，多笔将复用 SKU，已加大笔间数量差。`,
+          `「${who}」：合约内 SKU 仅 ${pool.length} 条，少于 行数×笔数=${form.linesPerOrder * form.ordersPerClient}，多笔将复用 SKU，已加大笔间数量差。`,
         );
       }
 
@@ -948,7 +1204,7 @@ async function runPlaceOrders() {
         if (signal.signal.aborted) break;
         const slotForOrder = form.randomDeliverySlot ? randomDeliverySlot() : (form.expectedSlot || "").trim();
         const row = {
-          client: c,
+          client: who,
           index: ++globalIdx,
           orderNo: "",
           orderId: "",
@@ -965,7 +1221,7 @@ async function runPlaceOrders() {
             form.linesPerOrder,
             oi,
             form.ordersPerClient,
-            c,
+            u,
             usedProductIds,
           );
           const baseQty = Math.max(1, Math.floor(Number(form.lineQuantity) || 1));
@@ -975,14 +1231,14 @@ async function runPlaceOrders() {
               p.contract_unit_price != null && p.contract_unit_price !== ""
                 ? Number(p.contract_unit_price)
                 : Number(p.guide_price ?? p.reference_price ?? 0);
-            const quantity = lineQuantityForDemo(baseQty, oi, li, c);
+            const quantity = lineQuantityForDemo(baseQty, oi, li, u);
             return {
               product_id: Number(p.id),
               quantity,
               unit_price: Number.isFinite(unit) && unit > 0 ? unit : 0.01,
             };
           });
-          const seed = seedForClient(c);
+          const seed = seedForClient(u);
           const off = globalIdx * (form.coordStep || 0);
           const lng = seed.lng + off;
           const lat = seed.lat + off;
@@ -1014,13 +1270,13 @@ async function runPlaceOrders() {
             const id = Number(p.id);
             if (Number.isFinite(id) && id > 0) usedProductIds.add(id);
           }
-          pushLog(`POST /orders ${c} #${oi + 1} OK id=${row.orderId} slot=${slotForOrder}`);
+          pushLog(`POST /orders ${who} #${oi + 1} OK id=${row.orderId} slot=${slotForOrder}`);
         } catch (e) {
           row.status = "失败";
           row.ms = String(Math.round(performance.now() - t0));
           const detail = e.response?.data?.detail;
           row.error = formatHttpDetail(detail) || String(e.message || e);
-          pushLog(`POST /orders ${c} FAIL`);
+          pushLog(`POST /orders ${who} FAIL`);
         }
         resultRows.value.push(row);
       }
@@ -1112,9 +1368,10 @@ async function confirmDeleteOrders() {
   }
   busyDelete.value = true;
   try {
-    await clientAxios(monitorToken.value).post("/demo/orders/delete", { order_ids: ids });
-    ElMessage.success("删单完成");
-    pushLog(`demo orders/delete OK count=${ids.length}`);
+    const r = await clientAxios(monitorToken.value).post("/demo/orders/delete", { order_ids: ids });
+    const summary = cleanupSummaryText(r.data);
+    ElMessage.success(`删单完成：${summary}`);
+    pushLog(`demo orders/delete OK ${summary}`);
     deleteDialog.visible = false;
   } catch (e) {
     ElMessage.error(e.response?.data?.detail || e.message);
@@ -1132,9 +1389,9 @@ async function confirmClearAllOrders() {
   busyClearAll.value = true;
   try {
     const r = await clientAxios(monitorToken.value).post("/demo/orders/clear-all");
-    const n = r.data?.deleted_orders ?? 0;
-    ElMessage.success(`已清空，删除订单数 ${n}`);
-    pushLog(`demo orders/clear-all OK deleted_orders=${n}`);
+    const summary = cleanupSummaryText(r.data);
+    ElMessage.success(`清理完成：${summary}`);
+    pushLog(`demo orders/clear-all OK ${summary}`);
     clearAllDialog.visible = false;
     resultRows.value = [];
   } catch (e) {
@@ -1218,6 +1475,12 @@ async function confirmClearAllOrders() {
 }
 .ship-all-btn {
   width: 100%;
+  margin-top: 10px;
+}
+.full-chain-btn {
+  width: 100%;
+}
+.chain-step-row {
   margin-top: 10px;
 }
 .monitor {
