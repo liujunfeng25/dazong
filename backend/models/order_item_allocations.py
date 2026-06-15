@@ -27,3 +27,4 @@ class OrderItemAllocation(Base):
         DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow
     )
     created_by: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"))
+    label_print_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)

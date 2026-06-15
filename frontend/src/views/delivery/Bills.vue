@@ -5,6 +5,6 @@ import BillingCenter from '../../components/BillingCenter.vue'
 <template>
   <BillingCenter
     title="配送商账单中心"
-    description="统一查看客户（食堂）待付款和需要付给供货商/厂家的账单。"
+    description="统一管理客户应收与供货商、厂家应付，按对手方和账期完成核对与清算。"
   />
 </template>

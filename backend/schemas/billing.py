@@ -34,6 +34,7 @@ class BillingStatementOut(BaseModel):
     role: str
     owner_user_id: int
     counterparty_user_id: int
+    canteen_id: Optional[int] = None
     direction: str
     status: str
     amount: Decimal
@@ -51,6 +52,18 @@ class BillingStatementOut(BaseModel):
     display_title: Optional[str] = None
     action_hint: Optional[str] = None
     order_numbers: list[str] = []
+    period_label: Optional[str] = None
+    period_start: Optional[str] = None
+    period_end: Optional[str] = None
+    close_at: Optional[str] = None
+    confirm_due_date: Optional[str] = None
+    payment_due_date: Optional[str] = None
+    cycle_type: Optional[str] = None
+    cycle_type_label: Optional[str] = None
+    close_day: Optional[int] = None
+    unsettled_amount: Optional[float] = None
+    overdue_confirm: bool = False
+    overdue_payment: bool = False
 
 
 class BillingCycleCreateIn(BaseModel):
@@ -59,17 +72,37 @@ class BillingCycleCreateIn(BaseModel):
     scope_type: str = Field(default="canteen")
     scope_ref_id: int = 0
     cycle_type: str = Field(default="monthly", pattern="^(daily|weekly|monthly)$")
-    close_day: int = Field(default=1, ge=1, le=31)
+    close_day: int = Field(default=1, ge=1, le=28)
     confirm_due_days: int = Field(default=3, ge=1, le=90)
     payment_due_days: int = Field(default=7, ge=1, le=180)
 
 
 class BillingCycleUpdateIn(BaseModel):
     cycle_type: Optional[str] = Field(default=None, pattern="^(daily|weekly|monthly)$")
-    close_day: Optional[int] = Field(default=None, ge=1, le=31)
+    close_day: Optional[int] = Field(default=None, ge=1, le=28)
     confirm_due_days: Optional[int] = Field(default=None, ge=1, le=90)
     payment_due_days: Optional[int] = Field(default=None, ge=1, le=180)
     is_active: Optional[bool] = None
+
+
+class TargetedCycleCreateIn(BaseModel):
+    """运营端预配置定向账期规则：client_delivery 按 学校×食堂×配送商，delivery_supplier 按 配送商×供货商/厂家。"""
+
+    relation_type: str = Field(pattern="^(client_delivery|delivery_supplier)$")
+    owner_user_id: int = Field(gt=0)
+    counterparty_user_id: int = Field(gt=0)
+    canteen_id: Optional[int] = Field(default=None, gt=0)
+    cycle_type: str = Field(default="monthly", pattern="^(daily|weekly|monthly)$")
+    close_day: int = Field(default=1, ge=1, le=28)
+    confirm_due_days: int = Field(default=3, ge=1, le=90)
+    payment_due_days: int = Field(default=7, ge=1, le=180)
+
+
+class TargetedCycleUpdateIn(BaseModel):
+    cycle_type: Optional[str] = Field(default=None, pattern="^(daily|weekly|monthly)$")
+    close_day: Optional[int] = Field(default=None, ge=1, le=28)
+    confirm_due_days: Optional[int] = Field(default=None, ge=1, le=90)
+    payment_due_days: Optional[int] = Field(default=None, ge=1, le=180)
 
 
 class BillingStatementConfirmIn(BaseModel):

@@ -259,6 +259,76 @@
           class="monitor-login-hint"
           title="下方「发货」「删单」「一键清除全部订单链路」为灰色时：请先点击「监管登录」（默认 monitor001 / demo123）。登录成功后需后端开启 DEMO_MODE，否则会 403。"
         />
+        <div class="tianshu-demo-panel">
+          <div class="tianshu-demo-panel__head">
+            <div>
+              <div class="tianshu-demo-panel__title">天枢大屏真实模式批次</div>
+              <p>生成 <code>TSDEMO</code> 批次：今日配送日订单、分单、分检、车次、风险告警、退单、账单和通知。清除只清这批数据。</p>
+            </div>
+            <el-space wrap>
+              <el-button size="small" plain :disabled="!monitorToken" :loading="busyTianshuStatus" @click="refreshTianshuStatus">刷新状态</el-button>
+              <el-button size="small" type="primary" plain @click="openTianshuScreen">打开天枢大屏</el-button>
+              <el-tag effect="dark" type="success">真实接口</el-tag>
+            </el-space>
+          </div>
+          <div class="tianshu-demo-panel__status">
+            <div :class="{ 'is-empty': !tianshuBatchStatus.exists }">
+              <span>当前批次</span>
+              <b>{{ tianshuBatchStatus.exists ? "已生成" : "未生成" }}</b>
+              <small>{{ tianshuBatchStatus.delivery_date || "等待生成 TSDEMO" }}</small>
+            </div>
+            <div>
+              <span>订单 / 车次</span>
+              <b>{{ tianshuBatchStatus.orders || 0 }} / {{ tianshuBatchStatus.dispatch_trips || 0 }}</b>
+              <small>{{ tianshuBatchStatus.latest_order_no || "暂无订单" }}</small>
+            </div>
+            <div>
+              <span>分单 / 分检</span>
+              <b>{{ tianshuBatchStatus.allocations || 0 }} / {{ tianshuBatchStatus.sort_scan_records || 0 }}</b>
+              <small>装车明细 {{ tianshuBatchStatus.dispatch_items || 0 }}</small>
+            </div>
+            <div>
+              <span>预警 / 账单 / 通知</span>
+              <b>{{ tianshuBatchStatus.alerts || 0 }} / {{ tianshuBatchStatus.bills || 0 }} / {{ tianshuBatchStatus.notifications || 0 }}</b>
+              <small>退单 {{ tianshuBatchStatus.returns || 0 }}</small>
+            </div>
+          </div>
+          <el-row :gutter="10" class="tianshu-demo-panel__controls">
+            <el-col :xs="24" :sm="8">
+              <el-input-number
+                v-model="form.tianshuOrderCount"
+                :min="12"
+                :max="120"
+                controls-position="right"
+                style="width: 100%"
+              />
+            </el-col>
+            <el-col :xs="24" :sm="8">
+              <el-button
+                type="success"
+                :disabled="!monitorToken"
+                :loading="busyTianshuSeed"
+                style="width: 100%"
+                @click="seedTianshuRealData"
+              >
+                生成天枢真实模式数据
+              </el-button>
+            </el-col>
+            <el-col :xs="24" :sm="8">
+              <el-button
+                type="danger"
+                plain
+                :disabled="!monitorToken"
+                :loading="busyTianshuClear"
+                style="width: 100%"
+                @click="openClearTianshuDialog"
+              >
+                清除天枢批次
+              </el-button>
+            </el-col>
+          </el-row>
+          <p v-if="tianshuBatchSummary" class="tianshu-demo-panel__summary">{{ tianshuBatchSummary }}</p>
+        </div>
         <el-form-item label="发货前（可选）">
           <el-switch
             v-model="form.mockPrintBeforeShip"
@@ -391,6 +461,26 @@
           @click="confirmClearAllOrders"
         >
           确认清空
+        </el-button>
+      </template>
+    </el-dialog>
+
+    <el-dialog v-model="clearTianshuDialog.visible" title="确认清除天枢批次" width="90%" style="max-width: 480px">
+      <p>
+        将删除订单号前缀为 <strong>TSDEMO</strong> 的天枢演示批次，以及它附带的分单、分检、车次、退单、账单、对账单、通知、预警和审计数据。
+      </p>
+      <p>普通演示订单和真实业务订单不会被删除。</p>
+      <p>请在下方输入 <strong>CLEAR TIANSHU</strong> 后确认。</p>
+      <el-input v-model="clearTianshuDialog.confirm" placeholder="输入 CLEAR TIANSHU" />
+      <template #footer>
+        <el-button @click="clearTianshuDialog.visible = false">取消</el-button>
+        <el-button
+          type="danger"
+          :disabled="clearTianshuDialog.confirm !== 'CLEAR TIANSHU'"
+          :loading="busyTianshuClear"
+          @click="confirmClearTianshuData"
+        >
+          确认清除
         </el-button>
       </template>
     </el-dialog>
@@ -566,6 +656,7 @@ const form = reactive({
   contractCategoriesOnly: true,
   force: false,
   mockPrintBeforeShip: false,
+  tianshuOrderCount: 36,
 });
 
 const monitorForm = reactive({
@@ -585,6 +676,9 @@ const busyDeliver = ref(false);
 const busyReceive = ref(false);
 const busySettle = ref(false);
 const busyFullChain = ref(false);
+const busyTianshuSeed = ref(false);
+const busyTianshuClear = ref(false);
+const busyTianshuStatus = ref(false);
 const validateOk = ref(null);
 const validateIssues = ref([]);
 const metaPreview = ref("");
@@ -598,6 +692,22 @@ const placeAbort = ref(null);
 const errDialog = reactive({ visible: false, text: "" });
 const deleteDialog = reactive({ visible: false, confirm: "" });
 const clearAllDialog = reactive({ visible: false, confirm: "" });
+const clearTianshuDialog = reactive({ visible: false, confirm: "" });
+const tianshuBatchSummary = ref("");
+const tianshuBatchStatus = reactive({
+  exists: false,
+  orders: 0,
+  allocations: 0,
+  sort_scan_records: 0,
+  dispatch_trips: 0,
+  dispatch_items: 0,
+  returns: 0,
+  bills: 0,
+  alerts: 0,
+  notifications: 0,
+  latest_order_no: "",
+  delivery_date: "",
+});
 
 const apiPresetHint = computed(() => {
   const o = apiPresetOptions.find((x) => x.value === form.apiPreset);
@@ -1017,6 +1127,103 @@ async function runFullChain() {
   }
 }
 
+function applyTianshuStatus(payload) {
+  const d = payload || {};
+  Object.assign(tianshuBatchStatus, {
+    exists: Boolean(d.exists),
+    orders: Number(d.orders || 0),
+    allocations: Number(d.allocations || 0),
+    sort_scan_records: Number(d.sort_scan_records || 0),
+    dispatch_trips: Number(d.dispatch_trips || 0),
+    dispatch_items: Number(d.dispatch_items || 0),
+    returns: Number(d.returns || 0),
+    bills: Number(d.bills || 0),
+    alerts: Number(d.alerts || 0),
+    notifications: Number(d.notifications || 0),
+    latest_order_no: d.latest_order_no || "",
+    delivery_date: d.delivery_date || "",
+  });
+}
+
+async function refreshTianshuStatus({ silent = false } = {}) {
+  if (!monitorToken.value) {
+    if (!silent) ElMessage.warning("请先监管登录");
+    return;
+  }
+  busyTianshuStatus.value = true;
+  try {
+    const r = await clientAxios(monitorToken.value).get("/demo/tianshu/status");
+    applyTianshuStatus(r.data || {});
+    if (!silent) ElMessage.success("天枢批次状态已刷新");
+  } catch (e) {
+    if (!silent) ElMessage.error(e.response?.data?.detail || e.message);
+  } finally {
+    busyTianshuStatus.value = false;
+  }
+}
+
+function openTianshuScreen() {
+  const { protocol, hostname, port, origin } = window.location;
+  const devConsolePorts = new Set(["5173", "5174", "5175", "5176", "5177", "5178", "5179"]);
+  const base = devConsolePorts.has(port) ? `${protocol}//${hostname}` : origin;
+  window.open(`${base}/tianshu/`, "_blank", "noopener,noreferrer");
+}
+
+async function seedTianshuRealData() {
+  if (!monitorToken.value) {
+    ElMessage.warning("请先监管登录");
+    return;
+  }
+  busyTianshuSeed.value = true;
+  try {
+    const r = await clientAxios(monitorToken.value).post("/demo/tianshu/seed", {
+      order_count: Number(form.tianshuOrderCount || 36),
+      delivery_username: (form.deliveryUsername || "delivery001").trim(),
+      clear_existing: true,
+    });
+    const d = r.data || {};
+    const ids = Array.isArray(d.order_ids) ? d.order_ids : [];
+    demoOrderIdsText.value = ids.join(", ");
+    tianshuBatchSummary.value = `已生成 ${d.inserted_orders || 0} 单、${d.dispatch_trips || 0} 个车次、${d.alerts || 0} 条预警、${d.returns || 0} 条退单、${d.bills || 0} 条账单。`;
+    await refreshTianshuStatus({ silent: true });
+    pushLog(`demo tianshu/seed OK orders=${d.inserted_orders || 0} trips=${d.dispatch_trips || 0} alerts=${d.alerts || 0}`);
+    ElMessage.success("天枢真实模式演示数据已生成，已填入本批 order_id");
+  } catch (e) {
+    ElMessage.error(e.response?.data?.detail || e.message);
+    pushLog("demo tianshu/seed FAIL");
+  } finally {
+    busyTianshuSeed.value = false;
+  }
+}
+
+function openClearTianshuDialog() {
+  clearTianshuDialog.confirm = "";
+  clearTianshuDialog.visible = true;
+}
+
+async function confirmClearTianshuData() {
+  if (!monitorToken.value) {
+    ElMessage.warning("请先监管登录");
+    return;
+  }
+  busyTianshuClear.value = true;
+  try {
+    const r = await clientAxios(monitorToken.value).post("/demo/tianshu/clear");
+    const summary = cleanupSummaryText(r.data);
+    tianshuBatchSummary.value = `已清除：${summary}`;
+    demoOrderIdsText.value = "";
+    applyTianshuStatus({});
+    pushLog(`demo tianshu/clear OK ${summary}`);
+    ElMessage.success(`天枢批次清理完成：${summary}`);
+    clearTianshuDialog.visible = false;
+  } catch (e) {
+    ElMessage.error(e.response?.data?.detail || e.message);
+    pushLog("demo tianshu/clear FAIL");
+  } finally {
+    busyTianshuClear.value = false;
+  }
+}
+
 onMounted(() => {
   if (!form.expectedDate) {
     form.expectedDate = todayStr();
@@ -1328,7 +1535,10 @@ async function monitorLogin() {
     });
     monitorToken.value = r.data.token;
     if (r.data.role !== "monitor") ElMessage.warning("该账号角色不是 monitor，演示接口可能被拒绝");
-    else ElMessage.success("监管登录成功");
+    else {
+      ElMessage.success("监管登录成功");
+      await refreshTianshuStatus({ silent: true });
+    }
   } catch (e) {
     monitorToken.value = "";
     ElMessage.error(e.response?.data?.detail || e.message);
@@ -1488,6 +1698,100 @@ async function confirmClearAllOrders() {
 }
 .monitor-login-hint {
   margin-bottom: 12px;
+}
+.tianshu-demo-panel {
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px solid rgba(64, 158, 255, 0.24);
+  border-radius: 10px;
+  background:
+    linear-gradient(135deg, rgba(9, 23, 46, 0.96), rgba(15, 47, 72, 0.92)),
+    radial-gradient(circle at 80% 20%, rgba(64, 210, 255, 0.18), transparent 34%);
+  color: #eaf7ff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+.tianshu-demo-panel__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+.tianshu-demo-panel__title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+.tianshu-demo-panel p {
+  margin: 6px 0 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: rgba(234, 247, 255, 0.76);
+}
+.tianshu-demo-panel code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(64, 210, 255, 0.14);
+  color: #9eeeff;
+}
+.tianshu-demo-panel__status {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+.tianshu-demo-panel__status > div {
+  min-width: 0;
+  padding: 10px 11px;
+  border: 1px solid rgba(123, 220, 255, 0.18);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(15, 51, 83, 0.78), rgba(8, 25, 46, 0.78)),
+    radial-gradient(circle at 85% 18%, rgba(77, 220, 255, 0.16), transparent 42%);
+  box-shadow: inset 0 0 20px rgba(37, 188, 255, 0.06);
+}
+.tianshu-demo-panel__status span,
+.tianshu-demo-panel__status small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tianshu-demo-panel__status span {
+  font-size: 0.72rem;
+  color: rgba(199, 236, 255, 0.68);
+}
+.tianshu-demo-panel__status b {
+  display: block;
+  margin-top: 3px;
+  font-size: 1rem;
+  color: #dffbff;
+}
+.tianshu-demo-panel__status small {
+  margin-top: 3px;
+  font-size: 0.7rem;
+  color: rgba(189, 248, 222, 0.78);
+}
+.tianshu-demo-panel__status .is-empty b {
+  color: #ffd18a;
+}
+.tianshu-demo-panel__controls {
+  margin-top: 12px;
+}
+.tianshu-demo-panel__summary {
+  color: #bdf8de !important;
+}
+@media (max-width: 860px) {
+  .tianshu-demo-panel__head {
+    flex-direction: column;
+  }
+  .tianshu-demo-panel__status {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 520px) {
+  .tianshu-demo-panel__status {
+    grid-template-columns: 1fr;
+  }
 }
 .btn-wrap {
   display: inline-block;

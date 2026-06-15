@@ -29,6 +29,9 @@ class Product(Base, TimestampMixin):
     volume_adjust_factor: Mapped[Optional[float]] = mapped_column(Numeric(6, 3))
     is_designated_factory: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     designated_factory_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"))
+    quality_report_mode: Mapped[str] = mapped_column(
+        Enum("batch", "periodic"), nullable=False, default="batch"
+    )
     status: Mapped[str] = mapped_column(
         Enum("active", "disabled"), nullable=False, default="active"
     )

@@ -34,6 +34,7 @@ import {
   DstColorFactor,
   OneFactor,
   TextureLoader,
+  BufferGeometry,
 } from "three";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import tianshuAtmosphereBg from "@/assets/images/tianshu-map-atmosphere-bg.png";
@@ -68,6 +69,30 @@ import {
 } from "./mapVisualStorage.js";
 import { computeShapeSpaceBounds } from "./mapGeoBounds.js";
 import { loadAmapSatelliteTexture } from "./amapSatelliteTexture.js";
+
+function installGeometryNaNGuard() {
+  const proto = BufferGeometry?.prototype;
+  if (!proto || proto.__tianshuNaNGuardInstalled) return;
+  const raw = proto.computeBoundingSphere;
+  proto.computeBoundingSphere = function computeBoundingSphereWithTianshuGuard() {
+    const pos = this?.attributes?.position;
+    const arr = pos?.array;
+    if (arr && typeof arr.length === "number") {
+      let touched = false;
+      for (let i = 0; i < arr.length; i += 1) {
+        if (!Number.isFinite(Number(arr[i]))) {
+          arr[i] = 0;
+          touched = true;
+        }
+      }
+      if (touched && pos) pos.needsUpdate = true;
+    }
+    return raw.call(this);
+  };
+  proto.__tianshuNaNGuardInstalled = true;
+}
+
+installGeometryNaNGuard();
 
 /** 与 createDistrictLabels 内 this.districtLabelStyle 同步的默认绘制参数 */
 const DISTRICT_LABEL_DEFAULT = {
@@ -174,16 +199,7 @@ function sortByValue(data) {
   return data;
 }
 
-/**
- * 大宗监管指挥中心锚点：默认北京市中心（GCJ-02，与高德一致量级）。
- */
-const SHIXUN_HQ_GEO = {
-  lng: 116.4074,
-  lat: 39.9042,
-  address: "北京市东城区监管指挥中心",
-};
-
-/** 总部 → 订单落点飞线：条数上限、拱高、线径（与模板 createFlyLine 同纹理） */
+/** 订单飞线（配送商→客户）参数：条数上限、拱高、线径（与模板 createFlyLine 同纹理） */
 const HQ_FLYLINE_MAX = 48;
 const HQ_FLYLINE_ARCH_Z = 3.55;
 const HQ_FLYLINE_RADIUS = 0.072;
@@ -402,46 +418,26 @@ export class World extends Mini3d {
       "focusMap",
     );
 
-    tl.to(
-      this.focusMapGroup.scale,
-      {
-        duration: 1,
-        x: 1,
-        y: 1,
-        z: 1,
-        ease: "circ.out",
-        onComplete: () => {
-          this.flyLineGroup.visible = true;
-          if (this.orderFlyLineGroup?.children?.length) {
-            this.orderFlyLineGroup.visible = true;
-          }
-          // 模板散点/信息点 demo 已停用，由订单光柱 + 总部光柱承担落点
-          if (this.scatterGroup) this.scatterGroup.visible = false;
-          if (this.InfoPointGroup) this.InfoPointGroup.visible = false;
-        },
+    // 保底：focusMapGroup 初始 scale 已为 1，这里只触发后续可见性，不再 tween scale
+    tl.call(
+      () => {
+        this.flyLineGroup.visible = true;
+        if (this.orderFlyLineGroup?.children?.length) {
+          this.orderFlyLineGroup.visible = true;
+        }
+        if (this.scatterGroup) this.scatterGroup.visible = false;
+        if (this.InfoPointGroup) this.InfoPointGroup.visible = false;
       },
+      [],
       "focusMap",
     );
 
-    tl.to(
-      this.focusMapTopMaterial,
-      {
-        duration: 1,
-        opacity: 1,
-        ease: "circ.out",
+    // 保底：focusMap 顶/侧材质 opacity 初始即为 1（见 createProvinceMaterial），不再依赖 timeline tween
+    tl.call(
+      () => {
+        if (this.focusMapSideMaterial) this.focusMapSideMaterial.transparent = false;
       },
-      "focusMapOpacity",
-    );
-    tl.to(
-      this.focusMapSideMaterial,
-      {
-        duration: 1,
-        opacity: 1,
-        ease: "circ.out",
-        onComplete: () => {
-          this.focusMapSideMaterial.transparent = false;
-        },
-      },
+      [],
       "focusMapOpacity",
     );
     this.otherLabel.map((item, index) => {
@@ -655,8 +651,8 @@ export class World extends Mini3d {
     mapTop.setParent(focusMapGroup);
     mapLine.setParent(focusMapGroup);
     focusMapGroup.position.set(0, 0, -0.01);
-    // 模板开场：Z 向压扁 + 挤出材质透明，由 GSAP 拉起
-    focusMapGroup.scale.set(1, 1, 0);
+    // 保底：scale 初始即为 1，地图始终可见；开场缩放动画走 mapGroup.scale 而非压扁 focusMapGroup
+    focusMapGroup.scale.set(1, 1, 1);
     mapGroup.add(focusMapGroup);
     mapGroup.rotation.x = -Math.PI / 2;
     mapGroup.position.set(0, 0.2, 0);
@@ -920,7 +916,7 @@ export class World extends Mini3d {
     let topMaterial = new MeshLambertMaterial({
       color: 0xffffff,
       transparent: true,
-      opacity: 0,
+      opacity: 1,
       fog: false,
       side: DoubleSide,
     });
@@ -1015,7 +1011,7 @@ export class World extends Mini3d {
       map: sideMap,
       fog: false,
       transparent: true,
-      opacity: 0,
+      opacity: 1,
       side: DoubleSide,
     });
     this.time.on("tick", () => {
@@ -1954,6 +1950,7 @@ export class World extends Mini3d {
 
   _setDemoMapDecorVisible(visible) {
     if (this.barGroup) this.barGroup.visible = visible;
+    if (this.flyLineGroup) this.flyLineGroup.visible = visible;
     if (this.scatterGroup) this.scatterGroup.visible = false;
     if (this.InfoPointGroup) {
       this.InfoPointGroup.visible = false;
@@ -1967,44 +1964,39 @@ export class World extends Mini3d {
     }
   }
 
-  _headquartersPillarItem() {
-    return {
-      isHeadquarters: true,
-      lng: SHIXUN_HQ_GEO.lng,
-      lat: SHIXUN_HQ_GEO.lat,
-      address: SHIXUN_HQ_GEO.address,
-      customer_name: "",
-      order_count: 0,
-      gmv: 0,
-      member_id: null,
-      member_key: null,
-    };
-  }
-
-  _isNearHeadquarters(lng, lat) {
-    if (!Number.isFinite(lng) || !Number.isFinite(lat)) return false;
-    return (
-      Math.abs(lng - SHIXUN_HQ_GEO.lng) < 0.004 &&
-      Math.abs(lat - SHIXUN_HQ_GEO.lat) < 0.004
-    );
-  }
-
   _clearOrderPillarHoverPanel() {
     emitter.$emit("tianshuOrderPillarHover", null);
   }
 
   /** 悬停信息改由大屏固定区位展示（index.vue），避免 CSS3D 随视距过小 */
   _showOrderPillarHover(payload) {
-    if (payload.isHeadquarters) {
-      emitter.$emit("tianshuOrderPillarHover", {
-        isHeadquarters: true,
-        headquartersTitle: "监管指挥中心",
-        address: String(payload.address || SHIXUN_HQ_GEO.address).trim(),
-      });
-      return;
-    }
     emitter.$emit("tianshuOrderPillarHover", {
-      isHeadquarters: false,
+      role: payload.role,
+      risk_type: payload.risk_type,
+      risk_level: payload.risk_level,
+      stage: payload.stage,
+      cold_type: payload.cold_type,
+      industry_type: payload.industry_type,
+      product_name: payload.product_name,
+      category_name: payload.category_name,
+      change_pct: payload.change_pct,
+      forecast_price: payload.forecast_price,
+      confidence: payload.confidence,
+      profile_type: payload.profile_type,
+      district_name: payload.district_name,
+      client_count: payload.client_count,
+      canteen_count: payload.canteen_count,
+      risk_count: payload.risk_count,
+      vehicle_id: payload.vehicle_id,
+      warehouse_id: payload.warehouse_id,
+      temperature: payload.temperature,
+      humidity: payload.humidity,
+      trip_id: payload.trip_id,
+      route_no: payload.route_no,
+      status: payload.status,
+      description: payload.description,
+      order_sn: payload.order_sn,
+      order_id: payload.order_id,
       address: String(payload.address || "").trim(),
       customer_name: payload.customer_name,
       order_count: Number(payload.order_count) || 0,
@@ -2037,7 +2029,7 @@ export class World extends Mini3d {
     });
   }
 
-  _clearHeadquartersFlyLines() {
+  _clearOrderFlyLines() {
     if (this._hqFlyLineMaterial) {
       try {
         this._hqFlyLineMaterial.dispose();
@@ -2064,11 +2056,26 @@ export class World extends Mini3d {
   }
 
   /**
-   * 省级 provincesData 为空时模板飞线无数据；此处用「总部 → 订单」二次贝塞尔管 + flyline6 流动贴图，风格与 createFlyLine 一致。
+   * 业务语义：金色光柱（配送商）→ 蓝色光柱（客户）。
+   * 入参 lines：[{ from_lng, from_lat, to_lng, to_lat, gmv, order_count }]，
+   * 由 /api/insights/business/cockpit-flylines 提供；mock 模式可叠加 mock flylines。
    */
-  _buildHeadquartersFlyLines(filteredOrderPoints) {
-    this._clearHeadquartersFlyLines();
-    if (!filteredOrderPoints.length || !this.orderFlyLineGroup) return;
+  _safeGeoProject(lng, lat) {
+    const xLng = Number(lng);
+    const xLat = Number(lat);
+    if (!Number.isFinite(xLng) || !Number.isFinite(xLat)) return null;
+    if (xLng < 70 || xLng > 140 || xLat < 15 || xLat > 55) return null;
+    const projected = this.geoProjection([xLng, xLat]);
+    if (!Array.isArray(projected) || projected.length < 2) return null;
+    const x = Number(projected[0]);
+    const y = Number(projected[1]);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+    return [x, y];
+  }
+
+  setFlylines(lines) {
+    this._clearOrderFlyLines();
+    if (!Array.isArray(lines) || !lines.length || !this.orderFlyLineGroup) return;
 
     const tex = this.assets.instance.getResource("mapFlyline");
     tex.wrapS = tex.wrapT = RepeatWrapping;
@@ -2100,50 +2107,38 @@ export class World extends Mini3d {
     this._hqFlyLineGlowMaterial = glowMat;
     this._hqFlyLineMaterial = coreMat;
 
-    const sorted = [...filteredOrderPoints].sort(
+    const sorted = [...lines].sort(
       (a, b) => (Number(b.gmv) || 0) - (Number(a.gmv) || 0),
     );
     const slice = sorted.slice(0, HQ_FLYLINE_MAX);
 
-    const [hx, hy] = this.geoProjection([SHIXUN_HQ_GEO.lng, SHIXUN_HQ_GEO.lat]);
-    const start = new Vector3(hx, -hy, 0);
     const archZ = HQ_FLYLINE_ARCH_Z;
     const tubeSegments = 48;
     const rad = HQ_FLYLINE_RADIUS;
     const radSeg = 5;
     const flyY = this.depth + 0.52;
 
-    for (const p of slice) {
-      const lng = Number(p.lng);
-      const lat = Number(p.lat);
-      if (!Number.isFinite(lng) || !Number.isFinite(lat)) continue;
-      const [ex, ey] = this.geoProjection([lng, lat]);
-      const end = new Vector3(ex, -ey, 0);
+    for (const line of slice) {
+      const from = this._safeGeoProject(line.from_lng, line.from_lat);
+      const to = this._safeGeoProject(line.to_lng, line.to_lat);
+      if (!from || !to) continue;
+      const [fx, fy] = from;
+      const [tx, ty] = to;
+      const start = new Vector3(fx, -fy, 0);
+      const end = new Vector3(tx, -ty, 0);
       if (start.distanceToSquared(end) < 1e-10) continue;
       const mid = new Vector3().addVectors(start, end).multiplyScalar(0.5);
       mid.setZ(archZ);
       const curve = new QuadraticBezierCurve3(start, mid, end);
 
-      const geomGlow = new TubeGeometry(
-        curve,
-        tubeSegments,
-        rad * HQ_FLYLINE_GLOW_RADIUS_MUL,
-        radSeg,
-        false,
-      );
+      const geomGlow = new TubeGeometry(curve, tubeSegments, rad * HQ_FLYLINE_GLOW_RADIUS_MUL, radSeg, false);
       const meshGlow = new Mesh(geomGlow, glowMat);
       meshGlow.rotation.x = -Math.PI / 2;
       meshGlow.position.set(0, flyY, 0);
       meshGlow.renderOrder = 19;
       this.orderFlyLineGroup.add(meshGlow);
 
-      const geomCore = new TubeGeometry(
-        curve,
-        tubeSegments,
-        rad,
-        radSeg,
-        false,
-      );
+      const geomCore = new TubeGeometry(curve, tubeSegments, rad, radSeg, false);
       const meshCore = new Mesh(geomCore, coreMat);
       meshCore.rotation.x = -Math.PI / 2;
       meshCore.position.set(0, flyY, 0);
@@ -2155,7 +2150,8 @@ export class World extends Mini3d {
 
   _clearOrderPillars() {
     this._clearOrderPillarHoverPanel();
-    this._clearHeadquartersFlyLines();
+    // 飞线 group 独立 lifecycle，由 setFlylines 自身管理；这里清柱子时不连带清飞线，
+    // 否则 loadFlylines 与 loadTodayOrderPillars 异步并行时飞线会被刷掉。
     for (const f of this._orderFocusMarkers) {
       try {
         this.flyLineFocusGroup?.remove(f);
@@ -2196,13 +2192,12 @@ export class World extends Mini3d {
     // 模板 createFocus 落在 flyLineCenter（近东城）；订单模式以真实地址柱为准，避免与「城市中心 demo 光圈」混淆
     if (this._cityFocusMarker) this._cityFocusMarker.visible = false;
     const raw = Array.isArray(points) ? points : [];
+    // 业务约束：不再前置注入硬编码"监管指挥中心"——数据库无该坐标。
+    // 金光柱（高大金色）= 后端返回的真实 delivery 点位本身。
     const filtered = raw.filter((p) => {
-      const lng = Number(p.lng);
-      const lat = Number(p.lat);
-      if (!Number.isFinite(lng) || !Number.isFinite(lat)) return false;
-      return !this._isNearHeadquarters(lng, lat);
+      return Boolean(this._safeGeoProject(p.lng, p.lat));
     });
-    const merged = [this._headquartersPillarItem(), ...filtered];
+    const merged = filtered;
 
     this._useOrderPillars = true;
     this._setDemoMapDecorVisible(false);
@@ -2222,10 +2217,38 @@ export class World extends Mini3d {
       const lng = Number(item.lng);
       const lat = Number(item.lat);
       if (!Number.isFinite(lng) || !Number.isFinite(lat)) continue;
-      const isHq = Boolean(item.isHeadquarters);
+      const roleLc = typeof item.role === "string" ? item.role.toLowerCase() : "";
+      const isDelivery = roleLc === "delivery";
+      const isRisk = roleLc === "risk";
+      const isFulfillment = roleLc === "fulfillment";
+      const isColdChain = roleLc === "cold_chain";
+      const isIndustry = roleLc === "industry";
+      const isCityProfile = roleLc === "city_profile";
+      const riskLevel = String(item.risk_level || "").toLowerCase();
+      const isHighRisk = isRisk && (riskLevel === "high" || riskLevel === "高");
+      const fulfillmentStage = String(item.stage || "").toLowerCase();
+      const isFulfillmentBlocked = isFulfillment && fulfillmentStage === "blocked";
+      const isFulfillmentTransit = isFulfillment && fulfillmentStage === "in_transit";
+      const coldStage = String(item.stage || "").toLowerCase();
+      const isColdAlert = isColdChain && coldStage === "alert";
+      const isColdWarehouse = isColdChain && String(item.cold_type || "").toLowerCase() === "warehouse";
+      const isIndustryVolatile = isIndustry && String(item.stage || "").toLowerCase() === "volatile";
+      const isCityRisk = isCityProfile && String(item.stage || "").toLowerCase() === "risk";
+      const isCityThin = isCityProfile && String(item.stage || "").toLowerCase() === "thin";
       const oc = Number(item.order_count) || 0;
-      const geoHeight = isHq
+      // 配送商（金光柱）直接复用原"总部"高大柱视觉：高度/粗细/颜色/光晕/焦点环全部对齐
+      const geoHeight = isDelivery
         ? heightBase * 0.94
+        : isRisk
+          ? heightBase * (isHighRisk ? 1.08 : 0.82)
+        : isFulfillment
+          ? heightBase * (isFulfillmentBlocked ? 0.96 : isFulfillmentTransit ? 0.86 : 0.72)
+        : isColdChain
+          ? heightBase * (isColdAlert ? 1.02 : isColdWarehouse ? 0.68 : 0.9)
+        : isIndustry
+          ? heightBase * (isIndustryVolatile ? 1.02 : 0.76)
+        : isCityProfile
+          ? heightBase * (isCityRisk ? 0.96 : isCityThin ? 0.68 : 0.82)
         : Math.max(
             0.38 * factor,
             heightBase * (0.12 + (0.88 * oc) / maxC),
@@ -2234,18 +2257,48 @@ export class World extends Mini3d {
       const material = new MeshBasicMaterial({
         color: 0xffffff,
         transparent: true,
-        opacity: 0,
+        opacity: 1,
         depthTest: false,
         fog: false,
       });
-      const yellowish = !isHq && (pillarIdx % 7) > 3;
+      // delivery=金（用原总部那套橙金渐变），client=蓝
       new GradientShader(material, {
-        uColor1: isHq ? 0xff9f43 : yellowish ? 0xfbdf88 : 0x50bbfe,
-        uColor2: isHq ? 0xfff8e8 : yellowish ? 0xfffef4 : 0x77fbf5,
+        uColor1: isRisk
+          ? (isHighRisk ? 0xff2d2d : 0xff7a1a)
+          : isFulfillment
+            ? (isFulfillmentBlocked ? 0xf59e0b : isFulfillmentTransit ? 0x22d3ee : 0x38bdf8)
+            : isColdChain
+              ? (isColdAlert ? 0x7c3aed : isColdWarehouse ? 0x7dd3fc : 0xa7f3ff)
+            : isIndustry
+              ? (isIndustryVolatile ? 0xfacc15 : 0xa855f7)
+            : isCityProfile
+              ? (isCityRisk ? 0xf97316 : isCityThin ? 0xfbbf24 : 0x22d3ee)
+            : isDelivery ? 0xff9f43 : 0x50bbfe,
+        uColor2: isRisk
+          ? (isHighRisk ? 0xfff1b8 : 0xffd56a)
+          : isFulfillment
+            ? (isFulfillmentBlocked ? 0xfff0b8 : 0xc8ffff)
+            : isColdChain
+              ? (isColdAlert ? 0xfbcfe8 : 0xffffff)
+            : isIndustry
+              ? (isIndustryVolatile ? 0x67e8f9 : 0xf0abfc)
+            : isCityProfile
+              ? (isCityRisk ? 0xffedd5 : 0xcffafe)
+            : isDelivery ? 0xfff8e8 : 0x77fbf5,
         size: geoHeight,
         dir: "y",
       });
-      const thick = isHq ? 2.35 : 1;
+      const thick = isRisk
+        ? (isHighRisk ? 2.15 : 1.65)
+        : isFulfillment
+          ? (isFulfillmentBlocked ? 1.95 : 1.45)
+          : isColdChain
+            ? (isColdAlert ? 2.05 : isColdWarehouse ? 1.35 : 1.7)
+          : isIndustry
+            ? (isIndustryVolatile ? 1.9 : 1.45)
+          : isCityProfile
+            ? (isCityRisk ? 1.85 : isCityThin ? 1.25 : 1.55)
+          : isDelivery ? 2.35 : 1;
       const geo = new BoxGeometry(
         0.1 * factor * thick,
         0.1 * factor * thick,
@@ -2253,12 +2306,24 @@ export class World extends Mini3d {
       );
       geo.translate(0, 0, geoHeight / 2);
       const mesh = new Mesh(geo, material);
-      mesh.renderOrder = isHq ? 6 : 5;
-      const [x, y] = this.geoProjection([lng, lat]);
+      mesh.renderOrder = isDelivery ? 6 : 5;
+      const projected = this._safeGeoProject(lng, lat);
+      if (!projected) continue;
+      const [x, y] = projected;
       mesh.position.set(x, -y, this.depth + 0.45);
       const hg = this.createHUIGUANG(
         geoHeight,
-        isHq ? 0xffe2b0 : yellowish ? 0xfffef4 : 0x77fbf5,
+        isRisk
+          ? (isHighRisk ? 0xff5b3a : 0xff9c38)
+          : isFulfillment
+            ? (isFulfillmentBlocked ? 0xffc45a : 0x67e8f9)
+            : isColdChain
+              ? (isColdAlert ? 0xf0abfc : 0xcffafe)
+            : isIndustry
+              ? (isIndustryVolatile ? 0xfde68a : 0xd8b4fe)
+            : isCityProfile
+              ? (isCityRisk ? 0xf97316 : 0x67e8f9)
+            : isDelivery ? 0xffe2b0 : 0x77fbf5,
       );
       mesh.add(...hg);
       const hNorm = (geoHeight - 0.38 * factor) / (heightBase - 0.38 * factor + 1e-6);
@@ -2267,27 +2332,52 @@ export class World extends Mini3d {
         y,
         pillarIdx,
         hNorm,
-        isHq ? { color1: 0xffcc66, color2: 0xffeecc } : null,
+        isRisk
+          ? { color1: isHighRisk ? 0xff4d2e : 0xff8a2a, color2: isHighRisk ? 0xffe0a3 : 0xffcc66 }
+          : isFulfillment
+            ? { color1: isFulfillmentBlocked ? 0xf59e0b : 0x22d3ee, color2: isFulfillmentBlocked ? 0xfff0b8 : 0xc8ffff }
+          : isColdChain
+            ? { color1: isColdAlert ? 0xc084fc : 0x67e8f9, color2: isColdAlert ? 0xfbcfe8 : 0xffffff }
+          : isIndustry
+            ? { color1: isIndustryVolatile ? 0xfacc15 : 0xa855f7, color2: isIndustryVolatile ? 0x67e8f9 : 0xf0abfc }
+          : isCityProfile
+            ? { color1: isCityRisk ? 0xf97316 : 0x22d3ee, color2: isCityRisk ? 0xffedd5 : 0xcffafe }
+          : isDelivery
+            ? { color1: 0xffcc66, color2: 0xffeecc }
+            : null,
       );
-      const stagger = Math.min(0.85, 0.02 * (pillarIdx % 45));
-      // scale.z=0 时柱体近乎无厚度，射线拾取极易失败；保留极小缩放再动画到 1
-      mesh.scale.set(1, 1, 0.12);
-      gsap.to(material, {
-        opacity: 1,
-        duration: 1,
-        delay: stagger,
-        ease: "circ.out",
-      });
-      gsap.to(mesh.scale, {
-        z: 1,
-        duration: 1,
-        delay: stagger,
-        ease: "circ.out",
-      });
+      // 保底：scale=1 + material.opacity=1 立刻可见，不依赖 GSAP tween
+      mesh.scale.set(1, 1, 1);
       pillarIdx += 1;
       mesh.userData = {
         orderPillar: true,
-        isHeadquarters: isHq,
+        role: roleLc || "client",
+        risk_type: item.risk_type,
+        risk_level: item.risk_level,
+        stage: item.stage,
+        cold_type: item.cold_type,
+        industry_type: item.industry_type,
+        product_name: item.product_name,
+        category_name: item.category_name,
+        change_pct: item.change_pct,
+        forecast_price: item.forecast_price,
+        confidence: item.confidence,
+        profile_type: item.profile_type,
+        district_name: item.district_name,
+        client_count: item.client_count,
+        canteen_count: item.canteen_count,
+        risk_count: item.risk_count,
+        vehicle_id: item.vehicle_id,
+        warehouse_id: item.warehouse_id,
+        temperature: item.temperature,
+        humidity: item.humidity,
+        trip_id: item.trip_id,
+        route_no: item.route_no,
+        status: item.status,
+        description: item.description,
+        order_sn: item.order_sn,
+        order_id: item.order_id,
+        _mockId: typeof item._mockId === "string" ? item._mockId : null,
         address: String(item.address || "").trim(),
         customer_name: item.customer_name,
         order_count: oc,
@@ -2314,17 +2404,44 @@ export class World extends Mini3d {
         if (this._shouldIgnorePillarClickForMapTop(ev, mesh)) return;
         const u = mesh.userData;
         emitter.$emit("tianshuOrderPillarClick", {
-          isHeadquarters: Boolean(u.isHeadquarters),
+          role: u.role,
+          risk_type: u.risk_type,
+          risk_level: u.risk_level,
+          stage: u.stage,
+          cold_type: u.cold_type,
+          industry_type: u.industry_type,
+          product_name: u.product_name,
+          category_name: u.category_name,
+          change_pct: u.change_pct,
+          forecast_price: u.forecast_price,
+          confidence: u.confidence,
+          profile_type: u.profile_type,
+          district_name: u.district_name,
+          client_count: u.client_count,
+          canteen_count: u.canteen_count,
+          risk_count: u.risk_count,
+          vehicle_id: u.vehicle_id,
+          warehouse_id: u.warehouse_id,
+          temperature: u.temperature,
+          humidity: u.humidity,
+          trip_id: u.trip_id,
+          route_no: u.route_no,
+          status: u.status,
+          description: u.description,
+          order_sn: u.order_sn,
+          order_id: u.order_id,
+          _mockId: u._mockId,
           address: u.address,
           customer_name: u.customer_name,
           order_count: u.order_count,
           gmv: u.gmv,
           member_id: u.member_id,
+          member_key: u.member_key,
         });
       });
     }
 
-    this._buildHeadquartersFlyLines(filtered);
+    // 飞线由 index.vue loadFlylines() 调用 setFlylines() 注入（业务语义：配送商→客户）
   }
 
   createStorke() {
@@ -2359,7 +2476,16 @@ export class World extends Mini3d {
   }
 
   geoProjection(args) {
-    return this.getGeoMercator()(args);
+    if (!Array.isArray(args) || args.length < 2) return [0, 0];
+    const lng = Number(args[0]);
+    const lat = Number(args[1]);
+    if (!Number.isFinite(lng) || !Number.isFinite(lat)) return [0, 0];
+    const projected = this.getGeoMercator()([lng, lat]);
+    if (!Array.isArray(projected) || projected.length < 2) return [0, 0];
+    const x = Number(projected[0]);
+    const y = Number(projected[1]);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return [0, 0];
+    return [x, y];
   }
 
   /** 与挤出/顶面一致的 d3 投影实例（供卫星包络反算） */

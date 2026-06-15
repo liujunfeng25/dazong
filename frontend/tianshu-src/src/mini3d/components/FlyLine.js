@@ -27,10 +27,16 @@ export class FlyLine {
   }
   init() {
     const { centerPoint, material, texture, segments, radius, radialSegments, data, speed, middleHeight } = this.options
-    let [centerX, centerY] = this.geoProjection(centerPoint)
+    const centerProjected = this.geoProjection(centerPoint)
+    if (!Array.isArray(centerProjected)) return
+    let [centerX, centerY] = centerProjected
+    if (!Number.isFinite(centerX) || !Number.isFinite(centerY)) return
     let centerPointVec = new Vector3(centerX, -centerY, 0)
     data.map((city) => {
-      let [x, y] = this.geoProjection(city.centroid)
+      const projected = this.geoProjection(city.centroid)
+      if (!Array.isArray(projected)) return
+      let [x, y] = projected
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return
       let point = new Vector3(x, -y, 0)
       const center = new Vector3()
       center.addVectors(centerPointVec, point).multiplyScalar(0.5)

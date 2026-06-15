@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { listNotificationsApi, markNotificationReadApi, markNotificationsReadApi } from '../api/notifications'
 import { createReconnectingWS } from '../services/ws'
 import { formatChinaDateTime, parseBackendDate } from '../utils/datetime'
+import { resolveNotificationEventMeta } from '../utils/notificationMeta'
 import { useUserStore } from './user'
 
 export const useNotificationStore = defineStore('notifications', {
@@ -21,9 +22,15 @@ export const useNotificationStore = defineStore('notifications', {
       tender_awarded_done: '定标完成',
       supplier_quote_updated: '供货报价更新',
       order_status_change: '订单通知',
+      monitor_broadcast: '监管指令',
       bill_created: '账单生成',
       bill_settled: '账单结算',
       bill_update: '账单结算',
+      billing: '账单提醒',
+      billing_confirmed: '账单确认',
+      billing_confirmed_by_peer: '账单确认',
+      billing_settled: '账单结清',
+      billing_settled_by_peer: '账单结清',
       general: '系统通知',
     }),
     eventMetaMap: () => ({
@@ -31,6 +38,11 @@ export const useNotificationStore = defineStore('notifications', {
       bill_created: { tone: 'bill-create', icon: '生' },
       bill_settled: { tone: 'bill-settle', icon: '结' },
       bill_update: { tone: 'bill-settle', icon: '结' },
+      billing: { tone: 'bill-create', icon: '账' },
+      billing_confirmed: { tone: 'bill-settle', icon: '核' },
+      billing_confirmed_by_peer: { tone: 'bill-settle', icon: '核' },
+      billing_settled: { tone: 'bill-settle', icon: '结' },
+      billing_settled_by_peer: { tone: 'bill-settle', icon: '结' },
       tender_shortlisted: { tone: 'procurement', icon: '招' },
       tender_bid_created: { tone: 'procurement', icon: '招' },
       tender_bid_updated: { tone: 'procurement', icon: '招' },
@@ -38,6 +50,7 @@ export const useNotificationStore = defineStore('notifications', {
       tender_award_lose: { tone: 'important', icon: '失' },
       tender_awarded_done: { tone: 'procurement', icon: '定' },
       supplier_quote_updated: { tone: 'procurement', icon: '报' },
+      monitor_broadcast: { tone: 'important', icon: '令' },
       general: { tone: 'general', icon: '系' },
     }),
     sortedItems: (state) =>
@@ -45,10 +58,11 @@ export const useNotificationStore = defineStore('notifications', {
         (a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime(),
       ),
     viewItems() {
+      const role = useUserStore().role
       return this.sortedItems.map((item) => ({
         ...item,
         event_label: this.eventTypeLabelMap[item.event_type] || '系统通知',
-        event_meta: this.eventMetaMap[item.event_type] || this.eventMetaMap.general,
+        event_meta: resolveNotificationEventMeta(item, role, this.eventMetaMap),
         time_text: formatTime(item.created_at),
       }))
     },

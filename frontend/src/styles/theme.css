@@ -187,7 +187,29 @@ body {
   letter-spacing: 0.04em;
 }
 
-/* MessageBox is teleported to body; keep confirm text visible */
+/* MessageBox is teleported to body (outside .app-content-area); Uno reset may hide button labels */
+.el-message-box__btns .el-button--primary:not(.is-link):not(.is-text) {
+  color: #fff !important;
+  background: var(--el-color-primary) !important;
+  border-color: var(--el-color-primary) !important;
+  font-weight: 600;
+}
+
+.el-message-box__btns .el-button--primary:not(.is-link):not(.is-text) > span {
+  color: #fff !important;
+}
+
+.el-message-box__btns .el-button--default:not(.is-link):not(.is-text) {
+  color: #334155 !important;
+  background: #fff !important;
+  border-color: #cbd5e1 !important;
+  font-weight: 600;
+}
+
+.el-message-box__btns .el-button--default:not(.is-link):not(.is-text) > span {
+  color: #334155 !important;
+}
+
 .danger-confirm-dialog .danger-confirm-btn {
   min-width: 92px;
   color: #fff !important;
@@ -243,6 +265,101 @@ body {
 
 .order-abnormal-confirm-dialog .order-abnormal-cancel-btn > span {
   color: #334155 !important;
+}
+
+/* Dispatch trip confirm/prompt dialogs are teleported to body. */
+.dispatch-confirm-dialog .dispatch-confirm-btn {
+  min-width: 96px;
+  color: #ffffff !important;
+  background: var(--el-color-primary) !important;
+  border-color: var(--el-color-primary) !important;
+  font-weight: 700;
+}
+
+.dispatch-confirm-dialog .dispatch-confirm-btn-danger {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+}
+
+.dispatch-confirm-dialog .dispatch-confirm-btn > span {
+  color: #ffffff !important;
+}
+
+.dispatch-confirm-dialog .dispatch-cancel-btn {
+  min-width: 76px;
+  color: #334155 !important;
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  font-weight: 700;
+}
+
+.dispatch-confirm-dialog .dispatch-cancel-btn > span {
+  color: #334155 !important;
+}
+
+.dispatch-confirm-dialog .el-button.is-disabled,
+.dispatch-confirm-dialog .el-button.is-loading {
+  opacity: 0.85;
+}
+
+/* 异常发车抽屉 footer 在 body 下，需单独保证按钮可读（同 dispatch-confirm-dialog） */
+.exception-depart-drawer .exception-drawer-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  width: 100%;
+}
+
+.exception-depart-drawer .exception-drawer-cancel {
+  min-width: 76px;
+  color: #334155 !important;
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  font-weight: 700;
+}
+
+.exception-depart-drawer .exception-drawer-cancel > span {
+  color: #334155 !important;
+}
+
+.exception-depart-drawer .exception-drawer-confirm {
+  min-width: 120px;
+  color: #ffffff !important;
+  background: #d97706 !important;
+  border-color: #d97706 !important;
+  font-weight: 700;
+}
+
+.exception-depart-drawer .exception-drawer-confirm > span {
+  color: #ffffff !important;
+}
+
+.exception-depart-drawer .exception-drawer-confirm.is-loading,
+.exception-depart-drawer .exception-drawer-confirm.is-disabled {
+  opacity: 0.85;
+}
+
+.risk-popover {
+  color: #334155;
+}
+
+.risk-popover strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #0f172a;
+  font-size: 15px;
+}
+
+.risk-popover p {
+  margin: 0 0 8px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.risk-popover ol {
+  margin: 0;
+  padding-left: 20px;
+  line-height: 1.7;
 }
 
 /* Notification popover styling (teleported) */
@@ -305,6 +422,67 @@ body {
   padding: 10px;
   margin-bottom: 8px;
   background: #fff;
+}
+
+.notify-popover-panel .notify-item-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.notify-popover-panel .notify-item-dot {
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border-radius: 999px;
+  background: #cbd5e1;
+  flex-shrink: 0;
+  color: #fff;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.notify-popover-panel .notify-item-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.notify-popover-panel .notify-item.tone-fulfillment.unread {
+  border-left-color: #2563eb;
+  background: #eff6ff;
+}
+
+.notify-popover-panel .notify-item.tone-fulfillment .notify-item-dot {
+  background: #2563eb;
+}
+
+.notify-popover-panel .notify-item.tone-bill-receive.unread {
+  border-left-color: #0f766e;
+  background: #ecfdf5;
+}
+
+.notify-popover-panel .notify-item.tone-bill-receive .notify-item-dot {
+  background: #0f766e;
+}
+
+.notify-popover-panel .notify-item.tone-bill-pay.unread {
+  border-left-color: #d97706;
+  background: #fffbeb;
+}
+
+.notify-popover-panel .notify-item.tone-bill-pay .notify-item-dot {
+  background: #d97706;
+}
+
+.notify-popover-panel .notify-item.tone-bill-settle.unread {
+  border-left-color: #15803d;
+  background: #f0fdf4;
+}
+
+.notify-popover-panel .notify-item.tone-bill-settle .notify-item-dot {
+  background: #15803d;
 }
 
 .notify-popover-panel .notify-item-top {

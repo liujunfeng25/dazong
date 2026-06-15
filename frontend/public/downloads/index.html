@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>大综 Android 终端下载</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        color: #17202a;
+        background: #f4f6f8;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        padding: 24px 16px 40px;
+      }
+      main {
+        width: min(820px, 100%);
+        margin: 0 auto;
+      }
+      header {
+        margin-bottom: 18px;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 28px;
+        line-height: 1.25;
+        color: #0f3d91;
+      }
+      p {
+        margin: 0;
+        color: #667085;
+        line-height: 1.7;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid #d7dde6;
+        border-radius: 12px;
+        box-shadow: 0 14px 36px rgba(16, 24, 40, .08);
+        padding: 18px;
+      }
+      .top {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+      }
+      .icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        font-size: 22px;
+        font-weight: 900;
+        flex: none;
+      }
+      .scale { background: #006b5e; }
+      .sorter { background: #0f3d91; }
+      .driver { background: #1f7a4d; }
+      h2 {
+        margin: 0;
+        font-size: 21px;
+        line-height: 1.3;
+      }
+      .desc {
+        margin-top: 5px;
+        color: #667085;
+        font-size: 14px;
+      }
+      .meta {
+        margin-top: 12px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        background: #f8fafc;
+        border: 1px solid #e4e7ec;
+        color: #667085;
+        font-size: 13px;
+        line-height: 1.55;
+      }
+      .button {
+        margin-top: 14px;
+        min-height: 52px;
+        width: 100%;
+        border-radius: 8px;
+        background: #0f3d91;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        font-size: 17px;
+        font-weight: 900;
+      }
+      .button.scale-btn {
+        background: #006b5e;
+      }
+      .history {
+        margin-top: 18px;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 10px;
+      }
+      .history li {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border: 1px solid #d7dde6;
+        border-radius: 8px;
+        background: #fff;
+        font-size: 14px;
+      }
+      .history a {
+        color: #0f3d91;
+        font-weight: 800;
+        text-decoration: none;
+      }
+      .hint {
+        margin-top: 18px;
+        border-left: 4px solid #9a5b00;
+        background: #fff8e6;
+        padding: 12px;
+        border-radius: 8px;
+        color: #5a3b00;
+        font-size: 14px;
+      }
+      .download-note {
+        margin-top: 18px;
+        border: 1px solid #bfd7ff;
+        border-left: 4px solid #0f3d91;
+        background: #f5f9ff;
+        border-radius: 8px;
+        padding: 14px 16px;
+        color: #1f2a44;
+        font-size: 14px;
+        line-height: 1.7;
+      }
+      .download-note strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #0f3d91;
+        font-size: 15px;
+      }
+      code {
+        color: #0f3d91;
+        font-weight: 800;
+        word-break: break-all;
+      }
+      .status {
+        color: #667085;
+      }
+      @media (min-width: 680px) {
+        body { padding: 34px; }
+        .grid { grid-template-columns: 1fr 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>大综 Android 终端下载</h1>
+        <p>在 Pad 或 PDA 浏览器打开本页，选择对应终端下载安装。</p>
+      </header>
+
+      <section class="grid">
+        <article class="card">
+          <div class="top">
+            <div class="icon scale">秤</div>
+            <div>
+              <h2>智能秤端</h2>
+              <p class="desc">用于 Pad 收货、称重、签字、照片留痕。</p>
+            </div>
+          </div>
+          <div class="meta" data-app-meta="smart_scale">正在读取最新安装包...</div>
+          <a class="button scale-btn" data-app-link="smart_scale" href="#">下载智能秤端</a>
+        </article>
+
+        <article class="card">
+          <div class="top">
+            <div class="icon sorter">检</div>
+            <div>
+              <h2>分检 PDA 端</h2>
+              <p class="desc">用于 Urovo PDA 登录配送商账号，扫描供货商标签完成分检。</p>
+            </div>
+          </div>
+          <div class="meta" data-app-meta="sorter_pda">正在读取最新安装包...</div>
+          <a class="button" data-app-link="sorter_pda" href="#">下载分检 PDA 端</a>
+        </article>
+
+        <article class="card">
+          <div class="top">
+            <div class="icon driver">车</div>
+            <div>
+              <h2>司机 Android 端</h2>
+              <p class="desc">用于司机按车牌登录，查看今日车次、内嵌高德路线地图、下一站引导并确认送达。</p>
+            </div>
+          </div>
+          <div class="meta" data-app-meta="driver_android">正在读取最新安装包...</div>
+          <a class="button" data-app-link="driver_android" href="#">下载司机端</a>
+        </article>
+      </section>
+
+      <ul class="history" id="history-list">
+        <li class="status">正在读取历史安装包...</li>
+      </ul>
+
+      <section class="download-note">
+        <strong>下载故障记录</strong>
+        若手机安装时提示“解析软件包出现问题”，先检查下载文件大小。真实 APK 应为数 MB 到数十 MB；如果下载器显示几百 B（如 431B），说明手机浏览器/下载器拿到的是 ngrok 或第三方下载中间页，不是 APK 本体。这个问题不是 debug 包或 release 包造成的，也不是普通安卓手机不兼容。所有下载链接必须走 <code>/api/system/downloads/*.apk</code> 后端直出接口，由后端返回 APK MIME、Content-Length 和附件文件名。
+      </section>
+
+      <p class="hint">
+        下载页完整地址：<code>https://staleness-catalyze-starting.ngrok-free.dev/downloads/</code>
+      </p>
+    </main>
+    <script>
+      const appLabels = {
+        smart_scale: '智能秤端',
+        sorter_pda: '分检 PDA 端',
+        driver_android: '司机 Android 端',
+      };
+
+      function setText(node, text) {
+        node.textContent = text;
+      }
+
+      function renderApp(key, app) {
+        const meta = document.querySelector(`[data-app-meta="${key}"]`);
+        const link = document.querySelector(`[data-app-link="${key}"]`);
+        if (!meta || !link) return;
+        if (!app) {
+          setText(meta, '暂未找到安装包');
+          link.removeAttribute('href');
+          return;
+        }
+        meta.innerHTML = `最新版：${app.filename}<br />${app.size_label}`;
+        link.href = app.url;
+      }
+
+      function renderHistory(history) {
+        const list = document.getElementById('history-list');
+        list.innerHTML = '';
+        if (!history.length) {
+          const item = document.createElement('li');
+          item.className = 'status';
+          item.textContent = '暂无历史安装包';
+          list.appendChild(item);
+          return;
+        }
+        history.forEach((file) => {
+          const item = document.createElement('li');
+          const name = document.createElement('span');
+          const link = document.createElement('a');
+          name.textContent = `历史包：${file.filename}（${file.size_label}）`;
+          link.href = file.url;
+          link.textContent = '下载';
+          item.append(name, link);
+          list.appendChild(item);
+        });
+      }
+
+      fetch('/api/system/downloads/manifest', { cache: 'no-store' })
+        .then((res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
+        })
+        .then((data) => {
+          Object.keys(appLabels).forEach((key) => renderApp(key, data.apps?.[key]));
+          renderHistory(data.history || []);
+        })
+        .catch(() => {
+          document.querySelectorAll('[data-app-meta]').forEach((node) => {
+            node.textContent = '读取安装包清单失败，请刷新页面';
+          });
+          renderHistory([]);
+        });
+    </script>
+  </body>
+</html>

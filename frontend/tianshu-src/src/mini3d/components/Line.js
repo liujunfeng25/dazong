@@ -43,10 +43,19 @@ export class Line {
     this.lineGroup.position.copy(this.config.position);
   }
   geoProjection(args) {
-    return geoMercator()
+    if (!Array.isArray(args) || args.length < 2) return null;
+    const lng = Number(args[0]);
+    const lat = Number(args[1]);
+    if (!Number.isFinite(lng) || !Number.isFinite(lat)) return null;
+    const p = geoMercator()
       .center(this.config.geoProjectionCenter)
       .scale(this.config.geoProjectionScale)
-      .translate([0, 0])(args);
+      .translate([0, 0])([lng, lat]);
+    if (!Array.isArray(p) || p.length < 2) return null;
+    const x = Number(p[0]);
+    const y = Number(p[1]);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+    return [x, y];
   }
 
   create(data) {
@@ -66,25 +75,31 @@ export class Line {
 
         if (type === "Line2") {
           coords[0].forEach((item) => {
-            const [x, y] = this.geoProjection(item);
+            const projected = this.geoProjection(item);
+            if (!projected) return;
+            const [x, y] = projected;
             points.push(x, -y, 0);
           });
-          line = this.createLine2(points);
+          if (points.length >= 6) line = this.createLine2(points);
         } else if (type === "Line3") {
           coords[0].forEach((item) => {
-            const [x, y] = this.geoProjection(item);
+            const projected = this.geoProjection(item);
+            if (!projected) return;
+            const [x, y] = projected;
             points.push(new Vector3(x, -y, 0));
           });
-          line = this.createLine3(points);
+          if (points.length >= 2) line = this.createLine3(points);
         } else {
           coords[0].forEach((item) => {
-            const [x, y] = this.geoProjection(item);
+            const projected = this.geoProjection(item);
+            if (!projected) return;
+            const [x, y] = projected;
             points.push(new Vector3(x, -y, 0));
-            line = this.createLine(points);
           });
+          if (points.length >= 2) line = this.createLine(points);
         }
         // 将线条插入到组中
-        group.add(line);
+        if (line) group.add(line);
       });
       lineGroup.add(group);
     }

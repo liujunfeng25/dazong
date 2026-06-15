@@ -13,6 +13,7 @@ import TianshuNativeEchart from "./TianshuNativeEchart.vue"
 import emitter from "@/utils/emitter"
 import {
   fetchJson,
+  isTianshuAuthMissingError,
   todayRangeQueryString,
   truncateLabel,
 } from "@/api/tianshuInsights.js"
@@ -251,11 +252,15 @@ async function load() {
 }
 
 onMounted(() => {
-  void load().catch((e) => console.warn("[tianshu] 区域分布", e))
+  void load().catch((e) => {
+    if (!isTianshuAuthMissingError(e)) console.warn("[tianshu] 区域分布", e)
+  })
   stopPoll = startStaggeredPoll(
     TIANSHU_POLL_PERIOD_MS,
     TIANSHU_POLL_STAGGER.bulkCommodity,
-    () => void load().catch((e) => console.warn("[tianshu] 区域分布 poll", e)),
+    () => void load().catch((e) => {
+      if (!isTianshuAuthMissingError(e)) console.warn("[tianshu] 区域分布 poll", e)
+    }),
   )
   nextTick(tryBindChartClick)
   setTimeout(tryBindChartClick, 400)

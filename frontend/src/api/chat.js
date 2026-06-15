@@ -5,10 +5,14 @@ const tokenHeader = () => {
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
-export const postChat = (payload) => http.post('/chat', payload)
+// AI 对话可能涉及多轮工具调用与 LLM 推理，不设超时
+export const postChat = (payload) => http.post('/chat', payload, { timeout: 0 })
 
 export const exportChatReport = (payload) =>
-  http.post('/chat/report/export', payload, { responseType: 'blob' })
+  http.post('/chat/report/export', payload, { responseType: 'blob', timeout: 0 })
+
+export const searchChatDocs = (q, limit = 5) =>
+  http.get('/chat/docs/search', { params: { q, limit } })
 
 export const streamChat = async (payload, handlers = {}) => {
   const response = await fetch('/api/chat/stream', {

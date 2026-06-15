@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppHeader from './AppHeader.vue'
 import { useUserStore } from '../stores/user'
@@ -78,7 +78,9 @@ const shellStyle = computed(() => ({
   '--el-color-primary': currentTheme.value.accent,
 }))
 const monitorFullscreen = computed(() => {
-  return route.path === '/monitor/dashboard' || route.path === '/monitor/tianshu'
+  return route.path === '/monitor/dashboard'
+    || route.path === '/monitor/tianshu'
+    || route.path === '/monitor/price-cockpit'
 })
 
 const showBack = computed(() => {
@@ -100,14 +102,24 @@ const goBack = () => {
   router.push('/login')
 }
 
+// 移动端：侧栏抽屉开关；切换路由后自动收起
+const mobileNavOpen = ref(false)
+const navTo = (path) => {
+  router.push(path)
+  mobileNavOpen.value = false
+}
+watch(() => route.fullPath, () => {
+  mobileNavOpen.value = false
+})
 </script>
 
 <template>
   <div v-if="monitorFullscreen" class="h-screen overflow-hidden">
     <router-view />
   </div>
-  <div v-else class="h-screen flex overflow-hidden role-shell" :style="shellStyle">
-    <aside class="w-66 p-4 text-white" :style="sidebarStyle">
+  <div v-else class="h-screen flex overflow-hidden role-shell" :class="{ 'nav-open': mobileNavOpen }" :style="shellStyle">
+    <div class="nav-overlay" @click="mobileNavOpen = false" />
+    <aside class="portal-aside w-66 p-4 text-white" :style="sidebarStyle">
       <div class="glass-card p-4 mb-4 border-white/15! bg-white/8!">
         <div class="text-xs text-slate-200/85 tracking-[0.2em] mb-1">DAZONG PLATFORM</div>
         <div class="text-lg font-bold leading-tight">{{ props.roleLabel }}</div>
@@ -121,15 +133,15 @@ const goBack = () => {
           v-for="item in props.menu"
           :key="item.path"
           :index="item.path"
-          @click="router.push(item.path)"
+          @click="navTo(item.path)"
         >
           {{ item.label }}
         </el-menu-item>
       </el-menu>
     </aside>
-    <div class="flex-1 flex flex-col bg-transparent role-content">
-      <AppHeader :title="props.title" :role-label="props.roleLabel" />
-      <div class="app-content-area p-5 overflow-auto">
+    <div class="flex-1 flex flex-col bg-transparent role-content min-w-0">
+      <AppHeader :title="props.title" :role-label="props.roleLabel" @toggle-nav="mobileNavOpen = !mobileNavOpen" />
+      <div class="app-content-area p-5 overflow-auto min-w-0">
         <div v-if="showBack" class="back-row">
           <el-button size="small" plain @click="goBack">返回上一层</el-button>
         </div>
@@ -166,5 +178,46 @@ const goBack = () => {
 }
 .back-row {
   margin-bottom: 10px;
+}
+
+/* 桌面默认隐藏遮罩 */
+.nav-overlay {
+  display: none;
+}
+
+/* 移动端：侧栏抽屉化 */
+@media (max-width: 768px) {
+  .portal-aside {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1001;
+    width: 78vw;
+    max-width: 300px;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    overflow-y: auto;
+  }
+  .role-shell.nav-open .portal-aside {
+    transform: translateX(0);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+  }
+  .nav-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(15, 23, 42, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .role-shell.nav-open .nav-overlay {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .app-content-area {
+    padding: 12px !important;
+  }
 }
 </style>

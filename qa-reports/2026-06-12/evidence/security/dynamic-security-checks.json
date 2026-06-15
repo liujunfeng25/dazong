@@ -1,0 +1,44 @@
+{
+  "factory_global_order_visibility": {
+    "generic_status": 200,
+    "factory_status": 200,
+    "generic_order_count": 198,
+    "factory_scoped_order_count": 0,
+    "unrelated_visible_count": 198,
+    "sample_unrelated_ids": [
+      2407,
+      2408,
+      2409,
+      2410,
+      2411,
+      2412,
+      2413,
+      2414,
+      2415,
+      2416
+    ]
+  },
+  "supplier_commercial_data_visibility": {
+    "contract_status": 200,
+    "contract_count": 17,
+    "tender_status": 403,
+    "tender_count": 0
+  },
+  "public_demo_account_enumeration": {
+    "client_status": 200,
+    "client_count": 52,
+    "supplier_status": 200,
+    "supplier_count": 9
+  },
+  "driver_shared_password": {
+    "vehicle_no": "京LBY283",
+    "login_status": 200,
+    "trips_status": 200,
+    "trip_count": 0
+  },
+  "disabled_monitor_websocket": {
+    "monitor_user_id": 6,
+    "connected_while_disabled": false,
+    "error_type": "ConnectionClosedError"
+  }
+}

@@ -62,6 +62,31 @@ def _audit_meta(request: Request) -> dict:
     }
 
 
+async def _overlapping_awarded_contracts(
+    db: AsyncSession,
+    client_id: int,
+    period_start: date,
+    period_end: date,
+    *,
+    exclude_delivery_id: Optional[int] = None,
+) -> list[tuple[Contract, User]]:
+    """与时段相交的「已中标」合约（可选排除某配送商，用于定标校验）。"""
+    stmt = (
+        select(Contract, User)
+        .join(User, User.id == Contract.delivery_id)
+        .where(
+            Contract.client_id == client_id,
+            Contract.status == "已中标",
+            Contract.period_start <= period_end,
+            Contract.period_end >= period_start,
+        )
+        .order_by(Contract.id.desc())
+    )
+    if exclude_delivery_id is not None:
+        stmt = stmt.where(Contract.delivery_id != int(exclude_delivery_id))
+    return list((await db.execute(stmt)).all())
+
+
 async def _has_overlapping_awarded_contract_other_delivery(
     db: AsyncSession,
     client_id: int,
@@ -70,18 +95,51 @@ async def _has_overlapping_awarded_contract_other_delivery(
     period_end: date,
 ) -> bool:
     """同一学校、时段与区间相交时，已中标合约不能与另一家配送商重叠。"""
-    rid = await db.scalar(
-        select(Contract.id)
-        .where(
-            Contract.client_id == client_id,
-            Contract.delivery_id != delivery_id,
-            Contract.status == "已中标",
-            Contract.period_start <= period_end,
-            Contract.period_end >= period_start,
-        )
-        .limit(1)
+    rows = await _overlapping_awarded_contracts(
+        db,
+        client_id,
+        period_start,
+        period_end,
+        exclude_delivery_id=delivery_id,
     )
-    return rid is not None
+    return len(rows) > 0
+
+
+def _serialize_overlap_contracts(rows: list[tuple[Contract, User]]) -> list[dict]:
+    contracts: list[dict] = []
+    for contract, delivery in rows:
+        contracts.append(
+            {
+                "contract_id": int(contract.id),
+                "contract_no": contract.contract_no,
+                "delivery_id": int(contract.delivery_id),
+                "delivery_name": (delivery.company_name or delivery.username or "").strip()
+                or f"配送方#{contract.delivery_id}",
+                "period_start": contract.period_start,
+                "period_end": contract.period_end,
+            }
+        )
+    return contracts
+
+
+def _build_overlap_hint_message(
+    contracts: list[dict],
+    *,
+    invited: Optional[set[int]] = None,
+) -> str:
+    if not contracts:
+        return ""
+    parts = [f"{c['delivery_name']}（{c['period_start']} ~ {c['period_end']}）" for c in contracts]
+    message = f"招标周期与以下已中标合约时段重叠：{'；'.join(parts)}。"
+    overlap_delivery_ids = {int(c["delivery_id"]) for c in contracts}
+    if invited and overlap_delivery_ids <= invited:
+        renew_names = "、".join(
+            c["delivery_name"] for c in contracts if int(c["delivery_id"]) in invited
+        )
+        message += f"定标给 {renew_names} 可视为续约；定标给其他配送商将在定标时被拒绝。"
+    else:
+        message += "定标时若选择其他配送商将无法签约，请调整招标周期或仅对原配送商定标续约。"
+    return message
 
 
 @router.post("/tender")
@@ -270,6 +328,101 @@ async def list_my_tenders(
         }
         for row in rows
     ]
+
+
+@router.get("/tender/period-overlap-hint")
+async def tender_period_overlap_hint(
+    period_start: date = Query(...),
+    period_end: date = Query(...),
+    delivery_ids: Optional[str] = Query(
+        None,
+        description="逗号分隔的入围配送商 ID，用于区分「可续约」与「定标将失败」",
+    ),
+    user=Depends(require_role("client")),
+    db: AsyncSession = Depends(get_db),
+):
+    """发起招标前软性提示：招标周期是否与另一家配送商的已中标合约重叠。"""
+    if period_start > period_end:
+        return {"has_overlap": False, "contracts": [], "message": ""}
+
+    rows = await _overlapping_awarded_contracts(db, int(user.id), period_start, period_end)
+    contracts = _serialize_overlap_contracts(rows)
+
+    invited: set[int] = set()
+    if delivery_ids:
+        for chunk in str(delivery_ids).split(","):
+            chunk = chunk.strip()
+            if chunk.isdigit():
+                invited.add(int(chunk))
+
+    message = _build_overlap_hint_message(contracts, invited=invited or None)
+
+    return {"has_overlap": bool(contracts), "contracts": contracts, "message": message}
+
+
+@router.get("/tender/{tender_id}/award-context")
+async def tender_award_context(
+    tender_id: int,
+    user=Depends(require_role("client")),
+    db: AsyncSession = Depends(get_db),
+):
+    """定标页：招标周期、重叠合约说明及各配送商是否允许定标。"""
+    tender = await db.scalar(
+        select(Tender).where(Tender.id == int(tender_id), Tender.client_id == int(user.id))
+    )
+    if not tender:
+        raise HTTPException(404, "招标单不存在")
+
+    overlap_rows = await _overlapping_awarded_contracts(
+        db, int(user.id), tender.period_start, tender.period_end
+    )
+    contracts = _serialize_overlap_contracts(overlap_rows)
+    invited = {int(i) for i in (tender.delivery_ids_json or [])}
+    message = _build_overlap_hint_message(contracts, invited=invited or None)
+
+    check_delivery_ids: set[int] = set(invited)
+    bid_delivery_ids = (
+        await db.scalars(
+            select(TenderBid.delivery_id).where(TenderBid.tender_id == int(tender_id))
+        )
+    ).all()
+    for did in bid_delivery_ids:
+        check_delivery_ids.add(int(did))
+
+    per_delivery: dict[str, dict] = {}
+    for did in sorted(check_delivery_ids):
+        blocked = await _has_overlapping_awarded_contract_other_delivery(
+            db,
+            int(user.id),
+            did,
+            tender.period_start,
+            tender.period_end,
+        )
+        if blocked:
+            others = [c for c in contracts if int(c["delivery_id"]) != did]
+            names = "、".join(
+                f"{c['delivery_name']}（{c['period_start']}~{c['period_end']}）" for c in others
+            )
+            per_delivery[str(did)] = {
+                "can_award": False,
+                "reason": f"与现有合约时段冲突：{names}。请对原配送商续约或调整招标周期。",
+            }
+        else:
+            renew_note = ""
+            if any(int(c["delivery_id"]) == did for c in contracts):
+                renew_note = "与现有合约为同一配送商，定标视为续约。"
+            per_delivery[str(did)] = {"can_award": True, "reason": renew_note}
+
+    return {
+        "tender_id": int(tender.id),
+        "period_start": tender.period_start,
+        "period_end": tender.period_end,
+        "status": tender.status,
+        "has_overlap": bool(contracts),
+        "overlap_contracts": contracts,
+        "message": message,
+        "per_delivery": per_delivery,
+    }
 
 
 @router.get("/tender/{tender_id}")

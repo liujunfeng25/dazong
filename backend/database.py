@@ -3,17 +3,34 @@ from datetime import date, timedelta
 from decimal import Decimal
 
 import bcrypt
-from sqlalchemy import select, text
+from sqlalchemy import or_, select, text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from config import settings
-from models import Base, Category, ClientCanteen, Contract, Order, Product, SupplierProductQuote, User
+from models import Base, Category, ClientCanteen, Contract, MonitorBroadcast, Order, Product, SupplierProductQuote, User  # noqa: F401
 from models.billing_cycles import BillingCycle  # noqa: F401
 from models.billing_statements import BillingStatement  # noqa: F401
 from models.delivery_geofences import DeliveryGeofence  # noqa: F401 — 注册 metadata 供 create_all
 
-engine = create_async_engine(settings.database_url, pool_pre_ping=True)
+engine = create_async_engine(
+    settings.database_url,
+    pool_pre_ping=True,
+    pool_size=20,
+    max_overflow=40,        # 总上限 60：监管端单页会并发 ~10+ 个聚合请求，原 25 在多页/多 tab 下易被打满
+    pool_recycle=1800,      # 30 分钟回收，避免长连接被 MySQL 端 wait_timeout 掐断后残留
+    pool_timeout=30,
+)
 SessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+# 只读引擎：供 AI 的 run_sql 工具使用。配置了只读账号时，DB 层授权即只授 SELECT；
+# 未配置则复用主账号 DSN，仅靠应用层 SELECT-only 校验兜底。小连接池，避免 AI 查询挤占主池。
+readonly_engine = create_async_engine(
+    settings.readonly_database_url,
+    pool_pre_ping=True,
+    pool_size=3,
+    max_overflow=5,
+)
+ReadOnlySession = async_sessionmaker(readonly_engine, class_=AsyncSession, expire_on_commit=False)
 
 
 async def get_db():
@@ -63,6 +80,57 @@ async def _ensure_orders_receive_signatures_json() -> None:
         )
 
 
+async def _ensure_billing_statements_reconciliation_id() -> None:
+    """对账单（reconciliation_statements）下挂明细：给 billing_statements 补 reconciliation_id 列。
+    create_all 不会给已有表补列，旧库需幂等 ALTER。"""
+    if "mysql" not in settings.database_url:
+        return
+    async with engine.begin() as conn:
+        r = await conn.execute(
+            text(
+                "SELECT COUNT(*) FROM information_schema.COLUMNS "
+                "WHERE TABLE_SCHEMA = :schema AND TABLE_NAME = 'billing_statements' "
+                "AND COLUMN_NAME = 'reconciliation_id'"
+            ),
+            {"schema": settings.mysql_db},
+        )
+        if (r.scalar_one() or 0) > 0:
+            return
+        await conn.execute(
+            text(
+                "ALTER TABLE billing_statements "
+                "ADD COLUMN reconciliation_id INT NULL COMMENT '所属对账单', "
+                "ADD INDEX ix_billing_statements_reconciliation_id (reconciliation_id)"
+            )
+        )
+
+
+async def _ensure_billing_cycles_granularity_columns() -> None:
+    """billing_cycles 颗粒化两列：canteen_id（client↔delivery 派生规则细到食堂）、
+    is_customized（运营定制后不再跟随全局规则）。"""
+    if "mysql" not in settings.database_url:
+        return
+    async with engine.begin() as conn:
+        r = await conn.execute(
+            text(
+                "SELECT COUNT(*) FROM information_schema.COLUMNS "
+                "WHERE TABLE_SCHEMA = :schema AND TABLE_NAME = 'billing_cycles' "
+                "AND COLUMN_NAME = 'canteen_id'"
+            ),
+            {"schema": settings.mysql_db},
+        )
+        if (r.scalar_one() or 0) > 0:
+            return
+        await conn.execute(
+            text(
+                "ALTER TABLE billing_cycles "
+                "ADD COLUMN canteen_id INT NULL COMMENT '账期规则所属食堂（client_delivery 腿）', "
+                "ADD COLUMN is_customized TINYINT(1) NOT NULL DEFAULT 0 COMMENT '运营已定制，不跟随全局', "
+                "ADD INDEX ix_billing_cycles_canteen_id (canteen_id)"
+            )
+        )
+
+
 async def _ensure_quality_reports_allocation_id() -> None:
     """质检报告新增按分单维度的 allocation_id；旧库需 ALTER 加列。"""
     if "mysql" not in settings.database_url:
@@ -85,6 +153,133 @@ async def _ensure_quality_reports_allocation_id() -> None:
                 "ADD INDEX ix_quality_reports_allocation_id (allocation_id)"
             )
         )
+
+
+async def _ensure_quality_reports_attachments_json() -> None:
+    """质检报告多图：有序 URL 列表（除首张外或整表多图扩展）；旧库幂等 ALTER。"""
+    if "mysql" not in settings.database_url:
+        return
+    async with engine.begin() as conn:
+        r = await conn.execute(
+            text(
+                "SELECT COUNT(*) FROM information_schema.COLUMNS "
+                "WHERE TABLE_SCHEMA = :schema AND TABLE_NAME = 'quality_reports' "
+                "AND COLUMN_NAME = 'attachments_json'"
+            ),
+            {"schema": settings.mysql_db},
+        )
+        if (r.scalar_one() or 0) > 0:
+            return
+        await conn.execute(
+            text(
+                "ALTER TABLE quality_reports "
+                "ADD COLUMN attachments_json JSON NULL COMMENT '质检多图URL列表（与file_url组合见业务层）'"
+            )
+        )
+
+
+async def _ensure_categories_image_url() -> None:
+    """分类图片：create_all 不会改已有 categories 表，启动前补列。"""
+    if "mysql" not in settings.database_url:
+        return
+    async with engine.begin() as conn:
+        r = await conn.execute(
+            text(
+                "SELECT COUNT(*) FROM information_schema.COLUMNS "
+                "WHERE TABLE_SCHEMA = :schema AND TABLE_NAME = 'categories' "
+                "AND COLUMN_NAME = 'image_url'"
+            ),
+            {"schema": settings.mysql_db},
+        )
+        if (r.scalar_one() or 0) > 0:
+            return
+        await conn.execute(
+            text(
+                "ALTER TABLE categories "
+                "ADD COLUMN image_url VARCHAR(512) NULL COMMENT '分类图片：URL 或 emoji: token'"
+            )
+        )
+
+
+async def _ensure_products_quality_report_mode() -> None:
+    """商品质检模式：create_all 不会改已有 products 表，启动种子前必须先补列。"""
+    if "mysql" not in settings.database_url:
+        return
+    async with engine.begin() as conn:
+        r = await conn.execute(
+            text(
+                "SELECT COUNT(*) FROM information_schema.COLUMNS "
+                "WHERE TABLE_SCHEMA = :schema AND TABLE_NAME = 'products' "
+                "AND COLUMN_NAME = 'quality_report_mode'"
+            ),
+            {"schema": settings.mysql_db},
+        )
+        if (r.scalar_one() or 0) > 0:
+            return
+        await conn.execute(
+            text(
+                "ALTER TABLE products "
+                "ADD COLUMN quality_report_mode ENUM('batch','periodic') "
+                "NOT NULL DEFAULT 'batch' COMMENT '质检报告模式：批次/周期'"
+            )
+        )
+
+
+async def _ensure_periodic_quality_report_version_columns() -> None:
+    """周期报告版本字段与状态枚举；兼容未主动执行 Alembic 的开发库。"""
+    if "mysql" not in settings.database_url:
+        return
+    async with engine.begin() as conn:
+        result = await conn.execute(
+            text(
+                "SELECT COLUMN_NAME FROM information_schema.COLUMNS "
+                "WHERE TABLE_SCHEMA = :schema AND TABLE_NAME = 'periodic_quality_reports'"
+            ),
+            {"schema": settings.mysql_db},
+        )
+        columns = {str(row[0]) for row in result.all()}
+        if not columns:
+            return
+        if "revision_of_id" not in columns:
+            await conn.execute(
+                text(
+                    "ALTER TABLE periodic_quality_reports "
+                    "ADD COLUMN revision_of_id INT NULL, "
+                    "ADD INDEX ix_periodic_quality_reports_revision_of_id (revision_of_id), "
+                    "ADD CONSTRAINT fk_pqr_revision_of "
+                    "FOREIGN KEY (revision_of_id) REFERENCES periodic_quality_reports(id)"
+                )
+            )
+        if "version" not in columns:
+            await conn.execute(
+                text(
+                    "ALTER TABLE periodic_quality_reports "
+                    "ADD COLUMN version INT NOT NULL DEFAULT 1"
+                )
+            )
+        await conn.execute(
+            text(
+                "ALTER TABLE periodic_quality_reports "
+                "MODIFY COLUMN status ENUM('待审核','已通过','已驳回','已失效') "
+                "NOT NULL DEFAULT '待审核'"
+            )
+        )
+        index_result = await conn.execute(
+            text(
+                "SELECT INDEX_NAME FROM information_schema.STATISTICS "
+                "WHERE TABLE_SCHEMA = :schema AND TABLE_NAME = 'periodic_quality_reports'"
+            ),
+            {"schema": settings.mysql_db},
+        )
+        indexes = {str(row[0]) for row in index_result.all()}
+        if "ix_periodic_report_pair_status_period" not in indexes:
+            await conn.execute(
+                text(
+                    "CREATE INDEX ix_periodic_report_pair_status_period "
+                    "ON periodic_quality_reports "
+                    "(provider_id, product_id, status, valid_from, valid_to)"
+                )
+            )
 
 
 async def _ensure_tickets_attachments_json() -> None:
@@ -139,6 +334,47 @@ async def _ensure_tickets_complaint_flow_columns() -> None:
             )
 
 
+async def _ensure_tickets_billing_columns() -> None:
+    """账务超期工单允许绑定 billing_statement，并兼容历史订单工单。"""
+    if "mysql" not in settings.database_url:
+        return
+    async with engine.begin() as conn:
+        r = await conn.execute(
+            text(
+                "SELECT COUNT(*) FROM information_schema.COLUMNS "
+                "WHERE TABLE_SCHEMA = :schema AND TABLE_NAME = 'tickets' "
+                "AND COLUMN_NAME = 'billing_statement_id'"
+            ),
+            {"schema": settings.mysql_db},
+        )
+        if (r.scalar_one() or 0) == 0:
+            await conn.execute(
+                text(
+                    "ALTER TABLE tickets ADD COLUMN billing_statement_id INT NULL, "
+                    "ADD INDEX ix_tickets_billing_statement_id (billing_statement_id), "
+                    "ADD CONSTRAINT fk_tickets_billing_statement_id "
+                    "FOREIGN KEY (billing_statement_id) REFERENCES billing_statements(id)"
+                )
+            )
+        r = await conn.execute(
+            text(
+                "SELECT IS_NULLABLE FROM information_schema.COLUMNS "
+                "WHERE TABLE_SCHEMA = :schema AND TABLE_NAME = 'tickets' "
+                "AND COLUMN_NAME = 'order_id'"
+            ),
+            {"schema": settings.mysql_db},
+        )
+        row = r.first()
+        if row and (row[0] or "").upper() != "YES":
+            await conn.execute(text("ALTER TABLE tickets MODIFY COLUMN order_id INT NULL"))
+        await conn.execute(
+            text(
+                "ALTER TABLE tickets MODIFY COLUMN type "
+                "ENUM('异常订单','售后投诉','配送异常','账务异常') NOT NULL"
+            )
+        )
+
+
 async def _ensure_notifications_canteen_id_column() -> None:
     """notifications.canteen_id：客户端按 JWT 食堂过滤；NULL 为学校级通知。"""
     if "mysql" not in settings.database_url:
@@ -158,6 +394,103 @@ async def _ensure_notifications_canteen_id_column() -> None:
             text(
                 "ALTER TABLE notifications ADD COLUMN canteen_id INT NULL COMMENT '采购端按食堂推送', "
                 "ADD INDEX ix_notifications_canteen_id (canteen_id)"
+            )
+        )
+
+
+async def _ensure_notifications_read_at_column() -> None:
+    """notifications.read_at：用于监管广播已读回执。"""
+    if "mysql" not in settings.database_url:
+        return
+    async with engine.begin() as conn:
+        r = await conn.execute(
+            text(
+                "SELECT COUNT(*) FROM information_schema.COLUMNS "
+                "WHERE TABLE_SCHEMA = :schema AND TABLE_NAME = 'notifications' "
+                "AND COLUMN_NAME = 'read_at'"
+            ),
+            {"schema": settings.mysql_db},
+        )
+        if (r.scalar_one() or 0) > 0:
+            return
+        await conn.execute(text("ALTER TABLE notifications ADD COLUMN read_at DATETIME NULL COMMENT '已读时间'"))
+
+
+async def _ensure_billing_notification_routes() -> None:
+    """历史账单通知曾写入 /bills 且文案过于笼统；启动时按角色和账单信息回填。"""
+    if "mysql" not in settings.database_url:
+        return
+    async with engine.begin() as conn:
+        await conn.execute(
+            text(
+                "UPDATE notifications "
+                "SET route = CASE role "
+                "WHEN 'client' THEN '/client/bills' "
+                "WHEN 'delivery' THEN '/delivery/bills' "
+                "WHEN 'supplier' THEN '/supplier/bills' "
+                "WHEN 'factory' THEN '/factory/bills' "
+                "ELSE '/operation/billing-overview' END "
+                "WHERE route = '/bills' "
+                "AND event_type IN ("
+                "'billing','billing_confirmed','billing_confirmed_by_peer',"
+                "'billing_settled','billing_settled_by_peer',"
+                "'bill_created','bill_settled','bill_update'"
+                ")"
+            )
+        )
+        await conn.execute(
+            text(
+                "UPDATE notifications n "
+                "JOIN billing_statements bs ON n.object_type = 'billing_statement' AND n.object_id = bs.id "
+                "SET n.title = CASE "
+                "WHEN n.event_type = 'billing' AND bs.direction = '应收' THEN '应收账单生成' "
+                "WHEN n.event_type = 'billing' AND bs.direction = '应付' THEN '应付账单生成' "
+                "WHEN n.event_type = 'billing' THEN '待确认账单生成' "
+                "WHEN n.event_type IN ('billing_confirmed','billing_confirmed_by_peer') THEN '账单已确认' "
+                "WHEN n.event_type IN ('billing_settled','billing_settled_by_peer') THEN '账单已结清' "
+                "ELSE n.title END, "
+                "n.content = CASE "
+                "WHEN n.event_type = 'billing' THEN CONCAT("
+                "'对方：', COALESCE(JSON_UNQUOTE(JSON_EXTRACT(bs.source_snapshot_json, '$.counterparty_name')), '—'), "
+                "'｜金额：¥', CAST(bs.amount AS CHAR), '｜账单号：', bs.statement_no"
+                ") "
+                "WHEN n.event_type IN ('billing_confirmed','billing_confirmed_by_peer') THEN CONCAT("
+                "'账单已确认｜金额：¥', CAST(bs.amount AS CHAR), "
+                "'｜对方：', COALESCE(JSON_UNQUOTE(JSON_EXTRACT(bs.source_snapshot_json, '$.counterparty_name')), '—'), "
+                "'｜下一步：', CASE WHEN bs.direction = '应收' THEN '等待对方付款' ELSE '安排付款' END"
+                ") "
+                "WHEN n.event_type IN ('billing_settled','billing_settled_by_peer') THEN CONCAT("
+                "'金额：¥', CAST(bs.amount AS CHAR), "
+                "'｜对方：', COALESCE(JSON_UNQUOTE(JSON_EXTRACT(bs.source_snapshot_json, '$.counterparty_name')), '—'), "
+                "'｜账单号：', bs.statement_no"
+                ") "
+                "ELSE n.content END "
+                "WHERE n.event_type IN ("
+                "'billing','billing_confirmed','billing_confirmed_by_peer',"
+                "'billing_settled','billing_settled_by_peer'"
+                ") "
+                "AND (n.title IN ('已生成账单','对方已核对账单','对方已结清账单','对方已部分付款') "
+                "OR n.content LIKE '账单 ST-%' "
+                "OR n.content LIKE '对方已核对账单%' "
+                "OR n.content LIKE '对方已结清账单%')"
+            )
+        )
+        await conn.execute(
+            text(
+                "DELETE n_old FROM notifications n_old "
+                "JOIN notifications n_new ON n_old.id < n_new.id "
+                "AND n_old.event_type = n_new.event_type "
+                "AND n_old.target_user_id = n_new.target_user_id "
+                "AND n_old.object_type = n_new.object_type "
+                "AND n_old.object_id = n_new.object_id "
+                "AND COALESCE(n_old.title, '') = COALESCE(n_new.title, '') "
+                "AND COALESCE(n_old.content, '') = COALESCE(n_new.content, '') "
+                "AND COALESCE(n_old.route, '') = COALESCE(n_new.route, '') "
+                "WHERE n_old.object_type = 'billing_statement' "
+                "AND n_old.event_type IN ("
+                "'billing','billing_confirmed','billing_confirmed_by_peer',"
+                "'billing_settled','billing_settled_by_peer'"
+                ")"
             )
         )
 
@@ -183,6 +516,97 @@ async def _ensure_orders_canteen_id_column() -> None:
                 "ADD INDEX ix_orders_canteen_id (canteen_id)"
             )
         )
+
+
+async def _ensure_order_receiving_lines_lock_photo_columns() -> None:
+    """收货行智能秤留痕照片字段；旧库缺列会导致订单详情查询 order_receiving_lines 500。"""
+    if "mysql" not in settings.database_url:
+        return
+    cols = [
+        ("lock_photo_url", "VARCHAR(1024) NULL COMMENT '锁定读数秤盘留痕照片URL'"),
+        ("lock_photo_taken_at", "DATETIME NULL COMMENT '留痕拍摄时间'"),
+        ("lock_photo_device_id", "VARCHAR(128) NULL COMMENT '智能秤设备ID'"),
+        ("return_photo_urls_json", "JSON NULL COMMENT '退货/质量问题证据照片URL数组'"),
+        ("return_note", "VARCHAR(1000) NULL COMMENT '退货/少收补充说明'"),
+        ("confirmed_quantity", "DECIMAL(14,4) NULL COMMENT '标品实收数量'"),
+        ("confirmed_unit", "VARCHAR(20) NULL COMMENT '标品实收单位'"),
+        ("sample_kg", "DECIMAL(14,4) NULL COMMENT '标品拍照留痕参考重量kg'"),
+    ]
+    async with engine.begin() as conn:
+        for col_name, ddl_suffix in cols:
+            r = await conn.execute(
+                text(
+                    "SELECT COUNT(*) FROM information_schema.COLUMNS "
+                    "WHERE TABLE_SCHEMA = :schema AND TABLE_NAME = 'order_receiving_lines' "
+                    "AND COLUMN_NAME = :col"
+                ),
+                {"schema": settings.mysql_db, "col": col_name},
+            )
+            if (r.scalar_one() or 0) > 0:
+                continue
+            await conn.execute(
+                text(f"ALTER TABLE order_receiving_lines ADD COLUMN {col_name} {ddl_suffix}")
+            )
+
+
+async def _ensure_order_return_line_evidence_columns() -> None:
+    """退货明细证据照片与扣减金额；旧库幂等 ALTER。"""
+    if "mysql" not in settings.database_url:
+        return
+    cols = [
+        ("photo_urls_json", "JSON NULL COMMENT '退货证据照片URL数组'"),
+        ("deduction_amount", "DECIMAL(12,2) NULL COMMENT '该退货明细扣减金额'"),
+    ]
+    async with engine.begin() as conn:
+        for col_name, ddl_suffix in cols:
+            r = await conn.execute(
+                text(
+                    "SELECT COUNT(*) FROM information_schema.COLUMNS "
+                    "WHERE TABLE_SCHEMA = :schema AND TABLE_NAME = 'order_return_lines' "
+                    "AND COLUMN_NAME = :col"
+                ),
+                {"schema": settings.mysql_db, "col": col_name},
+            )
+            if (r.scalar_one() or 0) > 0:
+                continue
+            await conn.execute(text(f"ALTER TABLE order_return_lines ADD COLUMN {col_name} {ddl_suffix}"))
+
+
+async def _ensure_kuaimai_print_columns() -> None:
+    """快麦云打印：用户绑定打印机 SN、分单标签打印次数。"""
+    if "mysql" not in settings.database_url:
+        return
+    async with engine.begin() as conn:
+        r = await conn.execute(
+            text(
+                "SELECT COUNT(*) FROM information_schema.COLUMNS "
+                "WHERE TABLE_SCHEMA = :schema AND TABLE_NAME = 'users' "
+                "AND COLUMN_NAME = 'kuaimai_printer_sn'"
+            ),
+            {"schema": settings.mysql_db},
+        )
+        if (r.scalar_one() or 0) == 0:
+            await conn.execute(
+                text(
+                    "ALTER TABLE users ADD COLUMN kuaimai_printer_sn VARCHAR(64) NULL "
+                    "COMMENT '快麦云打印机序列号'"
+                )
+            )
+        r2 = await conn.execute(
+            text(
+                "SELECT COUNT(*) FROM information_schema.COLUMNS "
+                "WHERE TABLE_SCHEMA = :schema AND TABLE_NAME = 'order_item_allocations' "
+                "AND COLUMN_NAME = 'label_print_count'"
+            ),
+            {"schema": settings.mysql_db},
+        )
+        if (r2.scalar_one() or 0) == 0:
+            await conn.execute(
+                text(
+                    "ALTER TABLE order_item_allocations ADD COLUMN label_print_count INT NOT NULL "
+                    "DEFAULT 0 COMMENT '云标签累计打印次数'"
+                )
+            )
 
 
 async def _ensure_billing_tables() -> None:
@@ -280,8 +704,65 @@ async def _ensure_xinfadi_tables() -> None:
         )
 
 
+async def _ensure_zgncpjgw_tables() -> None:
+    """农产品价格网行情表；与业务库隔离，仅幂等建表。"""
+    if "mysql" not in settings.database_url:
+        return
+    tbl = settings.zgncpjgw_price_table or "zgncpjgw_price_crawl"
+    async with engine.begin() as conn:
+        await conn.execute(
+            text(
+                f"""
+                CREATE TABLE IF NOT EXISTS `{tbl}` (
+                    `id` BIGINT NOT NULL AUTO_INCREMENT,
+                    `crawl_date` DATE NOT NULL COMMENT '查询日',
+                    `district_id` INT NOT NULL,
+                    `district_name` VARCHAR(128) NOT NULL DEFAULT '',
+                    `cate_id` INT NOT NULL,
+                    `cate_name` VARCHAR(128) NOT NULL DEFAULT '',
+                    `scate_name` VARCHAR(128) NOT NULL DEFAULT '',
+                    `goods_sn` VARCHAR(128) NOT NULL DEFAULT '',
+                    `goods_name` VARCHAR(256) NOT NULL DEFAULT '',
+                    `spec` VARCHAR(512) NOT NULL DEFAULT '',
+                    `unit` VARCHAR(64) NOT NULL DEFAULT '',
+                    `place` VARCHAR(256) NOT NULL DEFAULT '',
+                    `price` VARCHAR(64) NOT NULL DEFAULT '',
+                    `update_date` DATE NULL,
+                    `raw_json` LONGTEXT NULL,
+                    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    PRIMARY KEY (`id`),
+                    UNIQUE KEY `uk_zgncpjgw_row` (
+                        `crawl_date`, `district_id`, `cate_id`, `goods_sn`(64), `spec`(128), `place`(64), `update_date`
+                    ),
+                    KEY `idx_crawl_date` (`crawl_date`),
+                    KEY `idx_goods_name` (`goods_name`(64)),
+                    KEY `idx_district_cate_day` (`district_id`, `cate_id`, `crawl_date`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                """
+            )
+        )
+        await conn.execute(
+            text(
+                """
+                CREATE TABLE IF NOT EXISTS `zgncpjgw_account_config` (
+                    `id` TINYINT NOT NULL DEFAULT 1,
+                    `username` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '中农价格网手机号',
+                    `password_enc` TEXT NOT NULL COMMENT 'Fernet 加密密码',
+                    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    `updated_by` VARCHAR(64) NOT NULL DEFAULT '',
+                    PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                """
+            )
+        )
+
+
+DEMO_SECOND_CANTEEN_NAME = "二食堂（演示）"
+
+
 async def _ensure_client_canteens_for_user(session: AsyncSession, u: User) -> None:
-    """幂等：若该采购方尚无任一食堂，则仅新增一条「默认食堂」（不按单位名拆双食堂）。"""
+    """幂等：若该采购方尚无任一食堂，则一次性新增「默认食堂」+「二食堂（演示）」两所启用食堂。"""
     cid = int(u.id)
     addr = (u.address or "").strip() or "—"
     rows = (
@@ -299,15 +780,60 @@ async def _ensure_client_canteens_for_user(session: AsyncSession, u: User) -> No
                 sort_order=0,
             )
         )
+        session.add(
+            ClientCanteen(
+                school_client_id=cid,
+                name=DEMO_SECOND_CANTEEN_NAME,
+                address=addr,
+                lng=u.lng,
+                lat=u.lat,
+                status="active",
+                sort_order=1,
+            )
+        )
+
+
+async def _ensure_demo_second_canteen_if_single(session: AsyncSession) -> None:
+    """幂等：老库仅有「默认食堂」一所时补第二所，便于主站/控制台多食堂联调。"""
+    clients = (
+        await session.scalars(select(User).where(User.role == "client", User.status == "active"))
+    ).all()
+    for u in clients:
+        cid = int(u.id)
+        rows = (
+            await session.scalars(
+                select(ClientCanteen)
+                .where(ClientCanteen.school_client_id == cid)
+                .order_by(ClientCanteen.sort_order, ClientCanteen.id)
+            )
+        ).all()
+        names = {r.name for r in rows}
+        if DEMO_SECOND_CANTEEN_NAME in names:
+            continue
+        if len(rows) >= 2:
+            continue
+        addr = (u.address or "").strip() or "—"
+        session.add(
+            ClientCanteen(
+                school_client_id=cid,
+                name=DEMO_SECOND_CANTEEN_NAME,
+                address=addr,
+                lng=u.lng,
+                lat=u.lat,
+                status="active",
+                sort_order=1,
+            )
+        )
 
 
 async def seed_client_canteens_and_backfill_orders(session: AsyncSession) -> None:
-    """为尚无食堂的采购方幂等补一条「默认食堂」，并回填订单 canteen_id（MySQL）。"""
+    """为尚无食堂的采购方幂等补两所演示食堂，并回填订单 canteen_id（MySQL）。"""
     clients = (
         await session.scalars(select(User).where(User.role == "client", User.status == "active"))
     ).all()
     for u in clients:
         await _ensure_client_canteens_for_user(session, u)
+    await _ensure_demo_second_canteen_if_single(session)
     await session.commit()
 
     if "mysql" not in settings.database_url:
@@ -338,13 +864,29 @@ async def init_db_with_retry(retries: int = 20, delay_seconds: int = 2):
                     await conn.run_sync(Base.metadata.create_all)
             await _ensure_orders_supplier_id_nullable()
             await _ensure_orders_receive_signatures_json()
+            await _ensure_billing_statements_reconciliation_id()
+            await _ensure_billing_cycles_granularity_columns()
             await _ensure_quality_reports_allocation_id()
+            await _ensure_quality_reports_attachments_json()
+            await _ensure_products_quality_report_mode()
+            await _ensure_categories_image_url()
+            await _ensure_periodic_quality_report_version_columns()
             await _ensure_tickets_attachments_json()
             await _ensure_tickets_complaint_flow_columns()
+            await _ensure_tickets_billing_columns()
             await _ensure_orders_canteen_id_column()
+            await _ensure_order_receiving_lines_lock_photo_columns()
+            await _ensure_order_return_line_evidence_columns()
             await _ensure_notifications_canteen_id_column()
+            await _ensure_notifications_read_at_column()
+            await _ensure_billing_notification_routes()
+            await _ensure_kuaimai_print_columns()
             await _ensure_billing_tables()
             await _ensure_xinfadi_tables()
+            await _ensure_zgncpjgw_tables()
+            from services.zgncpjgw_credentials import refresh_credentials
+
+            await refresh_credentials()
             if settings.seed_on_start:
                 async with SessionLocal() as session:
                     await seed_data(session)
@@ -355,10 +897,48 @@ async def init_db_with_retry(retries: int = 20, delay_seconds: int = 2):
     raise RuntimeError(f"数据库初始化失败: {last_error}") from last_error
 
 
+DEMO_KUAIMAI_PRINTER_SN = "KM118DW25100096"
+
+# 计划内演示账号 + 智能分单 lab 账号（京牧鲜、瀚华等）
+DEMO_KUAIMAI_PRINTER_USERNAMES = (
+    "supplier001",
+    "supplier002",
+    "supplier003",
+    "factory001",
+    "supplier_jingmuxian",
+    "supplier_hanhua",
+)
+
+
+async def seed_demo_kuaimai_printers(session: AsyncSession) -> None:
+    """演示供货商/厂家共用一台云打印机。"""
+    sn = (settings.kuaimai_printer_sn or DEMO_KUAIMAI_PRINTER_SN).strip()
+    if not sn:
+        return
+    for uname in DEMO_KUAIMAI_PRINTER_USERNAMES:
+        u = await session.scalar(select(User).where(User.username == uname))
+        if u:
+            u.kuaimai_printer_sn = sn
+    if settings.demo_mode:
+        rows = (
+            await session.scalars(
+                select(User).where(
+                    User.role.in_(("supplier", "factory")),
+                    User.status == "active",
+                    or_(User.kuaimai_printer_sn.is_(None), User.kuaimai_printer_sn == ""),
+                )
+            )
+        ).all()
+        for u in rows:
+            u.kuaimai_printer_sn = sn
+    await session.commit()
+
+
 async def seed_data(session: AsyncSession):
     await seed_users(session)
     await seed_client_canteens_and_backfill_orders(session)
     await seed_demo_suppliers_bind_delivery(session)
+    await seed_demo_kuaimai_printers(session)
     await seed_categories_and_products(session)
     await seed_smart_split_lab_suppliers_and_quotes(session)
     await seed_demo_contracts_for_console(session)

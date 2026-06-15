@@ -1,0 +1,62 @@
+{
+  "operation": {
+    "username": "operation001",
+    "status": 200,
+    "body": {
+      "token": "<redacted>",
+      "role": "operation",
+      "company_name": "平台运营"
+    },
+    "role": "operation"
+  },
+  "client": {
+    "username": "client001",
+    "status": 200,
+    "body": {
+      "token": "<redacted>",
+      "role": "client",
+      "company_name": "北京第一实验小学"
+    },
+    "role": "client"
+  },
+  "supplier": {
+    "username": "supplier001",
+    "status": 200,
+    "body": {
+      "token": "<redacted>",
+      "role": "supplier",
+      "company_name": "新发地蔬菜批发档口"
+    },
+    "role": "supplier"
+  },
+  "delivery": {
+    "username": "delivery001",
+    "status": 200,
+    "body": {
+      "token": "<redacted>",
+      "role": "delivery",
+      "company_name": "中农食迅物流"
+    },
+    "role": "delivery"
+  },
+  "factory": {
+    "username": "factory001",
+    "status": 200,
+    "body": {
+      "token": "<redacted>",
+      "role": "factory",
+      "company_name": "三元牛奶厂"
+    },
+    "role": "factory"
+  },
+  "monitor": {
+    "username": "monitor001",
+    "status": 200,
+    "body": {
+      "token": "<redacted>",
+      "role": "monitor",
+      "company_name": "北京教委督察室"
+    },
+    "role": "monitor"
+  }
+}

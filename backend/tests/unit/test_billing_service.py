@@ -78,6 +78,7 @@ def test_receive_billing_statements_create_paired_flows_for_supplier_and_factory
         order_no="SO20260511001",
         client_id=1,
         delivery_id=2,
+        canteen_id=77,
         items_json=[{"name": "白菜"}, {"name": "牛奶"}, {"name": "鸡蛋"}],
         items_snapshot_json=[],
         total_amount=Decimal("100.00"),
@@ -137,6 +138,8 @@ def test_receive_billing_statements_create_paired_flows_for_supplier_and_factory
     assert flow_amounts[("supplier", 3, 2, "应收")] == Decimal("50.00")
     assert flow_amounts[("delivery", 2, 4, "应付")] == Decimal("50.00")
     assert flow_amounts[("factory", 4, 2, "应收")] == Decimal("50.00")
+    # 6 张账单应都带 order.canteen_id=77（一单只送一个食堂）
+    assert all(s.canteen_id == 77 for s in statements)
 
 
 def test_receive_billing_statements_reject_without_active_contract():

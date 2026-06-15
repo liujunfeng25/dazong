@@ -1,28 +1,42 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { changePasswordApi } from '../../api/auth'
 import {
-  monitorNeuralLogisticsApi,
   monitorNeuralMiningApi,
   monitorNeuralOverviewApi,
 } from '../../api/monitor'
 import { useMonitorStore } from '../../stores/monitor'
 import { useUserStore } from '../../stores/user'
 import DemoConsole from '../../components/monitor/DemoConsole.vue'
+import AiChatWidget from '../../components/monitor/AiChatWidget.vue'
 import { formatChinaClock } from '../../utils/datetime'
 import TianshuBigScreen from './TianshuBigScreen.vue'
+import MiningWorkbench from './MiningWorkbench.vue'
+import CommandBroadcastCenter from './CommandBroadcastCenter.vue'
+import AuditChainOverview from './AuditChainOverview.vue'
+import ExecutiveOverview from './ExecutiveOverview.vue'
+import Alerts from './Alerts.vue'
+import BeijingAmapCockpit from './BeijingAmapCockpit.vue'
+import FulfillmentMonitor from './FulfillmentMonitor.vue'
 
 const STITCH_BASE = '/stitch/advanced-ai-neural-architecture'
 
 const modules = [
   {
     key: 'overview',
-    label: '核心态势',
-    code: 'CORE',
-    source: `${STITCH_BASE}/ai_1/code.html`,
-    note: '神经核心 / AI 状态仪表盘',
+    label: '监管总览',
+    code: 'BI',
+    source: '',
+    note: '全域监管脉冲 BI 首页',
+  },
+  {
+    key: 'audit',
+    label: '审计态势',
+    code: 'AUD',
+    source: '',
+    note: '全链路审计态势指挥舱',
   },
   {
     key: 'tianshu',
@@ -42,8 +56,15 @@ const modules = [
     key: 'logistics',
     label: '履约监控',
     code: 'LOG',
-    source: `${STITCH_BASE}/_1/code.html`,
-    note: '多维算力监控面板',
+    source: '',
+    note: '今日履约、阻塞和在途监控',
+  },
+  {
+    key: 'beijing-map',
+    label: '北京全域',
+    code: 'MAP',
+    source: '',
+    note: '高德地图物流监管驾驶舱',
   },
   {
     key: 'mining',
@@ -53,29 +74,32 @@ const modules = [
     note: '数据智能挖掘中心',
   },
   {
-    key: 'chat',
-    label: 'AI 核心对话',
-    code: 'AI',
-    source: `${STITCH_BASE}/ai_2/code.html`,
-    note: '神经交互接口',
+    key: 'alerts',
+    label: '预警管理',
+    code: 'ALT',
+    source: '',
+    note: '告警处置与监管闭环',
   },
 ]
 
 const store = useMonitorStore()
 const userStore = useUserStore()
 const router = useRouter()
+const route = useRoute()
 
-const activeModule = ref('overview')
+const initialModule = modules.some((item) => item.key === route.query.module) ? String(route.query.module) : 'overview'
+const activeModule = ref(initialModule)
 const nowText = ref('')
 const demoVisible = ref(false)
 const passwordDialogVisible = ref(false)
 const changingPassword = ref(false)
-const loading = reactive({ overview: false, logistics: false, mining: false })
+const loading = reactive({ overview: false, mining: false })
 const passwordForm = reactive({ old_password: '', new_password: '', confirm_password: '' })
 const overviewData = ref({})
-const logisticsData = ref({})
 const miningData = ref({})
 const stitchFrameRef = ref(null)
+const tianshuScreenRef = ref(null)
+const tianshuDirectorRunning = ref(false)
 
 const activeItem = computed(() => modules.find((item) => item.key === activeModule.value) || modules[0])
 const stitchFrameSrc = computed(() => activeItem.value.source)
@@ -147,32 +171,6 @@ const updateStitchOverview = (doc) => {
   replaceText(doc, '自主决策数', '开放预警')
   replaceText(doc, '14,209', fmtNumber(kpi.pending_alerts), 1)
   setWidthByClassToken(doc, 'w-[98.4%]', kpi.fulfillment_rate)
-}
-
-const updateStitchLogistics = (doc) => {
-  if (!logisticsData.value.generated_at) return
-  const summary = logisticsData.value.summary || {}
-  replaceText(doc, 'GPU 集群负载', '车辆到达率')
-  replaceText(doc, '84.2', fmtNumber(summary.arrival_rate, 1), 1)
-  replaceText(doc, 'NODE_01: 92%', `车辆: ${fmtNumber(summary.vehicle_count)}`)
-  replaceText(doc, 'NODE_02: 76%', `设备: ${fmtNumber(summary.device_count)}`)
-  replaceText(doc, '节点平均延迟', '履约异常')
-  replaceText(doc, '12.4', fmtNumber(summary.exception_count), 1)
-  replaceText(doc, 'ms', '件', 1)
-  replaceText(doc, '突触速率', '配送任务')
-  replaceText(doc, '2.4k', fmtNumber(summary.delivery_count), 1)
-  replaceText(doc, 's/ops', '单', 1)
-  replaceText(doc, '核心状态：99.8% 效率', `履约到达率：${fmtNumber(summary.arrival_rate, 1)}%`)
-  replaceText(doc, '活跃节点', '在途路线')
-  replaceText(doc, '10,244', fmtNumber(summary.active_routes), 1)
-  replaceText(doc, '能耗', '今日配送')
-  replaceText(doc, '42.8', fmtNumber(summary.delivery_count), 1)
-  replaceText(doc, 'kW', '单', 1)
-  replaceText(doc, '处理器: 512 活跃', `车辆: ${fmtNumber(summary.vehicle_count)} 活跃`)
-  replaceText(doc, '512GB', `${fmtNumber(Number(summary.capacity_weight_kg || 0) / 1000, 1)} 吨`)
-  replaceText(doc, 'NODE_X-42 故障', summary.exception_count ? '履约异常' : '履约正常')
-  replaceText(doc, '突触链路 42 数据包溢出。正在启动重定向。', summary.exception_count ? `${fmtNumber(summary.exception_count)} 条配送异常待处理。` : '当前配送链路未发现异常。')
-  setWidthByClassToken(doc, 'w-[84%]', summary.arrival_rate)
 }
 
 const updateStitchBroadcast = (doc) => {
@@ -300,10 +298,7 @@ const applyStitchData = () => {
   const doc = stitchFrameRef.value?.contentDocument
   if (!doc?.body) return
   if (activeModule.value === 'overview') updateStitchOverview(doc)
-  if (activeModule.value === 'logistics') updateStitchLogistics(doc)
   if (activeModule.value === 'broadcast') updateStitchBroadcast(doc)
-  if (activeModule.value === 'mining') updateStitchMining(doc)
-  if (activeModule.value === 'chat') updateStitchChat(doc)
 }
 
 const onStitchFrameLoad = () => {
@@ -332,17 +327,6 @@ const loadOverview = async () => {
   }
 }
 
-const loadLogistics = async () => {
-  loading.logistics = true
-  try {
-    logisticsData.value = (await monitorNeuralLogisticsApi()) || {}
-  } catch (error) {
-    console.error('[monitor] logistics load failed', error)
-  } finally {
-    loading.logistics = false
-  }
-}
-
 const loadMining = async () => {
   loading.mining = true
   try {
@@ -354,16 +338,53 @@ const loadMining = async () => {
   }
 }
 
-const loadAll = async () => {
-  await Promise.allSettled([loadOverview(), loadLogistics(), loadMining()])
+/** 仅 Stitch 壳子页需要大块 /neural/*；挖掘中心等原生子组件自行请求，避免首屏 5 路重查询打满 DB 触发 10s 超时 */
+function neuralPayloadTargets(moduleKey) {
+  switch (moduleKey) {
+    case 'broadcast':
+      return ['overview']
+    case 'chat':
+      return ['overview', 'mining']
+    default:
+      return []
+  }
+}
+
+async function refreshNeuralPayload() {
+  const targets = neuralPayloadTargets(activeModule.value)
+  if (!targets.length) return
+  if (activeModule.value === 'chat') {
+    await loadOverview().catch((error) => console.error('[monitor] chat bundle overview failed', error))
+    await loadMining().catch((error) => console.error('[monitor] chat bundle mining failed', error))
+    return
+  }
+  const tasks = []
+  if (targets.includes('overview')) tasks.push(loadOverview())
+  if (targets.includes('mining')) tasks.push(loadMining())
+  await Promise.allSettled(tasks)
 }
 
 const selectModule = (key) => {
   activeModule.value = key
+  router.replace({ path: '/monitor/dashboard', query: key === 'overview' ? {} : { module: key } }).catch(() => {})
 }
 
 const openTianshuStandalone = () => {
   router.push('/monitor/tianshu')
+}
+
+const toggleTianshuDirector = () => {
+  if (tianshuDirectorRunning.value) {
+    tianshuScreenRef.value?.stopDirector?.()
+    tianshuDirectorRunning.value = false
+    return
+  }
+  tianshuScreenRef.value?.startDirector?.()
+  tianshuDirectorRunning.value = true
+}
+
+const onTianshuDirectorState = (payload = {}) => {
+  tianshuDirectorRunning.value = Boolean(payload.running)
 }
 
 const resetPasswordForm = () => {
@@ -415,11 +436,12 @@ const onUserCommand = (cmd) => {
 }
 
 watch(activeModule, async () => {
+  await refreshNeuralPayload()
   await nextTick()
   window.setTimeout(applyStitchData, 100)
 })
 
-watch([overviewData, logisticsData, miningData], () => {
+watch([overviewData, miningData], () => {
   window.setTimeout(applyStitchData, 100)
 }, { deep: true })
 
@@ -427,9 +449,9 @@ onMounted(async () => {
   document.body.style.overflow = 'hidden'
   refreshClock()
   clockTimer = setInterval(refreshClock, 1000)
-  await loadAll()
   store.connectMonitor()
-  refreshTimer = setInterval(loadAll, 60000)
+  await refreshNeuralPayload()
+  refreshTimer = setInterval(refreshNeuralPayload, 60000)
 })
 
 onBeforeUnmount(() => {
@@ -441,9 +463,9 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="stitch-host">
+  <div class="stitch-host" :class="{ 'cockpit-scroll': activeModule === 'overview' || activeModule === 'beijing-map' || activeModule === 'logistics' }">
     <iframe
-      v-if="activeModule !== 'tianshu'"
+      v-if="activeModule !== 'overview' && activeModule !== 'audit' && activeModule !== 'tianshu' && activeModule !== 'logistics' && activeModule !== 'mining' && activeModule !== 'broadcast' && activeModule !== 'alerts' && activeModule !== 'beijing-map'"
       ref="stitchFrameRef"
       :key="activeModule"
       class="stitch-frame"
@@ -452,20 +474,34 @@ onBeforeUnmount(() => {
       @load="onStitchFrameLoad"
     />
 
+    <ExecutiveOverview v-else-if="activeModule === 'overview'" @navigate="selectModule" />
+    <AuditChainOverview v-else-if="activeModule === 'audit'" />
+    <FulfillmentMonitor v-else-if="activeModule === 'logistics'" />
+    <MiningWorkbench v-else-if="activeModule === 'mining'" />
+    <CommandBroadcastCenter v-else-if="activeModule === 'broadcast'" />
+    <div v-else-if="activeModule === 'alerts'" class="alerts-stage"><Alerts /></div>
+    <BeijingAmapCockpit v-else-if="activeModule === 'beijing-map'" />
+
     <section v-else class="tianshu-stage">
       <header class="tianshu-stage__bar">
         <div>
           <strong>NEURAL CORE / 天枢大屏</strong>
           <span>原生大屏组件承载，保留全屏通信</span>
         </div>
+        <div class="tianshu-stage__director" :class="{ running: tianshuDirectorRunning }">
+          <span>DEMO DIRECTOR</span>
+          <button type="button" @click="toggleTianshuDirector">
+            {{ tianshuDirectorRunning ? '停止巡航' : '演示巡航' }}
+          </button>
+        </div>
         <button type="button" @click="openTianshuStandalone">独立打开</button>
       </header>
       <div class="tianshu-stage__body">
-        <TianshuBigScreen embedded />
+        <TianshuBigScreen ref="tianshuScreenRef" embedded @director-state="onTianshuDirectorState" />
       </div>
     </section>
 
-    <nav class="module-switcher" aria-label="监管模块切换">
+    <nav class="module-switcher" :class="{ 'is-tianshu': activeModule === 'tianshu' }" aria-label="监管模块切换">
       <button
         v-for="item in modules"
         :key="item.key"
@@ -499,6 +535,8 @@ onBeforeUnmount(() => {
       <DemoConsole />
     </el-drawer>
 
+    <AiChatWidget />
+
     <el-dialog v-model="passwordDialogVisible" title="更换密码" width="420px">
       <el-form label-width="92px">
         <el-form-item label="旧密码">
@@ -520,6 +558,15 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+.alerts-stage {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  background: #0f131f;
+  padding: 80px 32px 32px;
+  box-sizing: border-box;
+}
+
 .stitch-host {
   width: 100vw;
   height: 100vh;
@@ -531,6 +578,11 @@ onBeforeUnmount(() => {
     radial-gradient(circle at 10% 20%, rgba(114, 17, 153, 0.12), transparent 40%),
     #0f131f;
   font-family: "Space Grotesk", Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+.stitch-host.cockpit-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .stitch-frame {
@@ -561,20 +613,29 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  width: 96px;
-  padding: 76px 8px 18px;
+  width: 18px;
+  padding: 76px 0 18px;
   border: 0;
-  border-right: 1px solid rgba(59, 73, 76, 0.2);
+  border-right: 1px solid rgba(0, 229, 255, 0.1);
   border-radius: 0;
-  background: linear-gradient(180deg, rgba(10, 14, 26, 0.08), rgba(10, 14, 26, 0.42));
+  background: rgba(10, 14, 26, 0.02);
   box-shadow: none;
   opacity: 1;
-  transition: background 180ms ease;
+  overflow: visible;
+  transition: width 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.module-switcher.is-tianshu {
+  width: 8px;
+  background: transparent;
+  border-color: transparent;
 }
 
 .module-switcher:hover,
 .module-switcher:focus-within {
-  background: rgba(10, 14, 26, 0.5);
+  width: 104px;
+  background: rgba(10, 14, 26, 0.58);
+  border-color: rgba(0, 229, 255, 0.2);
 }
 
 .module-switcher button {
@@ -591,6 +652,17 @@ onBeforeUnmount(() => {
   color: #bac9cc;
   background: rgba(22, 27, 34, 0.72);
   cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-26px);
+  transition: opacity 180ms ease, transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.module-switcher:hover button,
+.module-switcher:focus-within button {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
 }
 
 .module-switcher button span {
@@ -687,9 +759,10 @@ onBeforeUnmount(() => {
 .tianshu-stage__bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 22px;
   margin-bottom: 14px;
-  padding: 0 18px;
+  padding: 0 220px 0 18px;
   border-radius: 8px;
 }
 
@@ -708,7 +781,53 @@ onBeforeUnmount(() => {
   font-size: 12px;
 }
 
-.tianshu-stage__bar button {
+.tianshu-stage__director {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid rgba(0, 229, 255, 0.26);
+  border-radius: 7px;
+  background:
+    radial-gradient(circle at 12% 50%, rgba(0, 229, 255, 0.15), transparent 40%),
+    rgba(4, 18, 32, 0.68);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.tianshu-stage__director span {
+  margin: 0;
+  color: rgba(250, 204, 21, 0.82);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.tianshu-stage__director button {
+  height: 26px;
+  padding: 0 10px;
+  border-color: rgba(0, 229, 255, 0.42);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.tianshu-stage__director.running {
+  border-color: rgba(250, 204, 21, 0.42);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 18px rgba(0, 229, 255, 0.12);
+}
+
+.tianshu-stage__director.running button {
+  border-color: rgba(251, 113, 133, 0.46);
+  color: #ffe4e6;
+  background: rgba(127, 29, 29, 0.22);
+}
+
+.tianshu-stage__bar > button {
+  order: -1;
+  flex: 0 0 auto;
   height: 36px;
   padding: 0 14px;
   border: 1px solid rgba(0, 229, 255, 0.45);
@@ -745,6 +864,7 @@ onBeforeUnmount(() => {
     padding: 8px;
     overflow-x: auto;
     transform: none;
+    background: rgba(10, 14, 26, 0.68);
     border: 1px solid rgba(0, 218, 243, 0.18);
     border-radius: 10px;
   }
@@ -756,6 +876,9 @@ onBeforeUnmount(() => {
 
   .module-switcher button {
     min-width: 96px;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
   }
 }
 </style>

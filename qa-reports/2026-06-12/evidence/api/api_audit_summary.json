@@ -1,0 +1,165 @@
+{
+  "base_url": "http://127.0.0.1:18000",
+  "path_count": 361,
+  "operation_count": 401,
+  "no_token_rejected": 390,
+  "invalid_token_rejected": 390,
+  "unexpected_no_token_count": 9,
+  "unexpected_no_token": [
+    {
+      "path": "/api/demo/client-accounts",
+      "method": "GET",
+      "result": {
+        "status": 200,
+        "body": "[{\"username\": \"acct_pin_test\", \"company_name\": \"扎针测试小学\", \"address\": \"北京市朝阳区望京演示点-改\", \"lng\": 116.5, \"lat\": 40.0, \"canteens\": [{\"id\": 149, \"name\": \"默认食堂\", \"status\": \"active\"}, {\"id\": 150, \"name\": \"二食堂（演示）\", \"status\": \"active\"}]}, {\"username\": \"client001\", \"company_name\": \"北京第一实验小学\", \"address\": \"北京市朝阳区望京演示点\", \"lng\": 116.481181, \"lat\": 39.98941, \"canteens\": [{\"id\": 51, \"name\": \"教师食堂\", \"status\": \"active\"}, {\"id\": 52, \"name\": \"学生食堂\", \"status\": \"active\"}]}, {\"username\": \"client002\", \"company_name\": \"首都师范大学附属中学\", \"address\": \"北京市海淀区中关村大街演示点\", \"lng\": 116.316833, \"lat\": 39.98396, \"canteens\": [{\"id\": 53, \"name\": \"教师食堂\", \"status\": \"active\"}, {\"id\": 54, \"name\": \"学生食堂\", \"status\": \"active\"}]}, {\"username\": \"client003\", \"company_name\": \"丰台第五小学（演示）\", \"address\": \"北京市丰台区丽泽商务区演示点\", \"lng\": 116.321, \"lat\": 39.866, \"canteens\": [{\"id\": 55, \"name\": \"教师食堂\", \"status\": \"active\"}, {\"id\": 56, \"name\": \"学生食堂\", \"status\": \"active\"}]}, {\"username\": \"client004\", \"company_name\": \"西城区演示中学\", \"address\": \"北京市西城区金融街演示点\", \"lng\": 116.363227, \"lat\": 39.914336, \"canteens\": [{\"id\": 57, \"name\": \"教师食堂\", \"status\": \"active\"}, {\"id\": 58, \"name\": \"学生食堂\", \"status\": \"active\"}]}, {\"username\": \"client005\", \"company_name\": \"朝阳区第二演示小学\", \"address\": \"北京市朝阳区三里屯演示点\", \"lng\": 116.454, \"lat\": 39.937, \"canteens\": [{\"id\": 59, \"name\": \"教师食堂\", \"status\": \"active\"}, {\"id\": 60, \"name\": \"学生食堂\", \"status\": \"active\"}]}, {\"username\": \"client006\", \"company_name\": \"通州区演示幼儿园\", \"address\": \"北京市通州区运河东大街演示点\", \"lng\": 116.656, \"lat\": 39.902, \"canteens\": [{\"id\": 6, \"name\": \"默认食堂\", \"status\": \"active\"}, {\"id\": 147, \"name\": \"二食堂（演示）\", \"status\": \"active\"}]}, {\"user..."
+      }
+    },
+    {
+      "path": "/api/demo/supplier-accounts",
+      "method": "GET",
+      "result": {
+        "status": 200,
+        "body": [
+          {
+            "username": "cuijie",
+            "company_name": "测试供货商A",
+            "supplier_delivery_id": 3
+          },
+          {
+            "username": "supplier_hanhua",
+            "company_name": "瀚华副食商贸中心（演示）",
+            "supplier_delivery_id": 3
+          },
+          {
+            "username": "supplier_jingmuxian",
+            "company_name": "京牧鲜冷鲜牛羊肉有限公司（演示）",
+            "supplier_delivery_id": 3
+          },
+          {
+            "username": "supplier001",
+            "company_name": "新发地蔬菜批发档口",
+            "supplier_delivery_id": 3
+          },
+          {
+            "username": "supplier002",
+            "company_name": "天津蔬菜配送站",
+            "supplier_delivery_id": 3
+          },
+          {
+            "username": "supplier003",
+            "company_name": "河北蛋品集散中心",
+            "supplier_delivery_id": 3
+          },
+          {
+            "username": "supplier004",
+            "company_name": "北大地米面粮油档口",
+            "supplier_delivery_id": 3
+          },
+          {
+            "username": "供货",
+            "company_name": "供货商（测试）",
+            "supplier_delivery_id": 72
+          },
+          {
+            "username": "供货商单位",
+            "company_name": "供货商（测试）",
+            "supplier_delivery_id": 68
+          }
+        ]
+      }
+    },
+    {
+      "path": "/api/driver/login",
+      "method": "POST",
+      "result": {
+        "status": 422,
+        "body": {
+          "detail": [
+            {
+              "type": "missing",
+              "loc": [
+                "body",
+                "vehicle_no"
+              ],
+              "msg": "Field required",
+              "input": {}
+            },
+            {
+              "type": "missing",
+              "loc": [
+                "body",
+                "password"
+              ],
+              "msg": "Field required",
+              "input": {}
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/api/system/readyz",
+      "method": "GET",
+      "result": {
+        "status": 200,
+        "body": {
+          "status": "ready",
+          "ts": "2026-06-12T09:08:25.493238"
+        }
+      }
+    },
+    {
+      "path": "/api/system/smart-scale-app/version",
+      "method": "GET",
+      "result": {
+        "status": 200,
+        "body": {
+          "version_code": 100,
+          "version_name": "1.0.0",
+          "apk_url": "https://staleness-catalyze-starting.ngrok-free.dev/api/system/downloads/smart-scale-android-latest.apk",
+          "wgt_url": "",
+          "force": false,
+          "notes": ""
+        }
+      }
+    },
+    {
+      "path": "/api/system/downloads/manifest",
+      "method": "GET",
+      "result": {
+        "status": 200,
+        "body": "{\"apps\": {\"smart_scale\": {\"filename\": \"smart-scale-android-debug-20260528134847.apk\", \"url\": \"/api/system/downloads/smart-scale-android-latest.apk\", \"size_bytes\": 33128806, \"size_label\": \"约 32 MB\", \"modified_at\": \"2026-05-28T05:48:47.366720\", \"download_filename\": \"smart-scale-android-latest.apk\"}, \"sorter_pda\": {\"filename\": \"sorter-pda-debug-20260529095428.apk\", \"url\": \"/api/system/downloads/sorter-pda-latest.apk\", \"size_bytes\": 11187611, \"size_label\": \"约 11 MB\", \"modified_at\": \"2026-05-29T01:54:28.964165\", \"download_filename\": \"sorter-pda-latest.apk\"}, \"driver_android\": {\"filename\": \"driver-android-debug-20260528134847.apk\", \"url\": \"/api/system/downloads/driver-android-latest.apk\", \"size_bytes\": 11189052, \"size_label\": \"约 11 MB\", \"modified_at\": \"2026-05-28T05:48:47.388916\", \"download_filename\": \"driver-android-latest.apk\"}}, \"history\": [{\"filename\": \"sorter-pda-debug-20260529095428.apk\", \"url\": \"/api/system/downloads/sorter-pda-debug-20260529095428.apk\", \"size_bytes\": 11187611, \"size_label\": \"约 11 MB\", \"modified_at\": \"2026-05-29T01:54:28.964165\"}, {\"filename\": \"driver-android-debug-20260528134847.apk\", \"url\": \"/api/system/downloads/driver-android-debug-20260528134847.apk\", \"size_bytes\": 11189052, \"size_label\": \"约 11 MB\", \"modified_at\": \"2026-05-28T05:48:47.388916\"}, {\"filename\": \"smart-scale-android-debug-20260528134847.apk\", \"url\": \"/api/system/downloads/smart-scale-android-debug-20260528134847.apk\", \"size_bytes\": 33128806, \"size_label\": \"约 32 MB\", \"modified_at\": \"2026-05-28T05:48:47.366720\"}, {\"filename\": \"sorter-pda-debug-20260528134847.apk\", \"url\": \"/api/system/downloa..."
+      }
+    },
+    {
+      "path": "/api/system/downloads/{filename}",
+      "method": "GET",
+      "result": {
+        "status": 404,
+        "body": {
+          "detail": "文件不存在"
+        }
+      }
+    },
+    {
+      "path": "/api/system/files/minio/{object_name}",
+      "method": "GET",
+      "result": {
+        "status": 404,
+        "body": {
+          "detail": "文件不存在"
+        }
+      }
+    },
+    {
+      "path": "/",
+      "method": "GET",
+      "result": {
+        "status": 200,
+        "body": {
+          "message": "大宗供应链系统后端运行中"
+        }
+      }
+    }
+  ]
+}

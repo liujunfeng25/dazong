@@ -1,0 +1,868 @@
+--------- beginning of main
+06-12 17:25:34.862  1714  1724 I ogle.android.as: Background concurrent copying GC freed 101997(4350KB) AllocSpace objects, 2(104KB) LOS objects, 49% free, 6725KB/13MB, paused 48us,14us total 144.601ms
+--------- beginning of kernel
+06-12 17:25:34.876   161   161 W logd    : Skipping entries from slow reader, pid 437, fd 14, from LogBuffer::Prune()
+06-12 17:25:34.866   537  2274 D SafetySourceDataValidator: No cert check requested for package com.google.android.permissioncontroller
+06-12 17:25:34.871   537  2274 D SafetySourceDataValidator: No cert check requested for package com.google.android.permissioncontroller
+06-12 17:25:34.874   537  2274 D SafetySourceDataValidator: No cert check requested for package com.google.android.permissioncontroller
+06-12 17:25:34.875   894  7956 I PermissionControllerServiceImpl: Updating user sensitive for uid 10193
+06-12 17:25:34.879   161   161 W logd    : Skipping entries from slow reader, pid 437, fd 14, from LogBuffer::Prune()
+--------- beginning of system
+06-12 17:25:34.876   537   564 D ActivityManager: sync unfroze 5320 com.google.android.settings.intelligence for 3
+06-12 17:25:34.884   537   537 D CompatibilityChangeReporter: Compat change id reported: 171306433; UID 10193; state: ENABLED
+06-12 17:25:34.884   537   537 W AlarmManager: Package com.dazong.driver, uid 10193 lost permission to set exact alarms!
+06-12 17:25:34.897  2090  7957 W KeyChain: Creating new DB.
+06-12 17:25:34.903  1166  1189 I s.nexuslauncher: Background concurrent copying GC freed 26062(1436KB) AllocSpace objects, 0(0B) LOS objects, 49% free, 6942KB/13MB, paused 342us,9us total 190.395ms
+06-12 17:25:34.943   537  2458 I ActivityManager: Force stopping com.dazong.driver appid=10193 user=0: from pid 7964
+06-12 17:25:34.943   537  2458 E libprocessgroup: No such cgroup attribute: /sys/fs/cgroup/uid_10193/cgroup.freeze
+06-12 17:25:34.943   537  2458 W libprocessgroup: Failed to apply Frozen process profile: No such file or directory
+06-12 17:25:34.944   537  2458 E libprocessgroup: No such cgroup attribute: /sys/fs/cgroup/uid_10193/cgroup.freeze
+06-12 17:25:34.944   537  2458 W libprocessgroup: Failed to apply Unfrozen process profile: No such file or directory
+06-12 17:25:34.944   537  2458 I AppsFilter: interaction: PackageSetting{d4b99a0 com.dazong.sorterpda/10192} -> PackageSetting{3bf5959 com.dazong.driver/10193} BLOCKED
+06-12 17:25:34.948  1124  1124 D CarrierSvcBindHelper: onHandleForceStop: [com.dazong.driver]
+06-12 17:25:34.949  1124  1124 D CarrierSvcBindHelper: No carrier app for: 0
+06-12 17:25:34.975  1714  1728 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+06-12 17:25:34.976   537   563 W WindowMagnificationMgr: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+06-12 17:25:34.976  1714  1818 I AiAiEcho: Predicting[0]: 
+06-12 17:25:34.976  1714  1818 I AiAiEcho: EchoTargets: 
+06-12 17:25:34.976  1714  1818 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:25:34.977  1714  1818 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:25:34.977  1714  1818 I AiAiEcho: Predicting[0]: 
+06-12 17:25:34.977  1714  1818 I AiAiEcho: EchoTargets: 
+06-12 17:25:34.977  1714  1818 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:25:34.977  1714  1818 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:25:34.977  1714  1818 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+06-12 17:25:34.978  1714  1818 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+06-12 17:25:34.978   891   891 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+06-12 17:25:34.983   537   563 W WindowMagnificationMgr: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+06-12 17:25:35.000   537  2458 D CompatibilityChangeReporter: Compat change id reported: 265464455; UID 10193; state: DISABLED
+06-12 17:25:35.000   537  2458 D CompatibilityChangeReporter: Compat change id reported: 265452344; UID 10193; state: DISABLED
+06-12 17:25:35.001   537  2458 D CompatibilityChangeReporter: Compat change id reported: 266124927; UID 10193; state: DISABLED
+06-12 17:25:35.001   537  2458 D CompatibilityChangeReporter: Compat change id reported: 265451093; UID 10193; state: DISABLED
+06-12 17:25:35.001   537  2458 D CompatibilityChangeReporter: Compat change id reported: 265456536; UID 10193; state: DISABLED
+06-12 17:25:35.002   537  2458 D CompatibilityChangeReporter: Compat change id reported: 255940284; UID 10193; state: DISABLED
+06-12 17:25:35.002   537  2458 D CompatibilityChangeReporter: Compat change id reported: 236283604; UID 10193; state: DISABLED
+06-12 17:25:35.002   537  2458 D CompatibilityChangeReporter: Compat change id reported: 263959004; UID 10193; state: DISABLED
+06-12 17:25:35.002   537  2458 D CompatibilityChangeReporter: Compat change id reported: 264304459; UID 10193; state: DISABLED
+06-12 17:25:35.002   537  2458 D CompatibilityChangeReporter: Compat change id reported: 264301586; UID 10193; state: DISABLED
+06-12 17:25:35.002   537  2458 D CompatibilityChangeReporter: Compat change id reported: 254631730; UID 10193; state: DISABLED
+06-12 17:25:35.002   537  2458 D CompatibilityChangeReporter: Compat change id reported: 273509367; UID 10193; state: DISABLED
+06-12 17:25:35.002   537  2458 D CompatibilityChangeReporter: Compat change id reported: 263259275; UID 10193; state: DISABLED
+06-12 17:25:35.002   537  2458 D CompatibilityChangeReporter: Compat change id reported: 174042980; UID 10193; state: DISABLED
+06-12 17:25:35.002   537  2458 D CompatibilityChangeReporter: Compat change id reported: 174042936; UID 10193; state: DISABLED
+06-12 17:25:35.002   537  2458 D CompatibilityChangeReporter: Compat change id reported: 181136395; UID 10193; state: DISABLED
+06-12 17:25:35.004   537  2458 D CompatibilityChangeReporter: Compat change id reported: 194480991; UID 10193; state: ENABLED
+06-12 17:25:35.012   537  2458 D CompatibilityChangeReporter: Compat change id reported: 184838306; UID 10193; state: DISABLED
+06-12 17:25:35.012   537  2458 D CompatibilityChangeReporter: Compat change id reported: 185004937; UID 10193; state: DISABLED
+06-12 17:25:35.014   537  2458 D CompatibilityChangeReporter: Compat change id reported: 197654537; UID 10193; state: ENABLED
+06-12 17:25:35.015   537  2458 V SplashScreenExceptionList: SplashScreen checking exception for package com.dazong.driver (target sdk:35) -> false
+06-12 17:25:35.016   537  2458 D CompatibilityChangeReporter: Compat change id reported: 205907456; UID 10193; state: ENABLED
+06-12 17:25:35.019   891   932 V WindowManagerShell: Transition requested: android.os.BinderProxy@20a7153 TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=10 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.dazong.driver/.MainActivity } baseActivity=ComponentInfo{com.dazong.driver/com.dazong.driver.MainActivity} topActivity=ComponentInfo{com.dazong.driver/com.dazong.driver.MainActivity} origActivity=null realActivity=ComponentInfo{com.dazong.driver/com.dazong.driver.MainActivity} numActivities=1 lastActiveTime=351316 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@62bba90} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 128 - 0, 0) topActivityInfo=ActivityInfo{ed67f89 com.dazong.driver.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
+06-12 17:25:35.020   537  2458 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=com.dazong.driver/.MainActivity} with LAUNCH_MULTIPLE from uid 0 (BAL_ALLOW_ALLOWLISTED_UID) result code=0
+06-12 17:25:35.022   537   557 D CompatibilityChangeReporter: Compat change id reported: 135634846; UID 10193; state: DISABLED
+06-12 17:25:35.022   537   557 D CompatibilityChangeReporter: Compat change id reported: 177438394; UID 10193; state: DISABLED
+06-12 17:25:35.022   537   557 D CompatibilityChangeReporter: Compat change id reported: 135772972; UID 10193; state: DISABLED
+06-12 17:25:35.022   537   557 D CompatibilityChangeReporter: Compat change id reported: 135754954; UID 10193; state: ENABLED
+06-12 17:25:35.047   537   565 D CompatibilityChangeReporter: Compat change id reported: 143937733; UID 10193; state: ENABLED
+06-12 17:25:35.047  1714  1714 I AiAiEcho: AppFetcherImpl onPackageChanged com.dazong.driver.
+06-12 17:25:35.051  1714  7973 I AiAiEcho: AppIndexer Package:[com.dazong.driver] UserProfile:[0] Enabled:[true].
+06-12 17:25:35.051  1714  7973 I AiAiEcho: AppFetcherImplV2 updateApps package:[com.dazong.driver], userId:[0], reason:[package is updated.].
+06-12 17:25:35.063   891   932 W Looper  : Slow dispatch took 44ms wmshell.main h=android.os.Handler c=com.android.wm.shell.transition.Transitions$TransitionPlayerImpl$$ExternalSyntheticLambda1@9263b8e m=0
+06-12 17:25:35.076   537   616 D CompatibilityChangeReporter: Compat change id reported: 265195908; UID 10193; state: ENABLED
+06-12 17:25:35.080   891   945 D SplashScreenView: Build android.window.SplashScreenView{2196c1 V.E...... ......ID 0,0-0,0}
+06-12 17:25:35.080   891   945 D SplashScreenView: Icon: view: android.widget.ImageView{4822e66 V.ED..... ......I. 0,0-0,0 #10204f0 android:id/splashscreen_icon_view} drawable: com.android.wm.shell.startingsurface.SplashscreenIconDrawableFactory$ImmobileIconDrawable@e7505a7 size: 420
+06-12 17:25:35.080   891   945 D SplashScreenView: Branding: view: android.view.View{5b67a54 G.ED..... ......I. 0,0-0,0 #10204ef android:id/splashscreen_branding_view} drawable: null size w: 0 h: 0
+06-12 17:25:35.084   390   390 I BpBinder: onLastStrongRef automatically unlinking death recipients: 
+06-12 17:25:35.134   350   350 D Zygote  : Forked child process 7974
+06-12 17:25:35.134   537   565 W ActivityManager: Slow operation: 113ms so far, now at startProcess: returned from zygote!
+06-12 17:25:35.135   537   565 W ActivityManager: Slow operation: 113ms so far, now at startProcess: done updating battery stats
+06-12 17:25:35.135   537   565 W ActivityManager: Slow operation: 113ms so far, now at startProcess: building log message
+06-12 17:25:35.135   537   565 I ActivityManager: Start proc 7974:com.dazong.driver/u0a193 for next-top-activity {com.dazong.driver/com.dazong.driver.MainActivity}
+06-12 17:25:35.135   537   565 W ActivityManager: Slow operation: 113ms so far, now at startProcess: starting to update pids map
+06-12 17:25:35.161   537  2267 D CoreBackPreview: Window{5e6d46f u0 Splash Screen com.dazong.driver}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@791fe05, mPriority=0, mIsAnimationCallback=false}
+06-12 17:25:35.168   537   565 W ActivityManager: Slow operation: 146ms so far, now at startProcess: done updating pids map
+06-12 17:25:35.171  7974  7974 I m.dazong.driver: Late-enabling -Xcheck:jni
+06-12 17:25:35.224  7974  7974 I m.dazong.driver: Using CollectorTypeCC GC.
+06-12 17:25:35.224  7795  7823 D EGL_emulation: app_time_stats: avg=495.93ms min=488.14ms max=499.84ms count=3
+06-12 17:25:35.227   891   976 E OpenGLRenderer: Unable to match the desired swap behavior.
+06-12 17:25:35.245   537   546 I system_server: Background young concurrent copying GC freed 201265(10MB) AllocSpace objects, 9(180KB) LOS objects, 20% free, 39MB/49MB, paused 35us,46us total 161.682ms
+06-12 17:25:35.246  1696  1696 W MediaProvider: WorkProfileOwnerApps cache is empty
+06-12 17:25:35.246  1729  1729 I GsaVoiceInteractionSrv: (REDACTED) O received %s
+06-12 17:25:35.249  1729  1729 I GsaVoiceInteractionSrv: (REDACTED) O received %s
+06-12 17:25:35.288   891   891 D ControlsListingControllerImpl: ServiceConfig reloaded, count: 0
+06-12 17:25:35.289   537  1826 D ActivityManager: sync unfroze 1621 com.google.android.apps.wellbeing for 7
+06-12 17:25:35.292  7730  7738 I adbd    : jdwp connection from 7974
+06-12 17:25:35.302   537  2234 W ProcessStats: Tracking association SourceState{7ebf814 com.google.android.googlequicksearchbox:interactor/10132 BFgs #11490} whose proc state 4 is better than process ProcessState{c67edd4 com.google.android.googlequicksearchbox:search/10132 pkg=com.google.android.googlequicksearchbox} proc state 6 (0 skipped)
+06-12 17:25:35.307   891   891 D ControlsListingControllerImpl: ServiceConfig reloaded, count: 0
+06-12 17:25:35.307   891   891 D ControlsListingControllerImpl: ServiceConfig reloaded, count: 0
+06-12 17:25:35.339  1729  1729 I GsaVoiceInteractionSrv: (REDACTED) O received %s
+06-12 17:25:35.380   891   932 V WindowManagerShell: onTransitionReady android.os.BinderProxy@20a7153: {id=9 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@5e8fd16} m=OPEN f=NONE leash=Surface(name=Task=10)/@0x76729bb sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0},{WCT{android.window.IWindowContainerToken$Stub$Proxy@654a697} m=TO_BACK f=NONE leash=Surface(name=Task=9)/@0x745eed8 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0}]}
+06-12 17:25:35.380   891   932 V WindowManagerShell: Playing animation for (#9)android.os.BinderProxy@20a7153@0
+06-12 17:25:35.380   891   932 V WindowManagerShell:  try handler com.android.wm.shell.transition.DefaultMixedHandler@e8df97f
+06-12 17:25:35.380   891   932 V WindowManagerShell:  try handler com.android.wm.shell.keyguard.KeyguardTransitionHandler@bb21d4c
+06-12 17:25:35.383   891   932 V WindowManagerShell:  try handler com.android.wm.shell.activityembedding.ActivityEmbeddingController@48bd195
+06-12 17:25:35.383   891   932 V WindowManagerShell:  try handler com.android.wm.shell.recents.RecentsTransitionHandler@7a1d2aa
+06-12 17:25:35.383   891   932 V ShellRecents: RecentsTransitionHandler.startAnimation: no controller found
+06-12 17:25:35.383   891   932 V WindowManagerShell:  try handler com.android.wm.shell.pip.PipTransition@792ae9b
+06-12 17:25:35.383   891   932 V WindowManagerShell:  try handler com.android.wm.shell.splitscreen.StageCoordinator@189c238
+06-12 17:25:35.383   891   932 V WindowManagerShell:  try handler com.android.wm.shell.transition.RemoteTransitionHandler@24f211
+06-12 17:25:35.383   891   932 V WindowManagerShell: Transition doesn't have explicit remote, search filters for match for {id=9 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@5e8fd16} m=OPEN f=NONE leash=Surface(name=Task=10)/@0x76729bb sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0},{WCT{android.window.IWindowContainerToken$Stub$Proxy@654a697} m=TO_BACK f=NONE leash=Surface(name=Task=9)/@0x745eed8 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0}]}
+06-12 17:25:35.384   891   932 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x0 checks=[{atype=dream independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=null},{atype=home independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@c972084, appThread = android.app.IApplicationThread$Stub$Proxy@259406d, debugName = LauncherToDream }}
+06-12 17:25:35.384   891   932 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=TOP topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@2efd4a2, appThread = android.app.IApplicationThread$Stub$Proxy@a331533, debugName = QuickstepLaunchHome }}
+06-12 17:25:35.384   891   932 V WindowManagerShell:  Delegate animation for #9 to null
+06-12 17:25:35.384   891   932 V WindowManagerShell:  try handler com.android.wm.shell.transition.DefaultTransitionHandler@ba26f76
+06-12 17:25:35.384   891   932 V WindowManagerShell: start default transition animation, info = {id=9 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@5e8fd16} m=OPEN f=NONE leash=Surface(name=Task=10)/@0x76729bb sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0},{WCT{android.window.IWindowContainerToken$Stub$Proxy@654a697} m=TO_BACK f=NONE leash=Surface(name=Task=9)/@0x745eed8 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0}]}
+06-12 17:25:35.385   891   932 V WindowManagerShell: loadAnimation: anim=android.view.animation.AnimationSet@dd67669 animAttr=0x9 type=OPEN isEntrance=false
+06-12 17:25:35.385   537   554 V WindowManager: Sent Transition #9 createdAt=06-12 17:25:35.004 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=10 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.dazong.driver/.MainActivity } baseActivity=ComponentInfo{com.dazong.driver/com.dazong.driver.MainActivity} topActivity=ComponentInfo{com.dazong.driver/com.dazong.driver.MainActivity} origActivity=null realActivity=ComponentInfo{com.dazong.driver/com.dazong.driver.MainActivity} numActivities=1 lastActiveTime=351316 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{9677275 Task{515bbd8 #10 type=standard A=10193:com.dazong.driver}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 128 - 0, 0) topActivityInfo=ActivityInfo{169920a com.dazong.driver.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
+06-12 17:25:35.385   537   554 V WindowManager:     startWCT=WindowContainerTransaction { changes = {} hops = [] errorCallbackToken=null taskFragmentOrganizer=null }
+06-12 17:25:35.385   537   554 V WindowManager:     info={id=9 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{RemoteToken{9677275 Task{515bbd8 #10 type=standard A=10193:com.dazong.driver}}} m=OPEN f=NONE leash=Surface(name=Task=10)/@0xf3e53b9 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0},{WCT{RemoteToken{6865935 Task{bee475b #9 type=standard A=10192:com.dazong.sorterpda}}} m=TO_BACK f=NONE leash=Surface(name=Task=9)/@0x45b101f sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0}]}
+06-12 17:25:35.386   891   932 V WindowManagerShell: loadAnimation: anim=android.view.animation.AnimationSet@47fd18f animAttr=0x8 type=OPEN isEntrance=true
+06-12 17:25:35.391   891   932 V WindowManagerShell:  animated by com.android.wm.shell.transition.DefaultTransitionHandler@ba26f76
+06-12 17:25:35.443  7974  7974 D CompatibilityChangeReporter: Compat change id reported: 171979766; UID 10193; state: ENABLED
+06-12 17:25:35.444  7974  7974 D CompatibilityChangeReporter: Compat change id reported: 242716250; UID 10193; state: ENABLED
+06-12 17:25:35.462   537  2455 D CompatibilityChangeReporter: Compat change id reported: 170503758; UID 10193; state: ENABLED
+06-12 17:25:35.467  1869  2534 W SearchServiceCore: Abort, client detached.
+06-12 17:25:35.468  7974  7974 W ziparchive: Unable to open '/data/app/~~cefzVYv3LLZ_lNKw4tElWw==/com.dazong.driver-cNGlvjCHhxYiRLeTdGaWCg==/base.dm': No such file or directory
+06-12 17:25:35.468  7974  7974 W ziparchive: Unable to open '/data/app/~~cefzVYv3LLZ_lNKw4tElWw==/com.dazong.driver-cNGlvjCHhxYiRLeTdGaWCg==/base.dm': No such file or directory
+06-12 17:25:35.495  1621  1654 I .apps.wellbeing: Background concurrent copying GC freed 7733(574KB) AllocSpace objects, 0(0B) LOS objects, 49% free, 4931KB/9862KB, paused 46us,8us total 197.288ms
+06-12 17:25:35.580  1869  1880 I earchbox:search: JIT allocated 64KB for compiled code of java.lang.Object com.google.android.apps.gsa.binaries.satin.app.aky.a()
+06-12 17:25:35.746  5550  7992 I Fitness : FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_REMOVED [CONTEXT service_id=17 ]
+06-12 17:25:35.750  5550  8005 I FontLog : Package com.dazong.driver has no metadata [CONTEXT service_id=132 ]
+06-12 17:25:35.755  5549  8010 I Auth    : [SupervisedAccountIntentOperation] onHandleIntent(): android.intent.action.PACKAGE_ADDED
+06-12 17:25:35.758  5550  8002 I ProximityAuth: [RecentAppsMediator] Package added: (user=UserHandle{0}) com.dazong.driver
+06-12 17:25:35.780  5549  5549 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+06-12 17:25:35.780  5549  5549 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+06-12 17:25:35.835  5549  5549 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+06-12 17:25:35.893  7974  7974 D nativeloader: Configuring clns-6 for other apk /data/app/~~cefzVYv3LLZ_lNKw4tElWw==/com.dazong.driver-cNGlvjCHhxYiRLeTdGaWCg==/base.apk. target_sdk_version=35, uses_libraries=, library_path=/data/app/~~cefzVYv3LLZ_lNKw4tElWw==/com.dazong.driver-cNGlvjCHhxYiRLeTdGaWCg==/lib/arm64:/data/app/~~cefzVYv3LLZ_lNKw4tElWw==/com.dazong.driver-cNGlvjCHhxYiRLeTdGaWCg==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.dazong.driver
+06-12 17:25:35.902   891   932 V WindowManagerShell: Transition animation finished (aborted=false), notifying core (#9)android.os.BinderProxy@20a7153@0
+06-12 17:25:35.918   537  2267 D CompatibilityChangeReporter: Compat change id reported: 161252188; UID 10193; state: DISABLED
+06-12 17:25:35.936   537   554 V WindowManager: Finish Transition #9: created at 06-12 17:25:35.004 collect-started=0.025ms request-sent=13.936ms started=42.469ms ready=283.536ms sent=367.828ms finished=931.16ms
+06-12 17:25:35.952   891   932 V WindowManagerShell: Track 0 became idle
+06-12 17:25:35.952   891   932 V WindowManagerShell: All active transition animations finished
+06-12 17:25:35.952   891   932 W Looper  : Slow dispatch took 50ms wmshell.main h=android.os.Handler c=com.android.wm.shell.transition.DefaultTransitionHandler$$ExternalSyntheticLambda0@db8d7c6 m=0
+06-12 17:25:36.009  7974  7974 V GraphicsEnvironment: Currently set values for:
+06-12 17:25:36.009  7974  7974 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+06-12 17:25:36.009  7974  7974 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+06-12 17:25:36.011  5550  5550 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.nearby.exposurenotification.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentApiServiceNoInstantApps }
+06-12 17:25:36.011  5550  5550 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.nearby.exposurenotification.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentApiServiceNoInstantApps }
+06-12 17:25:36.019  7974  7974 V GraphicsEnvironment: ANGLE GameManagerService for com.dazong.driver: false
+06-12 17:25:36.019  7974  7974 V GraphicsEnvironment: com.dazong.driver is not listed in per-application setting
+06-12 17:25:36.019  7974  7974 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+06-12 17:25:36.024  5550  5605 W ChimeraUtils: Module com.google.android.gms.nearby_en missing resource null(0)
+06-12 17:25:36.025  5550  5605 W ChimeraUtils: Module com.google.android.gms.nearby_en missing resource null(0)
+06-12 17:25:36.094  5549  7999 W SQLiteLog: (28) double-quoted string literal: "com.dazong.driver"
+06-12 17:25:36.097   537  1826 I ActivityManager: Flag disabled. Ignoring finishAttachApplication from uid: 10193. pid: 7974
+06-12 17:25:36.121  7974  8034 D libEGL  : loaded /vendor/lib64/egl/libEGL_emulation.so
+06-12 17:25:36.125  7974  8034 D libEGL  : loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
+06-12 17:25:36.127  7974  8034 D libEGL  : loaded /vendor/lib64/egl/libGLESv2_emulation.so
+06-12 17:25:36.128  5549  5665 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=AppsCorpus serviceId=36
+06-12 17:25:36.134  5549  5549 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.feedback.internal.IFeedbackService dat=chimera-action:/... cmp=com.google.android.gms/.chimera.GmsBoundBrokerService }
+06-12 17:25:36.134  5549  5549 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.feedback.internal.IFeedbackService dat=chimera-action:/... cmp=com.google.android.gms/.chimera.GmsBoundBrokerService }
+06-12 17:25:36.168  5549  5661 I Icing   : Usage reports ok 1, Failed Usage reports 0, indexed 0, rejected 0
+06-12 17:25:36.174  7974  7974 D CompatibilityChangeReporter: Compat change id reported: 237531167; UID 10193; state: DISABLED
+06-12 17:25:36.177  7974  7974 W OpenGLRenderer: Unknown dataspace 0
+06-12 17:25:36.183  5549  5678 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=null serviceId=30
+06-12 17:25:36.187  5549  5661 I Icing   : Indexing com.google.android.gms-internal.3p:MobileApplication from com.google.android.gms
+06-12 17:25:36.194  5549  5661 I Icing   : Indexing done com.google.android.gms-internal.3p:MobileApplication
+06-12 17:25:36.199  5549  5661 I Icing   : Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+06-12 17:25:36.238  5549  5661 I Icing   : Indexing com.google.android.gms-apps from com.google.android.gms
+06-12 17:25:36.244  5549  5661 I Icing   : Indexing done com.google.android.gms-apps
+06-12 17:25:36.354  7974  7974 W m.dazong.driver: Method boolean androidx.compose.runtime.snapshots.SnapshotStateList.conditionalUpdate(boolean, kotlin.jvm.functions.Function1) failed lock verification and will run slower.
+06-12 17:25:36.354  7974  7974 W m.dazong.driver: Common causes for lock verification issues are non-optimized dex code
+06-12 17:25:36.354  7974  7974 W m.dazong.driver: and incorrect proguard optimizations.
+06-12 17:25:36.354  7974  7974 W m.dazong.driver: Method boolean androidx.compose.runtime.snapshots.SnapshotStateList.conditionalUpdate$default(androidx.compose.runtime.snapshots.SnapshotStateList, boolean, kotlin.jvm.functions.Function1, int, java.lang.Object) failed lock verification and will run slower.
+06-12 17:25:36.354  7974  7974 W m.dazong.driver: Method java.lang.Object androidx.compose.runtime.snapshots.SnapshotStateList.mutate(kotlin.jvm.functions.Function1) failed lock verification and will run slower.
+06-12 17:25:36.355  7974  7974 W m.dazong.driver: Method void androidx.compose.runtime.snapshots.SnapshotStateList.update(boolean, kotlin.jvm.functions.Function1) failed lock verification and will run slower.
+06-12 17:25:36.355  7974  7974 W m.dazong.driver: Method void androidx.compose.runtime.snapshots.SnapshotStateList.update$default(androidx.compose.runtime.snapshots.SnapshotStateList, boolean, kotlin.jvm.functions.Function1, int, java.lang.Object) failed lock verification and will run slower.
+06-12 17:25:36.386  7974  7974 D CompatibilityChangeReporter: Compat change id reported: 289878283; UID 10193; state: ENABLED
+06-12 17:25:36.440   537   550 D CoreBackPreview: Window{b364f79 u0 com.dazong.driver/com.dazong.driver.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@e0e8eca, mPriority=0, mIsAnimationCallback=false}
+06-12 17:25:36.495   390   964 W ServiceManagerCppClient: Permission failure: android.permission.ROTATE_SURFACE_FLINGER from uid=10193 pid=0
+06-12 17:25:36.495   390   964 D PermissionCache: checking android.permission.ROTATE_SURFACE_FLINGER for uid=10193 => denied (416 us)
+06-12 17:25:36.495   390   964 W ServiceManagerCppClient: Permission failure: android.permission.INTERNAL_SYSTEM_WINDOW from uid=10193 pid=0
+06-12 17:25:36.495   390   964 D PermissionCache: checking android.permission.INTERNAL_SYSTEM_WINDOW for uid=10193 => denied (308 us)
+06-12 17:25:36.496   390   964 W ServiceManagerCppClient: Permission failure: android.permission.ACCESS_SURFACE_FLINGER from uid=10193 pid=0
+06-12 17:25:36.496   390   964 D PermissionCache: checking android.permission.ACCESS_SURFACE_FLINGER for uid=10193 => denied (828 us)
+06-12 17:25:36.496   390   633 W ServiceManagerCppClient: Permission failure: android.permission.INTERNAL_SYSTEM_WINDOW from uid=10193 pid=7974
+06-12 17:25:36.496   390   633 D PermissionCache: checking android.permission.INTERNAL_SYSTEM_WINDOW for uid=10193 => denied (1249 us)
+06-12 17:25:36.516  7974  8032 W OpenGLRenderer: Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+06-12 17:25:36.517  7974  8032 W OpenGLRenderer: Failed to initialize 101010-2 format, error = EGL_SUCCESS
+06-12 17:25:36.569   152   152 I servicemanager: Could not find android.hardware.graphics.allocator.IAllocator/default in the VINTF manifest.
+06-12 17:25:36.567   153   153 I hwservicemanager: getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+06-12 17:25:36.567  7974  8032 I Gralloc4: mapper 4.x is not supported
+06-12 17:25:36.584  7974  8032 E OpenGLRenderer: Unable to match the desired swap behavior.
+06-12 17:25:36.646   537  1842 W ServiceManagerCppClient: Permission failure: android.permission.ROTATE_SURFACE_FLINGER from uid=10193 pid=0
+06-12 17:25:36.646   537  1842 D PermissionCache: checking android.permission.ROTATE_SURFACE_FLINGER for uid=10193 => denied (119 us)
+06-12 17:25:36.646   537  1842 W ServiceManagerCppClient: Permission failure: android.permission.INTERNAL_SYSTEM_WINDOW from uid=10193 pid=0
+06-12 17:25:36.646   537  1842 D PermissionCache: checking android.permission.INTERNAL_SYSTEM_WINDOW for uid=10193 => denied (9 us)
+06-12 17:25:36.646   537  1842 W ServiceManagerCppClient: Permission failure: android.permission.ACCESS_SURFACE_FLINGER from uid=10193 pid=0
+06-12 17:25:36.646   537  1842 D PermissionCache: checking android.permission.ACCESS_SURFACE_FLINGER for uid=10193 => denied (6 us)
+06-12 17:25:36.714   537   554 W ziparchive: Unable to open '/data/app/~~cefzVYv3LLZ_lNKw4tElWw==/com.dazong.driver-cNGlvjCHhxYiRLeTdGaWCg==/base.dm': No such file or directory
+06-12 17:25:36.715   537   554 I ActivityTaskManager: Displayed com.dazong.driver/.MainActivity for user 0: +1s650ms
+06-12 17:25:36.727  7974  7974 I Choreographer: Skipped 30 frames!  The application may be doing too much work on its main thread.
+06-12 17:25:36.758   537  1842 D CompatibilityChangeReporter: Compat change id reported: 214016041; UID 10193; state: ENABLED
+06-12 17:25:36.758   537  1842 I ImeTracker: com.dazong.driver:458e2d7e: onRequestHide at ORIGIN_SERVER_HIDE_INPUT reason HIDE_UNSPECIFIED_WINDOW
+06-12 17:25:36.769  7795  7795 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=ImeCallback=ImeOnBackInvokedCallback@23244111 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@23ccc7c
+06-12 17:25:36.777  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.onFinishInputView():2241 
+06-12 17:25:36.779   537  1842 D CoreBackPreview: Window{309c48e u0 com.dazong.sorterpda/com.dazong.sorterpda.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@5c22d22, mPriority=0, mIsAnimationCallback=false}
+06-12 17:25:36.802  1588  1588 W TooltipLifecycleManager: TooltipLifecycleManager.dismissTooltips():159 Tooltip with id spell_check_add_to_dictionary not found in tooltipManager.
+06-12 17:25:36.805  1588  1588 I InputBundle: InputBundle.consumeEvent():923 Skip consuming an event as keyboard status is 0
+06-12 17:25:36.812  1588  1588 I KeyboardWrapper: KeyboardWrapper.consumeEvent():275 Skip consuming an event as current keyboard is deactivated (state=0, keyboard existence=true)
+06-12 17:25:36.812  1588  1588 I VoiceInputManagerWrapper: VoiceInputManagerWrapper.shutdown():77 shutdown()
+06-12 17:25:36.814  1588  1788 W ModuleManager: ModuleManager.loadModule():450 Module jjj is not available
+06-12 17:25:36.815  1588  1588 I AndroidIME: AbstractIme.onDeactivate():207 LatinIme.onDeactivate()
+06-12 17:25:36.815  1588  1788 I NebulaeTrainingCacheMetricsProcessor: NebulaeTrainingCacheMetricsProcessor.processEndSession():447 No input action collection in this session, skip logging.
+06-12 17:25:36.871  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():3227 
+06-12 17:25:36.879  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.updateDeviceLockedStatus():2087 repeatCheckTimes = 0, unlocked = true
+06-12 17:25:36.879  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1877 onStartInput(EditorInfo{inputType=0x0(NULL) imeOptions=0x0 privateImeOptions=null actionName=UNSPECIFIED actionLabel=null actionId=0 initialSelStart=-1 initialSelEnd=-1 initialCapsMode=0x0 hintText=null label=null packageName=com.dazong.driver fieldId=0 fieldName=null extras=null}, false)
+06-12 17:25:36.879  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.shouldHideHeaderOnInitialState():4008 ShouldHideHeaderOnInitialState = false
+06-12 17:25:36.880  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.updateDeviceLockedStatus():2087 repeatCheckTimes = 2, unlocked = true
+06-12 17:25:36.885   537   616 D CompatibilityChangeReporter: Compat change id reported: 265195908; UID 10192; state: ENABLED
+06-12 17:25:36.904  5550  5728 I FontLog : Received query Noto Color Emoji Compat, URI content://com.google.android.gms.fonts [CONTEXT service_id=132 ]
+06-12 17:25:36.904  5550  5728 I FontLog : Query [emojicompat-emoji-font] resolved to {Noto Color Emoji Compat, wdth 100.0, wght 400, ital 0.0, bestEffort false} [CONTEXT service_id=132 ]
+06-12 17:25:36.943  5550  5728 I FontLog : Fetch {Noto Color Emoji Compat, wdth 100.0, wght 400, ital 0.0, bestEffort false} end status Status{statusCode=SUCCESS, resolution=null} [CONTEXT service_id=132 ]
+06-12 17:25:36.950  7795  7795 I ImeTracker: com.dazong.driver:458e2d7e: onCancelled at PHASE_CLIENT_ANIMATION_CANCEL
+06-12 17:25:36.952  1095  1425 D BtGatt.ScanManager: uid 10128 isForeground true scanMode -1
+06-12 17:25:36.952  1095  1425 D BtGatt.ScanManager: uid 10128 isForeground true scanMode -1
+06-12 17:25:36.955  7795  7795 I ImeTracker: com.dazong.sorterpda:c4f5c2f8: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT_BY_INSETS_API
+06-12 17:25:36.956  7795  7795 I ImeTracker: com.dazong.sorterpda:c4f5c2f8: onFailed at PHASE_CLIENT_VIEW_SERVED
+06-12 17:25:36.988  5550  5728 I FontLog : Pulling font file for id = 8, cache size = 7 [CONTEXT service_id=132 ]
+06-12 17:25:37.002  5550  5728 I FontLog : Pulling font file for id = 8, cache size = 7 [CONTEXT service_id=132 ]
+06-12 17:25:37.116   891   944 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=android.view.ViewRootImpl$$ExternalSyntheticLambda17@de25543
+06-12 17:25:37.116   537  2234 D CoreBackPreview: Window{5e6d46f u0 Splash Screen com.dazong.driver EXITING}: Setting back callback null
+06-12 17:25:37.116   537  2234 W InputManager-JNI: Input channel object '5e6d46f Splash Screen com.dazong.driver (client)' was disposed without first being removed with the input manager!
+06-12 17:25:37.246   891   915 I ndroid.systemui: Background concurrent copying GC freed 304922(12MB) AllocSpace objects, 26(520KB) LOS objects, 49% free, 17MB/35MB, paused 68us,21us total 198.332ms
+06-12 17:25:37.300   537   556 I DropBoxManagerService: add tag=system_app_strictmode isTagEnabled=true flags=0x2
+06-12 17:25:37.312   537   556 I DropBoxManagerService: add tag=system_app_strictmode isTagEnabled=true flags=0x2
+06-12 17:25:37.312   537   556 I DropBoxManagerService: add tag=system_app_strictmode isTagEnabled=true flags=0x2
+06-12 17:25:38.023   537  3592 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+06-12 17:25:38.148   891   891 D StatusBarIconController: ignoring old pipeline callbacks, because the new mobile icons are enabled
+06-12 17:25:38.355   349  8043 I resolv  : GetAddrInfoHandler::run: {100 786532 100 983140 10128 0}
+06-12 17:25:38.359   349  8045 I resolv  : res_nmkquery: (QUERY, IN, A)
+06-12 17:25:38.359   349  8044 I resolv  : res_nmkquery: (QUERY, IN, AAAA)
+06-12 17:25:38.550   349  8045 I resolv  : res_nsend: used send_dg 364 terrno: 0
+06-12 17:25:38.551   349  8045 I resolv  : doQuery: rcode=0, ancount=4, return value=364
+06-12 17:25:38.551   349  8044 I resolv  : res_nsend: used send_dg 412 terrno: 0
+06-12 17:25:38.551   349  8044 I resolv  : doQuery: rcode=0, ancount=4, return value=412
+06-12 17:25:38.679  7947  7949 I AidlLazyServiceRegistrar: Process has 0 (of 1 available) client(s) in use after notification artd has clients: 0
+06-12 17:25:38.679  7947  7949 I AidlLazyServiceRegistrar: Trying to shut down the service. No clients in use for any service in process.
+06-12 17:25:38.681  7947  7949 I AidlLazyServiceRegistrar: Unregistered all clients and exiting
+06-12 17:25:38.682   152   152 I servicemanager: Notifying artd they don't (previously: do) have clients when we now have no record of a client
+06-12 17:25:38.684   152   152 I servicemanager: Unregistering artd
+06-12 17:25:38.684   152   152 I BpBinder: onLastStrongRef automatically unlinking death recipients:
+06-12 17:25:38.688     1     1 I init    : Service 'artd' (pid 7947) exited with status 0 oneshot service took 4.047000 seconds in background
+06-12 17:25:38.688     1     1 I init    : Sending signal 9 to service 'artd' (pid 7947) process group...
+06-12 17:25:38.688     1     1 I libprocessgroup: Successfully killed process cgroup uid 1082 pid 7947 in 0ms
+06-12 17:25:38.744   876   876 I wpa_supplicant: wlan0: CTRL-EVENT-BEACON-LOSS 
+06-12 17:25:39.825   537  2234 D OomAdjuster: Not killing cached processes
+06-12 17:25:41.021  8049  8049 W BpBinder: Linking to death on android.gui.ISurfaceComposer but there are no threads (yet?) listening to incoming transactions. See ProcessState::startThreadPool and ProcessState::setThreadPoolMaxThreadCount. Generally you should setup the binder threadpool before other initialization steps.
+06-12 17:25:41.022  8049  8049 W ProcessState: Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+06-12 17:25:41.033   153   153 I hwservicemanager: getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+06-12 17:25:41.036   152   152 I servicemanager: Could not find android.hardware.graphics.allocator.IAllocator/default in the VINTF manifest.
+06-12 17:25:41.034  8049  8050 I Gralloc4: mapper 4.x is not supported
+06-12 17:25:41.247  8051  8051 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+06-12 17:25:41.265  8051  8051 I AndroidRuntime: Using default boot image
+06-12 17:25:41.265  8051  8051 I AndroidRuntime: Leaving lock profiling enabled
+06-12 17:25:41.270  8051  8051 I app_process: Core platform API reporting enabled, enforcing=false
+06-12 17:25:41.270  8051  8051 I app_process: Using CollectorTypeCC GC.
+06-12 17:25:41.375  8051  8051 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+06-12 17:25:41.396  8051  8051 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+06-12 17:25:41.396  8051  8051 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt72l.dat
+06-12 17:25:41.416  8051  8051 W app_process: ClassLoaderContext shared library size mismatch. Expected=2, found=0 (PCL[]{PCL[/system/framework/android.test.base.jar*836642756]#PCL[/system/framework/android.test.mock.jar*3186112116]} | PCL[])
+06-12 17:25:41.419  8051  8051 W app_process: ClassLoaderContext classpath size mismatch. expected=0, found=1 (PCL[]{PCL[/system/framework/android.test.runner.jar*4168958247]{PCL[/system/framework/android.test.base.jar*836642756]#PCL[/system/framework/android.test.mock.jar*3186112116]}#PCL[/system/framework/android.test.base.jar*836642756]} | PCL[/system/framework/android.test.runner.jar*4168958247])
+06-12 17:25:41.447  8051  8051 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+06-12 17:25:41.453  8051  8051 D UiAutomationConnection: Created on user UserHandle{0}
+06-12 17:25:41.453  8051  8051 I UiAutomation: Initialized for user 0 on display 0
+06-12 17:25:41.453  8051  8051 W UiAutomation: Created with deprecatead constructor, assumes DEFAULT_DISPLAY
+06-12 17:25:41.455   537   550 D AccessibilityManagerService: changeCurrentUserForTestAutomationIfNeededLocked(0): ignoring because device doesn't support visible background users
+06-12 17:25:41.455   537   550 I UiAutomationManager: Registering UiTestAutomationService (id=com.android.server.accessibility/UiAutomation) when called by user 0
+06-12 17:25:41.461   537   550 W WindowMagnificationMgr: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+06-12 17:25:41.463  8051  8068 V UiAutomation: Init UiAutomation@5cdb034[id=6, displayId=0, flags=0]
+06-12 17:25:41.464  1714  1730 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+06-12 17:25:41.466  1714  1818 I AiAiEcho: Predicting[0]: 
+06-12 17:25:41.466  1714  1818 I AiAiEcho: EchoTargets: 
+06-12 17:25:41.466  1714  1818 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:25:41.466  1714  1818 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:25:41.468  1729  2098 I A11yListener: (REDACTED) #onAccessibilityStateChanged enabled: %s
+06-12 17:25:41.469  1714  1818 I AiAiEcho: Predicting[0]: 
+06-12 17:25:41.469  1714  1818 I AiAiEcho: EchoTargets: 
+06-12 17:25:41.469  1714  1818 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:25:41.469  1714  1818 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:25:41.478   537   550 W WindowMagnificationMgr: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+06-12 17:25:41.483  1714  1818 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+06-12 17:25:41.489  1714  1730 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+06-12 17:25:41.496  1714  1818 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+06-12 17:25:41.496  1729  2189 I A11yListener: #onChange
+06-12 17:25:41.497  1714  1818 I AiAiEcho: Predicting[0]: 
+06-12 17:25:41.497  1714  1818 I AiAiEcho: EchoTargets: 
+06-12 17:25:41.497  1714  1818 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:25:41.498  1714  1818 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:25:41.498  1714  1818 I AiAiEcho: Predicting[0]: 
+06-12 17:25:41.498  1714  1818 I AiAiEcho: EchoTargets: 
+06-12 17:25:41.498  1714  1818 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:25:41.498  1714  1818 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:25:41.499  1714  1818 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+06-12 17:25:41.499  1714  1818 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+06-12 17:25:41.508   537   537 D BatterySaverPolicy: accessibility changed to true, updating policy.
+06-12 17:25:41.512  1869  2341 I A       : NGA disabled due to not being eligible.
+06-12 17:25:41.515   891   891 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+06-12 17:25:41.516   891   891 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+06-12 17:25:41.526  1729  2189 E TraceManager: Duplicate trace
+06-12 17:25:41.526  1729  2189 E TraceManager: com.google.apps.tiktok.tracing.w: Starting new trace A11yEventListener_onChange when already associated with a trace: . For more help, see http://go/tiktok-tracing#fixing-duplicate-trace-issues
+06-12 17:25:41.526  1729  2189 E TraceManager: 	at com.google.apps.tiktok.tracing.el.f(PG:6)
+06-12 17:25:41.526  1729  2189 E TraceManager: 	at com.google.apps.tiktok.tracing.el.g(PG:2)
+06-12 17:25:41.526  1729  2189 E TraceManager: 	at com.google.apps.tiktok.tracing.dv.d(PG:1)
+06-12 17:25:41.526  1729  2189 E TraceManager: 	at com.google.android.libraries.search.assistant.a.g.a(PG:7)
+06-12 17:25:41.526  1729  2189 E TraceManager: 	at com.google.android.libraries.search.assistant.a.b.b(PG:2)
+06-12 17:25:41.526  1729  2189 E TraceManager: 	at i.c.b.a.a.h(PG:4)
+06-12 17:25:41.526  1729  2189 E TraceManager: 	at kotlinx.coroutines.bk.run(PG:14)
+06-12 17:25:41.526  1729  2189 E TraceManager: 	at com.google.apps.tiktok.coroutines.g.run(PG:1)
+06-12 17:25:41.526  1729  2189 E TraceManager: 	at com.google.android.libraries.i.z.run(PG:1)
+06-12 17:25:41.526  1729  2189 E TraceManager: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+06-12 17:25:41.526  1729  2189 E TraceManager: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+06-12 17:25:41.526  1729  2189 E TraceManager: 	at com.google.android.libraries.i.h.run(PG:2)
+06-12 17:25:41.526  1729  2189 E TraceManager: 	at java.lang.Thread.run(Thread.java:1012)
+06-12 17:25:41.526  1729  2189 E TraceManager: 	at com.google.android.libraries.i.ai.run(PG:5)
+06-12 17:25:41.526  1729  2189 E TraceManager: 	Suppressed: com.google.apps.tiktok.tracing.fv: 
+06-12 17:25:41.526  1729  2189 E TraceManager: 		at tk_trace.(Unknown Source:0)
+06-12 17:25:41.526  1729  2189 E TraceManager: 		at tk_trace.Missing root trace(Unknown Source:0)
+06-12 17:25:41.526  1729  2189 E TraceManager: Caused by: com.google.apps.tiktok.tracing.aa
+06-12 17:25:41.528  1729  2189 I Ma-Fcf-A11yChangeNotifier: #FCF: onChange
+06-12 17:25:41.532  1729  2189 I A       : FCF A11y Checker - readyForTngMa
+06-12 17:25:41.533  1729  2189 I A       : (REDACTED) #FCF: Continued Conversation Mode Enabled: %s
+06-12 17:25:41.536  1729  2254 I A       : (REDACTED) #FCF: Headset Connected Status: %s
+06-12 17:25:41.536  1729  2254 I A       : (REDACTED) #FCF: Assistant primary locale : %s
+06-12 17:25:41.536  1729  2254 I A       : (REDACTED) #FCF: Assistant Primary locale check status : %s
+06-12 17:25:41.538  1729  2254 W A       : Unable to check for productivity accounts. Assuming there are none.
+06-12 17:25:41.538  1729  2254 W A       : com.google.android.libraries.geller.portable.GellerException: Code: INVALID_ARGUMENT, Message: Account name is null.
+06-12 17:25:41.538  1729  2254 W A       : 	at com.google.android.libraries.search.h.k.a(PG:6)
+06-12 17:25:41.538  1729  2254 W A       : 	at com.google.apps.tiktok.tracing.es.a(PG:3)
+06-12 17:25:41.538  1729  2254 W A       : 	at com.google.common.w.a.bc.a(PG:1)
+06-12 17:25:41.538  1729  2254 W A       : 	at com.google.common.w.a.cw.run(PG:4)
+06-12 17:25:41.538  1729  2254 W A       : 	at com.google.android.libraries.i.z.run(PG:1)
+06-12 17:25:41.538  1729  2254 W A       : 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+06-12 17:25:41.538  1729  2254 W A       : 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+06-12 17:25:41.538  1729  2254 W A       : 	at com.google.android.libraries.i.h.run(PG:2)
+06-12 17:25:41.538  1729  2254 W A       : 	at java.lang.Thread.run(Thread.java:1012)
+06-12 17:25:41.538  1729  2254 W A       : 	at com.google.android.libraries.i.ai.run(PG:5)
+06-12 17:25:41.540  1729  2189 I A       : (REDACTED) #FCF evaluate: %s
+06-12 17:25:41.540  1729  2189 I A       : (REDACTED) TngMaStatusChecker#evaluateInternal completed in %s millis
+06-12 17:25:41.541  1729  2189 I Ma-Entry-Triggering: (REDACTED) TNG:MA status updated: %s
+06-12 17:25:41.542  1729  2189 I Ma-Entry-Triggering: TNG:MA became ineligible, client should disconnect
+06-12 17:25:41.543  1729  2189 I Ma-Entry-Triggering: #disconnectAndStop - preventing double stop
+06-12 17:25:41.543  1729  2189 I A       : #invalidationSource: adding headset checker
+06-12 17:25:41.544  1729  2189 I A       : #invalidationSource : adding a11y checker
+06-12 17:25:41.548   537  2457 D SafetySourceDataValidator: No cert check requested for package com.google.android.permissioncontroller
+06-12 17:25:41.817  7974  8069 D ProfileInstaller: Installing profile for com.dazong.driver
+06-12 17:25:41.821   891   891 D StatusBarIconController: ignoring old pipeline callback because the new wifi icon is enabled
+06-12 17:25:41.885  1869  3847 I IPCThreadState: oneway function results for code 2 on binder at 0xb400007a01959800 will be dropped but finished with status UNKNOWN_TRANSACTION
+06-12 17:25:42.521  7974  8032 D EGL_emulation: app_time_stats: avg=1168.88ms min=9.41ms max=5169.29ms count=5
+06-12 17:25:42.558  8051  8051 W AccessibilityNodeInfoDumper: Fetch time: 51ms
+06-12 17:25:42.562   537   550 W WindowMagnificationMgr: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+06-12 17:25:42.562   537   550 D AccessibilityManagerService: restoreCurrentUserForTestAutomationIfNeededLocked(): ignoring because device doesn't support visible background users
+06-12 17:25:42.562  1714  1730 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+06-12 17:25:42.562  1714  1818 I AiAiEcho: Predicting[0]: 
+06-12 17:25:42.562  1714  1818 I AiAiEcho: EchoTargets: 
+06-12 17:25:42.562  1714  1818 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:25:42.563  1714  1818 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:25:42.563  1714  1818 I AiAiEcho: Predicting[0]: 
+06-12 17:25:42.563  1714  1818 I AiAiEcho: EchoTargets: 
+06-12 17:25:42.563  1714  1818 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:25:42.563  1714  1818 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:25:42.563  1729  2098 I A11yListener: (REDACTED) #onAccessibilityStateChanged enabled: %s
+06-12 17:25:42.564  1729  2189 I A11yListener: #onChange
+06-12 17:25:42.564   537   537 D BatterySaverPolicy: accessibility changed to false, updating policy.
+06-12 17:25:42.564  8051  8051 D AndroidRuntime: Shutting down VM
+06-12 17:25:42.565  1729  2189 E TraceManager: Duplicate trace
+06-12 17:25:42.565  1729  2189 E TraceManager: com.google.apps.tiktok.tracing.w: Starting new trace A11yEventListener_onChange when already associated with a trace: . For more help, see http://go/tiktok-tracing#fixing-duplicate-trace-issues
+06-12 17:25:42.565  1729  2189 E TraceManager: 	at com.google.apps.tiktok.tracing.el.f(PG:6)
+06-12 17:25:42.565  1729  2189 E TraceManager: 	at com.google.apps.tiktok.tracing.el.g(PG:2)
+06-12 17:25:42.565  1729  2189 E TraceManager: 	at com.google.apps.tiktok.tracing.dv.d(PG:1)
+06-12 17:25:42.565  1729  2189 E TraceManager: 	at com.google.android.libraries.search.assistant.a.g.a(PG:7)
+06-12 17:25:42.565  1729  2189 E TraceManager: 	at com.google.android.libraries.search.assistant.a.b.b(PG:2)
+06-12 17:25:42.565  1729  2189 E TraceManager: 	at i.c.b.a.a.h(PG:4)
+06-12 17:25:42.565  1729  2189 E TraceManager: 	at kotlinx.coroutines.bk.run(PG:14)
+06-12 17:25:42.565  1729  2189 E TraceManager: 	at com.google.apps.tiktok.coroutines.g.run(PG:1)
+06-12 17:25:42.565  1729  2189 E TraceManager: 	at com.google.android.libraries.i.z.run(PG:1)
+06-12 17:25:42.565  1729  2189 E TraceManager: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+06-12 17:25:42.565  1729  2189 E TraceManager: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+06-12 17:25:42.565  1729  2189 E TraceManager: 	at com.google.android.libraries.i.h.run(PG:2)
+06-12 17:25:42.565  1729  2189 E TraceManager: 	at java.lang.Thread.run(Thread.java:1012)
+06-12 17:25:42.565  1729  2189 E TraceManager: 	at com.google.android.libraries.i.ai.run(PG:5)
+06-12 17:25:42.565  1729  2189 E TraceManager: 	Suppressed: com.google.apps.tiktok.tracing.fv: 
+06-12 17:25:42.565  1729  2189 E TraceManager: 		at tk_trace.(Unknown Source:0)
+06-12 17:25:42.565  1729  2189 E TraceManager: 		at tk_trace.Missing root trace(Unknown Source:0)
+06-12 17:25:42.565  1729  2189 E TraceManager: Caused by: com.google.apps.tiktok.tracing.aa
+06-12 17:25:42.566  1729  2189 I Ma-Fcf-A11yChangeNotifier: #FCF: onChange
+06-12 17:25:42.566  1714  1818 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+06-12 17:25:42.566  1714  1818 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+06-12 17:25:42.567  1729  2189 I A       : FCF A11y Checker - readyForTngMa
+06-12 17:25:42.568  1729  2254 I A       : (REDACTED) #FCF: Continued Conversation Mode Enabled: %s
+06-12 17:25:42.578  1729  2254 I A       : (REDACTED) #FCF: Headset Connected Status: %s
+06-12 17:25:42.578  1729  2254 I A       : (REDACTED) #FCF: Assistant primary locale : %s
+06-12 17:25:42.578  1729  2254 I A       : (REDACTED) #FCF: Assistant Primary locale check status : %s
+06-12 17:25:42.579  1729  2254 W A       : Unable to check for productivity accounts. Assuming there are none.
+06-12 17:25:42.579  1729  2254 W A       : com.google.android.libraries.geller.portable.GellerException: Code: INVALID_ARGUMENT, Message: Account name is null.
+06-12 17:25:42.579  1729  2254 W A       : 	at com.google.android.libraries.search.h.k.a(PG:6)
+06-12 17:25:42.579  1729  2254 W A       : 	at com.google.apps.tiktok.tracing.es.a(PG:3)
+06-12 17:25:42.579  1729  2254 W A       : 	at com.google.common.w.a.bc.a(PG:1)
+06-12 17:25:42.579  1729  2254 W A       : 	at com.google.common.w.a.cw.run(PG:4)
+06-12 17:25:42.579  1729  2254 W A       : 	at com.google.android.libraries.i.z.run(PG:1)
+06-12 17:25:42.579  1729  2254 W A       : 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+06-12 17:25:42.579  1729  2254 W A       : 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+06-12 17:25:42.579  1729  2254 W A       : 	at com.google.android.libraries.i.h.run(PG:2)
+06-12 17:25:42.579  1729  2254 W A       : 	at java.lang.Thread.run(Thread.java:1012)
+06-12 17:25:42.579  1729  2254 W A       : 	at com.google.android.libraries.i.ai.run(PG:5)
+06-12 17:25:42.580  1729  2189 I A       : (REDACTED) #FCF evaluate: %s
+06-12 17:25:42.581  1729  2189 I A       : (REDACTED) TngMaStatusChecker#evaluateInternal completed in %s millis
+06-12 17:25:42.581  1729  2189 I Ma-Entry-Triggering: (REDACTED) TNG:MA status updated: %s
+06-12 17:25:42.581  1729  2189 I Ma-Entry-Triggering: TNG:MA became ineligible, client should disconnect
+06-12 17:25:42.582  1729  2189 I Ma-Entry-Triggering: #disconnectAndStop - preventing double stop
+06-12 17:25:42.582  1729  2189 I A       : #invalidationSource: adding headset checker
+06-12 17:25:42.582  1869  2340 I A       : NGA disabled due to not being eligible.
+06-12 17:25:42.583  1729  2189 I A       : #invalidationSource : adding a11y checker
+06-12 17:25:42.594   891   891 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+06-12 17:25:43.013  1095  1425 D BtGatt.ScanManager: uid 10128 isForeground true scanMode -1
+06-12 17:25:43.013  1095  1425 D BtGatt.ScanManager: uid 10128 isForeground true scanMode -1
+06-12 17:25:44.825   891   891 D StatusBarIconController: ignoring old pipeline callback because the new wifi icon is enabled
+06-12 17:25:44.890   537   871 D OomAdjuster: Not killing cached processes
+06-12 17:25:44.935   537   624 D ActivityManager: freezing 5320 com.google.android.settings.intelligence
+06-12 17:25:45.426   175  7963 I keystore2: system/security/keystore2/src/watchdog.rs:319 - Watchdog thread idle -> terminating. Have a great day.
+06-12 17:25:46.501   537   550 W ProcessStats: Tracking association SourceState{8c321e1 com.google.android.gms.persistent/10128 BFgs #11624} whose proc state 4 is better than process ProcessState{4b4c14a com.google.android.gms/10128 pkg=com.google.android.gms} proc state 8 (138 skipped)
+06-12 17:25:46.675   876   876 I wpa_supplicant: wlan0: CTRL-EVENT-BEACON-LOSS 
+06-12 17:25:46.835  1588  1788 I ProtoXDBBufferWrapper: ProtoXDBBufferWrapper.flushToStorage():153 Flushed 13 data item(s) to storage.
+06-12 17:25:47.837   891   891 D StatusBarIconController: ignoring old pipeline callback because the new wifi icon is enabled
+06-12 17:25:48.147   891   891 D StatusBarIconController: ignoring old pipeline callbacks, because the new mobile icons are enabled
+06-12 17:25:50.688   537   550 D OomAdjuster: Not killing cached processes
+06-12 17:25:51.139  5550  5550 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.nearby.exposurenotification.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentApiServiceNoInstantApps }
+06-12 17:25:51.187  5549  5549 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.feedback.internal.IFeedbackService dat=chimera-action:/... cmp=com.google.android.gms/.chimera.GmsBoundBrokerService }
+06-12 17:25:51.829  3193  4214 I DialerOmtpVvmCarrierConfigHelper: com.android.voicemail.impl.OmtpVvmCarrierConfigHelper.handleEvent:527 OmtpEvent:CONFIG_STATUS_SMS_TIME_OUT PhoneAccountHandle: [ComponentName: com.android.phone/com.android.services.telephony.TelephonyConnectionService subId: 1] [CONTEXT enable_persistent_logger=true ]
+06-12 17:25:51.830  3193  3193 I DialerRetryPolicy: com.android.voicemail.impl.scheduling.RetryPolicy.onCompleted:106 Retry limit for com.android.voicemail.impl.ActivationTask@ebc4cb4 reached [CONTEXT enable_persistent_logger=true ]
+06-12 17:25:51.831  3193  3193 I DialerRetryPolicy: com.android.voicemail.impl.scheduling.RetryPolicy.onCompleted:108 committing deferred status [CONTEXT enable_persistent_logger=true ]
+06-12 17:25:51.832  3193  3193 I DialerTaskExecutor: com.android.voicemail.impl.scheduling.TaskExecutor.prepareStop:371 no more tasks, stopping service if no task are added in 5000 millis [CONTEXT enable_persistent_logger=true ]
+06-12 17:25:51.832  3193  8072 I DialerVoicemailStatus: com.android.voicemail.impl.VoicemailStatus$Editor.apply:112 enter
+06-12 17:25:51.834  3193  8072 I DialerVoicemailStatusDataServiceImpl: com.android.dialer.voicemailstatus.dataservice.impl.VoicemailStatusDataServiceImpl.insertOrUpdateVoicemailStatus:196 enter
+06-12 17:25:51.847  3193  8073 I DialerRestVoicemailEnabledFn: com.android.dialer.voicemail.service.impl.vvmclients.rest.RestVoicemailEnabledFn.isEnabled:51 disabled by flag [CONTEXT ratelimit_period="1 MINUTES [skipped: 23]" ]
+06-12 17:25:51.847  3193  8073 I DialerCvvmEnabledFn: com.android.dialer.voicemail.service.impl.vvmclients.omtp.protocol.cvvm.CvvmEnabledFn.isEnabled:37 disabled by flag [CONTEXT ratelimit_period="1 MINUTES [skipped: 11]" ]
+06-12 17:25:51.857  3193  8073 I DialerOmtpVvmCarrierConfigHelper: com.android.voicemail.impl.OmtpVvmCarrierConfigHelper.isCarrierAppInstalled:637 carrier app not installed in this device [CONTEXT ratelimit_period="1 MINUTES [skipped: 4]" ]
+06-12 17:25:51.867  3193  8073 W Settings: Setting airplane_mode_on has moved from android.provider.Settings.System to android.provider.Settings.Global, returning read-only value.
+06-12 17:25:51.868  3193  8073 I DialerVoicemailStatusDataServiceImpl: com.android.dialer.voicemailstatus.dataservice.impl.VoicemailStatusDataServiceImpl.lambda$insertOrUpdateVoicemailStatus$5:213 merged status: # kee@5cbbd7c4
+06-12 17:25:52.018   361   361 W healthd : battery l=100 v=5000 t=25.0 h=2 st=2 c=900000 fc=3000000 cc=10 chg=a
+06-12 17:25:53.846   891   891 D StatusBarIconController: ignoring old pipeline callback because the new wifi icon is enabled
+06-12 17:25:54.613   876   876 I wpa_supplicant: wlan0: CTRL-EVENT-BEACON-LOSS 
+06-12 17:25:54.942   537   624 D ActivityManager: freezing 894 com.google.android.permissioncontroller
+06-12 17:25:56.817  1588  1788 I VoiceInputManagerWrapper: VoiceInputManagerWrapper.shutdownVoiceInternal():95 shutdownVoiceInternal()
+06-12 17:25:56.838  3193  3193 I DialerTaskExecutor: com.android.voicemail.impl.scheduling.TaskExecutor.lambda$new$0:152 Stopping service [CONTEXT enable_persistent_logger=true ]
+06-12 17:25:56.840  3193  3193 I DialerTaskExecutor: com.android.voicemail.impl.scheduling.TaskExecutor.finishJobAsync:461 finishing Job [CONTEXT enable_persistent_logger=true ]
+06-12 17:25:56.841  3193  3193 I DialerTaskSchedulerJobService: com.android.voicemail.impl.scheduling.TaskSchedulerJobService.finishAsync:195 finishing job [CONTEXT enable_persistent_logger=true ]
+06-12 17:25:56.846   537   993 D OomAdjuster: Not killing cached processes
+06-12 17:25:56.847  3193  3193 I DialerTaskExecutor: com.android.voicemail.impl.scheduling.TaskExecutor$JobFinishedPoller.run:189 JobFinishedPoller.run Job finished [CONTEXT enable_persistent_logger=true ]
+06-12 17:25:56.848   891   891 D StatusBarIconController: ignoring old pipeline callback because the new wifi icon is enabled
+06-12 17:25:56.848  3193  3193 I DialerTaskExecutor: com.android.voicemail.impl.scheduling.TaskExecutor.terminate:287 terminated [CONTEXT enable_persistent_logger=true ]
+06-12 17:25:58.153   891   891 D StatusBarIconController: ignoring old pipeline callbacks, because the new mobile icons are enabled
+06-12 17:25:59.860   891   891 D StatusBarIconController: ignoring old pipeline callback because the new wifi icon is enabled
+06-12 17:26:00.013  1714  1818 I AiAiEcho: Predicting[0]: 
+06-12 17:26:00.013  1714  1818 I AiAiEcho: EchoTargets: 
+06-12 17:26:00.013  1714  1818 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:26:00.014  1714  1818 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:26:00.014  1714  1818 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+06-12 17:26:00.028   891   891 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+06-12 17:26:00.030   891   976 D EGL_emulation: app_time_stats: avg=31876.58ms min=31876.58ms max=31876.58ms count=1
+06-12 17:26:01.203   537   624 D ActivityManager: freezing 5549 com.google.android.gms
+06-12 17:26:02.547   876   876 I wpa_supplicant: wlan0: CTRL-EVENT-BEACON-LOSS 
+06-12 17:26:04.027  1166  1166 D TaplEvents: TIS / TouchInteractionService.onInputEvent: MotionEvent { action=ACTION_DOWN, actionButton=0, id[0]=0, x[0]=540.0, y[0]=995.0, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, classification=NONE, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=380324, downTime=380324, deviceId=-1, source=0x1002, displayId=0, eventId=-39975792 }
+06-12 17:26:04.041  1166  1166 D TaplEvents: TIS / TouchInteractionService.onInputEvent: MotionEvent { action=ACTION_UP, actionButton=0, id[0]=0, x[0]=540.0, y[0]=995.0, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, classification=NONE, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=380324, downTime=380324, deviceId=-1, source=0x1002, displayId=0, eventId=-858820353 }
+06-12 17:26:04.086  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():3227 
+06-12 17:26:04.087  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.updateDeviceLockedStatus():2087 repeatCheckTimes = 0, unlocked = true
+06-12 17:26:04.087  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1877 onStartInput(EditorInfo{inputType=0x8001(Normal) imeOptions=0x2000006 privateImeOptions=null actionName=DONE actionLabel=null actionId=0 initialSelStart=21 initialSelEnd=21 initialCapsMode=0x0 hintText=null label=null packageName=com.dazong.driver fieldId=-1 fieldName=null extras=Bundle[mParcelledData.dataSize=404]}, false)
+06-12 17:26:04.087  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.shouldHideHeaderOnInitialState():4008 ShouldHideHeaderOnInitialState = false
+06-12 17:26:04.087  7974  7974 I ImeTracker: com.dazong.driver:155c53a8: onRequestShow at ORIGIN_CLIENT_SHOW_SOFT_INPUT reason SHOW_SOFT_INPUT_BY_INSETS_API
+06-12 17:26:04.087  7974  7974 D InsetsController: show(ime(), fromIme=false)
+06-12 17:26:04.087  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.updateDeviceLockedStatus():2087 repeatCheckTimes = 2, unlocked = true
+06-12 17:26:04.088  7974  7974 D InputMethodManager: showSoftInput() view=androidx.compose.ui.platform.AndroidComposeView{7b67d8a VFED..... .F....ID 0,0-1080,2209 aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT_BY_INSETS_API
+06-12 17:26:04.089   537   550 D OomAdjuster: Not killing cached processes
+06-12 17:26:04.092  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1877 onStartInput(EditorInfo{inputType=0x8001(Normal) imeOptions=0x2000006 privateImeOptions=null actionName=DONE actionLabel=null actionId=0 initialSelStart=21 initialSelEnd=21 initialCapsMode=0x0 hintText=null label=null packageName=com.dazong.driver fieldId=-1 fieldName=null extras=Bundle[mParcelledData.dataSize=404]}, true)
+06-12 17:26:04.092  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.shouldHideHeaderOnInitialState():4008 ShouldHideHeaderOnInitialState = false
+06-12 17:26:04.093  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.updateDeviceLockedStatus():2087 repeatCheckTimes = 2, unlocked = true
+06-12 17:26:04.093  1588  1588 W SessionManager: SessionManager.beginSession():53 Try to begin an already begun session [INPUT_SESSION], end it first
+06-12 17:26:04.094  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.onStartInputView():1995 onStartInputView(EditorInfo{inputType=0x8001(Normal) imeOptions=0x2000006 privateImeOptions=null actionName=DONE actionLabel=null actionId=0 initialSelStart=21 initialSelEnd=21 initialCapsMode=0x0 hintText=null label=null packageName=com.dazong.driver fieldId=-1 fieldName=null extras=Bundle[{android.support.text.emoji.emojiCompat_metadataVersion=9, androidx.core.view.inputmethod.EditorInfoCompat.STYLUS_HANDWRITING_ENABLED=true, android.support.text.emoji.emojiCompat_replaceAll=false}]}, false)
+06-12 17:26:04.095  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.updateDeviceLockedStatus():2087 repeatCheckTimes = 2, unlocked = true
+06-12 17:26:04.095  1588  1588 W ModuleManager: ModuleManager.loadModule():450 Module erj is not available
+06-12 17:26:04.097  1588  1788 I DeviceModeUtil: DeviceModeUtil.getDeviceMode():122 Get device mode phone by ui mode:1 and smallestScreenWidthDp:411
+06-12 17:26:04.102  7974  8032 D EGL_emulation: app_time_stats: avg=21580.99ms min=21580.99ms max=21580.99ms count=1
+06-12 17:26:04.142   537   550 D CompatibilityChangeReporter: Compat change id reported: 168419799; UID 10193; state: DISABLED
+06-12 17:26:04.143   537   550 D CompatibilityChangeReporter: Compat change id reported: 273564678; UID 10193; state: DISABLED
+06-12 17:26:04.218  7974  7974 W WindowOnBackDispatcher: OnBackInvokedCallback is not enabled for the application.
+06-12 17:26:04.218  7974  7974 W WindowOnBackDispatcher: Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+06-12 17:26:04.226   537  2454 D CoreBackPreview: Window{f9d61b6 u0 Pop-Up Window}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@f1c0f53, mPriority=0, mIsAnimationCallback=false}
+06-12 17:26:04.248  7974  8032 E OpenGLRenderer: Unable to match the desired swap behavior.
+06-12 17:26:04.269  7974  7974 I ImeTracker: com.dazong.driver:b6aca8f7: onRequestShow at ORIGIN_CLIENT_SHOW_SOFT_INPUT reason SHOW_SOFT_INPUT
+06-12 17:26:04.269  7974  7974 D InputMethodManager: showSoftInput() view=androidx.compose.ui.platform.AndroidComposeView{7b67d8a VFED..... .F...... 0,0-1080,2209 aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+06-12 17:26:04.272  1588  1588 W InputConnectionWrapper: InputConnectionWrapper.recordDuration():1451 IPC IC_GET_SURROUNDING_TEXT took 176 ms
+06-12 17:26:04.273  1588  1588 I KeyboardViewUtil: KeyboardViewUtil.getKeyboardHeightRatio():189 systemKeyboardHeightRatio:1.000000; userKeyboardHeightRatio:1.000000.
+06-12 17:26:04.274  1588  1588 I AndroidIME: AbstractIme.onActivate():86 LatinIme.onActivate() : EditorInfo = inputType=0x8001(Normal) imeOptions=0x2000006 privateImeOptions=null actionName=DONE actionLabel=null actionId=0 initialSelStart=21 initialSelEnd=21 initialCapsMode=0x0 hintText=null label=null packageName=com.dazong.driver fieldId=-1 fieldName=null extras=Bundle[{android.support.text.emoji.emojiCompat_metadataVersion=9, androidx.core.view.inputmethod.EditorInfoCompat.STYLUS_HANDWRITING_ENABLED=true, android.support.text.emoji.emojiCompat_replaceAll=false}], IncognitoMode = false, DeviceLocked = false
+06-12 17:26:04.277  1588  1588 I Delight5Facilitator: Delight5Facilitator.initializeForIme():777 initializeForIme() : Locale = [en_US], layout = qwerty
+06-12 17:26:04.278  1588  1588 I VoiceInputManagerWrapper: VoiceInputManagerWrapper.cancelShutdown():55 cancelShutdown()
+06-12 17:26:04.278  1588  1588 I VoiceInputManagerWrapper: VoiceInputManagerWrapper.syncLanguagePacks():67 syncLanguagePacks()
+06-12 17:26:04.281  1588  6137 I SpeechFactory: SpeechRecognitionFactory.maybeScheduleAutoPackDownloadForFallback():205 maybeScheduleAutoPackDownloadForFallback()
+06-12 17:26:04.281  1588  6137 I FallbackOnDeviceRecognitionProvider: FallbackOnDeviceRecognitionProvider.maybeScheduleAutoPackDownload():195 maybeScheduleAutoPackDownload() for language tag en-US
+06-12 17:26:04.281  1588  1588 I LatinIme: LatinIme.updateEnableInlineSuggestionsOnDecoderSideFlags():1003 inline flag updated to:false
+06-12 17:26:04.312  1588  1588 I KeyboardWrapper: KeyboardWrapper.consumeEvent():275 Skip consuming an event as current keyboard is deactivated (state=0, keyboard existence=true)
+06-12 17:26:04.320  1588  1588 I KeyboardViewUtil: KeyboardViewUtil.calculateMaxKeyboardBodyHeight():40 leave 354 height for app when screen height:2274, header height:116 and isFullscreenMode:false, so the max keyboard body height is:1804
+06-12 17:26:04.321  1588  1588 I DeviceModeUtil: DeviceModeUtil.getDeviceMode():122 Get device mode phone by ui mode:1 and smallestScreenWidthDp:411
+06-12 17:26:04.321  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3483 setKeyboardViewShown() : type = HEADER, shownType = SHOW_OPTIONAL
+06-12 17:26:04.321  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3530 setKeyboardViewShown() : shouldShow = true
+06-12 17:26:04.321  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3483 setKeyboardViewShown() : type = BODY, shownType = SHOW_MANDATORY
+06-12 17:26:04.321  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3530 setKeyboardViewShown() : shouldShow = true
+06-12 17:26:04.321  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3483 setKeyboardViewShown() : type = FLOATING_CANDIDATES, shownType = HIDE
+06-12 17:26:04.321  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3530 setKeyboardViewShown() : shouldShow = false
+06-12 17:26:04.322  1588  1588 I KeyboardViewUtil: KeyboardViewUtil.calculateMaxKeyboardBodyHeight():40 leave 354 height for app when screen height:2274, header height:116 and isFullscreenMode:false, so the max keyboard body height is:1804
+06-12 17:26:04.324  1588  1588 I DeviceModeUtil: DeviceModeUtil.getDeviceMode():122 Get device mode phone by ui mode:1 and smallestScreenWidthDp:411
+06-12 17:26:04.364  1588  1588 I DeviceModeUtil: DeviceModeUtil.getDeviceMode():122 Get device mode phone by ui mode:1 and smallestScreenWidthDp:411
+06-12 17:26:04.364  1588  1588 I KeyboardModeManager: KeyboardModeManager.setInputView():364 setInputView() : supportsOneHandedMode=true
+06-12 17:26:04.365  1588  1588 I NormalModeController: NormalModeController.getKeyboardBodyViewHolderPaddingBottom():116 currentPrimeKeyboardType:SOFT systemPaddingBottom:-1
+06-12 17:26:04.365  1588  1588 I AndroidIME: KeyboardViewManager.updateKeyboardBodyViewHolderPaddingBottom():604 Set finalPaddingBottom = 0 while keyboardBottomGapFromScreen = 0; navigationHeight = 126
+06-12 17:26:04.365  1588  1588 I NormalModeController: NormalModeController.getKeyboardBodyViewHolderPaddingBottom():116 currentPrimeKeyboardType:SOFT systemPaddingBottom:-1
+06-12 17:26:04.365  1588  1588 I AndroidIME: KeyboardViewManager.updateKeyboardBodyViewHolderPaddingBottom():604 Set finalPaddingBottom = 0 while keyboardBottomGapFromScreen = 0; navigationHeight = 126
+06-12 17:26:04.365  1588  1588 I KeyboardModeManager: KeyboardModeManager.setInputView():356 setInputView() : entry=hwn{languageTag=en-US, variant=qwerty, hasLocalizedResources=true, conditionCacheKey=_device=phone_device_size=default_enable_adaptive_text_editing=true_enable_inline_suggestions_on_client_side=false_enable_large_tablet_batch_1=false_enable_large_tablet_batch_2=false_enable_more_candidates_view_for_multilingual=false_enable_nav_redesign=false_enable_number_row=false_enable_preemptive_decode=true_enable_secondary_symbols=false_expressions=normal_four_or_more_letter_rows=false_keyboard_mode=normal_language=en-US_orientation=portrait_physical_keyboard=nokeys_show_secondary_digits=true_show_suggestions=true_split_with_duplicate_keys=true_variant=qwerty, imeDef.stringId=ime_english_united_states, imeDef.className=com.google.android.apps.inputmethod.libs.latin5.LatinIme, imeDef.languageTag=en-US}
+06-12 17:26:04.368  1588  1588 I VoiceImeExtension: VoiceImeExtension.shouldStartVoiceInputAutomatically():383 No private IME option set to start voice input.
+06-12 17:26:04.400  1588  1923 E OpenGLRenderer: Unable to match the desired swap behavior.
+06-12 17:26:04.419   537  2457 D CoreBackPreview: Window{b364f79 u0 com.dazong.driver/com.dazong.driver.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@1f33945, mPriority=0, mIsAnimationCallback=false}
+06-12 17:26:04.448   537   993 D ActivityManager: sync unfroze 5549 com.google.android.gms for 6
+06-12 17:26:04.463  1588  1588 I NormalModeController: NormalModeController.getKeyboardBodyViewHolderPaddingBottom():116 currentPrimeKeyboardType:SOFT systemPaddingBottom:-1
+06-12 17:26:04.463  1588  2493 I Delight5Decoder: Delight5DecoderWrapper.setKeyboardLayout():457 setKeyboardLayout()
+06-12 17:26:04.466  5549  5549 D BoundBrokerSvc: onBind: Intent { act=com.google.firebase.dynamiclinks.service.START pkg=com.google.android.gms }
+06-12 17:26:04.466  5549  5549 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.firebase.dynamiclinks.service.START pkg=com.google.android.gms }
+06-12 17:26:04.495  7974  7974 D InsetsController: show(ime(), fromIme=true)
+06-12 17:26:04.502  7974  7974 D InsetsController: show(ime(), fromIme=true)
+06-12 17:26:04.502  7974  7974 I ImeTracker: com.dazong.driver:b6aca8f7: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+06-12 17:26:04.508  1588  1588 E InputConnectionParser: InputConnectionParser.responseWithError():106 responseWithError(): parse_code: 2
+06-12 17:26:04.508  1588  1588 E InputContextProxyV4: InputContextProxyV4.reset():371 reset(): un-successful, parse_code: 2, input_state_id 0
+06-12 17:26:04.508  1588  1588 W Delight5Decoder: Delight5DecoderWrapper.asyncFetchSuggestions():1876 asyncFetchSuggestions(): Decoder state is invalid
+06-12 17:26:04.554  7974  7974 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=android.view.ViewRootImpl$$ExternalSyntheticLambda17@1e82b59
+06-12 17:26:04.559   537  2457 W InputManager-JNI: Input channel object 'f9d61b6 Pop-Up Window (client)' was disposed without first being removed with the input manager!
+06-12 17:26:04.569  5549  5549 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+06-12 17:26:04.569  5549  5549 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+06-12 17:26:04.569   537  2274 W WindowManager: Failed looking up window session=Session{b23ded4 7974:u0a10193} callers=com.android.server.wm.WindowManagerService.windowForClientLocked:6034 com.android.server.wm.Session.setOnBackInvokedCallbackInfo:944 android.view.IWindowSession$Stub.onTransact:1145 
+06-12 17:26:04.569   537  2274 I WindowManager: setOnBackInvokedCallback(): No window state for package:com.dazong.driver
+06-12 17:26:04.572  5549  5549 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+06-12 17:26:04.577  5549  5549 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+06-12 17:26:04.577  5549  5549 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+06-12 17:26:04.604  5549  5549 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+06-12 17:26:04.756  7974  7974 I ImeTracker: com.dazong.driver:155c53a8: onShown
+06-12 17:26:05.031  1588  1588 W InputContextProxyV4: InputContextProxyV4.waitForDecoderResponse():1351 Timed out while waiting for suggestion fetch request.
+06-12 17:26:05.107  1588  2493 I native  : I0000 00:00:1781256365.100634    2493 input-context-store.cc:255] Ignoring stale client request for FetchSuggestions
+06-12 17:26:05.128  7974  8032 D EGL_emulation: app_time_stats: avg=44.23ms min=1.92ms max=126.58ms count=19
+06-12 17:26:05.196  1588  2493 I native  : I0000 00:00:1781256365.196249    2493 input-context-store.cc:178] Ignoring stale client request for OverrideDecodedCandidates
+06-12 17:26:05.201  1588  1588 W InputContextProxyV4: InputContextProxyV4.applyClientDiffInternal():897 Ignore [FetchSuggestions] diff due to stale request: 244<258, inputStateId=0, lastInputStateId=56
+06-12 17:26:05.202  1588  2493 I native  : I0000 00:00:1781256365.202195    2493 input-context-store.cc:255] Ignoring stale client request for FetchSuggestions
+06-12 17:26:05.209  1588  2493 I native  : I0000 00:00:1781256365.209266    2493 input-context-store.cc:178] Ignoring stale client request for OverrideDecodedCandidates
+06-12 17:26:05.229  1588  1588 W InputContextProxyV4: InputContextProxyV4.applyClientDiffInternal():897 Ignore [FetchSuggestions] diff due to stale request: 257<259, inputStateId=0, lastInputStateId=56
+06-12 17:26:05.229  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3483 setKeyboardViewShown() : type = HEADER, shownType = SHOW_MANDATORY_WITH_ANIMATION
+06-12 17:26:05.229  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3530 setKeyboardViewShown() : shouldShow = true
+06-12 17:26:05.638  1588  1588 W InputContextProxyV4: InputContextProxyV4.applyClientDiffInternal():897 Ignore [FetchSuggestions] diff due to stale request: 269<270, inputStateId=68, lastInputStateId=67
+06-12 17:26:05.692  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3483 setKeyboardViewShown() : type = HEADER, shownType = SHOW_MANDATORY_WITH_ANIMATION
+06-12 17:26:05.693  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3530 setKeyboardViewShown() : shouldShow = true
+06-12 17:26:05.878   891   891 D StatusBarIconController: ignoring old pipeline callback because the new wifi icon is enabled
+06-12 17:26:06.048  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3483 setKeyboardViewShown() : type = HEADER, shownType = SHOW_MANDATORY_WITH_ANIMATION
+06-12 17:26:06.048  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3530 setKeyboardViewShown() : shouldShow = true
+06-12 17:26:06.080  1588  1923 D EGL_emulation: app_time_stats: avg=155.33ms min=6.76ms max=553.14ms count=10
+06-12 17:26:06.125  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3483 setKeyboardViewShown() : type = HEADER, shownType = SHOW_MANDATORY_WITH_ANIMATION
+06-12 17:26:06.125  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3530 setKeyboardViewShown() : shouldShow = true
+06-12 17:26:06.158  7974  8032 D EGL_emulation: app_time_stats: avg=22.97ms min=1.75ms max=58.35ms count=26
+06-12 17:26:06.231  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3483 setKeyboardViewShown() : type = HEADER, shownType = SHOW_MANDATORY_WITH_ANIMATION
+06-12 17:26:06.232  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3530 setKeyboardViewShown() : shouldShow = true
+06-12 17:26:06.295  1166  1166 D TaplEvents: TIS / TouchInteractionService.onInputEvent: MotionEvent { action=ACTION_DOWN, actionButton=0, id[0]=0, x[0]=540.0, y[0]=1200.0, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, classification=NONE, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=382592, downTime=382592, deviceId=-1, source=0x1002, displayId=0, eventId=-1001289575 }
+06-12 17:26:06.311  1166  1166 D TaplEvents: TIS / TouchInteractionService.onInputEvent: MotionEvent { action=ACTION_UP, actionButton=0, id[0]=0, x[0]=540.0, y[0]=1200.0, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, classification=NONE, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=382592, downTime=382592, deviceId=-1, source=0x1002, displayId=0, eventId=-676356191 }
+06-12 17:26:06.363   537  2454 I ImeTracker: com.dazong.driver:58141ee2: onRequestShow at ORIGIN_SERVER_START_INPUT reason ATTACH_NEW_INPUT
+06-12 17:26:06.364  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1877 onStartInput(EditorInfo{inputType=0x8001(Normal) imeOptions=0x2000006 privateImeOptions=null actionName=DONE actionLabel=null actionId=0 initialSelStart=0 initialSelEnd=0 initialCapsMode=0x0 hintText=null label=null packageName=com.dazong.driver fieldId=-1 fieldName=null extras=Bundle[mParcelledData.dataSize=404]}, true)
+06-12 17:26:06.364  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.shouldHideHeaderOnInitialState():4008 ShouldHideHeaderOnInitialState = false
+06-12 17:26:06.366  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.updateDeviceLockedStatus():2087 repeatCheckTimes = 2, unlocked = true
+06-12 17:26:06.366  1588  1588 W SessionManager: SessionManager.beginSession():53 Try to begin an already begun session [INPUT_SESSION], end it first
+06-12 17:26:06.366  1588  1588 W SessionManager: SessionManager.endSession():96 Child session [INPUT_VIEW_SESSION] is not ended while ending session [{TRAINING_CACHE_SESSION=1781256364275, INPUT_VIEW_SESSION=1781256364094, IME_SESSION=1781256364273, INPUT_SESSION=1781256364093}], ending it now.
+06-12 17:26:06.366  1588  1588 W SessionManager: SessionManager.endSession():96 Child session [IME_SESSION] is not ended while ending session [{TRAINING_CACHE_SESSION=1781256364275, INPUT_VIEW_SESSION=1781256364094, IME_SESSION=1781256364273, INPUT_SESSION=1781256364093}], ending it now.
+06-12 17:26:06.368  7974  7974 I ImeTracker: com.dazong.driver:dc7e9502: onRequestShow at ORIGIN_CLIENT_SHOW_SOFT_INPUT reason SHOW_SOFT_INPUT_BY_INSETS_API
+06-12 17:26:06.368  7974  7974 D InsetsController: show(ime(), fromIme=false)
+06-12 17:26:06.369  7974  7974 I ImeTracker: com.dazong.driver:dc7e9502: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+06-12 17:26:06.371  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.onStartInputView():1995 onStartInputView(EditorInfo{inputType=0x8001(Normal) imeOptions=0x2000006 privateImeOptions=null actionName=DONE actionLabel=null actionId=0 initialSelStart=0 initialSelEnd=0 initialCapsMode=0x0 hintText=null label=null packageName=com.dazong.driver fieldId=-1 fieldName=null extras=Bundle[{android.support.text.emoji.emojiCompat_metadataVersion=9, androidx.core.view.inputmethod.EditorInfoCompat.STYLUS_HANDWRITING_ENABLED=true, android.support.text.emoji.emojiCompat_replaceAll=false}]}, true)
+06-12 17:26:06.371  1588  2493 W Delight5Decoder: Delight5DecoderWrapper.shouldAbandonMessage():1983 Detected old [FetchSuggestions] request in background: 288<289
+06-12 17:26:06.372  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.updateDeviceLockedStatus():2087 repeatCheckTimes = 2, unlocked = true
+06-12 17:26:06.372  1588  1788 I DeviceModeUtil: DeviceModeUtil.getDeviceMode():122 Get device mode phone by ui mode:1 and smallestScreenWidthDp:411
+06-12 17:26:06.373  1588  1588 W ModuleManager: ModuleManager.loadModule():450 Module erj is not available
+06-12 17:26:06.396  7974  7974 I ImeTracker: com.dazong.driver:cf5d9b8c: onRequestShow at ORIGIN_CLIENT_SHOW_SOFT_INPUT reason SHOW_SOFT_INPUT
+06-12 17:26:06.397  7974  7974 D InputMethodManager: showSoftInput() view=androidx.compose.ui.platform.AndroidComposeView{7b67d8a VFED..... .F...... 0,0-1080,2209 aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+06-12 17:26:06.406  1588  1588 I KeyboardViewUtil: KeyboardViewUtil.getKeyboardHeightRatio():189 systemKeyboardHeightRatio:1.000000; userKeyboardHeightRatio:1.000000.
+06-12 17:26:06.407  1588  1588 W TooltipLifecycleManager: TooltipLifecycleManager.dismissTooltips():159 Tooltip with id spell_check_add_to_dictionary not found in tooltipManager.
+06-12 17:26:06.407  1588  1588 I KeyboardWrapper: KeyboardWrapper.consumeEvent():275 Skip consuming an event as current keyboard is deactivated (state=0, keyboard existence=true)
+06-12 17:26:06.407  1588  1588 I VoiceInputManagerWrapper: VoiceInputManagerWrapper.shutdown():77 shutdown()
+06-12 17:26:06.407  1588  1588 I AndroidIME: AbstractIme.onDeactivate():207 LatinIme.onDeactivate()
+06-12 17:26:06.408  1588  1588 W SessionManager: SessionManager.endSession():88 Try to end a not begun session [IME_SESSION].
+06-12 17:26:06.408  1588  1588 I AndroidIME: AbstractIme.onActivate():86 LatinIme.onActivate() : EditorInfo = inputType=0x8001(Normal) imeOptions=0x2000006 privateImeOptions=null actionName=DONE actionLabel=null actionId=0 initialSelStart=0 initialSelEnd=0 initialCapsMode=0x0 hintText=null label=null packageName=com.dazong.driver fieldId=-1 fieldName=null extras=Bundle[{android.support.text.emoji.emojiCompat_metadataVersion=9, androidx.core.view.inputmethod.EditorInfoCompat.STYLUS_HANDWRITING_ENABLED=true, android.support.text.emoji.emojiCompat_replaceAll=false}], IncognitoMode = false, DeviceLocked = false
+06-12 17:26:06.408  1588  1588 I Delight5Facilitator: Delight5Facilitator.initializeForIme():777 initializeForIme() : Locale = [en_US], layout = qwerty
+06-12 17:26:06.408  1588  1588 I VoiceInputManagerWrapper: VoiceInputManagerWrapper.cancelShutdown():55 cancelShutdown()
+06-12 17:26:06.409  1588  1588 I VoiceInputManagerWrapper: VoiceInputManagerWrapper.syncLanguagePacks():67 syncLanguagePacks()
+06-12 17:26:06.409  1588  1588 I LatinIme: LatinIme.updateEnableInlineSuggestionsOnDecoderSideFlags():1003 inline flag updated to:false
+06-12 17:26:06.410  1588  1588 I KeyboardWrapper: KeyboardWrapper.consumeEvent():275 Skip consuming an event as current keyboard is deactivated (state=0, keyboard existence=true)
+06-12 17:26:06.410  1588  6137 I SpeechFactory: SpeechRecognitionFactory.maybeScheduleAutoPackDownloadForFallback():205 maybeScheduleAutoPackDownloadForFallback()
+06-12 17:26:06.410  1588  6137 I FallbackOnDeviceRecognitionProvider: FallbackOnDeviceRecognitionProvider.maybeScheduleAutoPackDownload():195 maybeScheduleAutoPackDownload() for language tag en-US
+06-12 17:26:06.411  1588  1588 I KeyboardViewUtil: KeyboardViewUtil.calculateMaxKeyboardBodyHeight():40 leave 354 height for app when screen height:2274, header height:116 and isFullscreenMode:false, so the max keyboard body height is:1804
+06-12 17:26:06.411  1588  1588 I DeviceModeUtil: DeviceModeUtil.getDeviceMode():122 Get device mode phone by ui mode:1 and smallestScreenWidthDp:411
+06-12 17:26:06.415  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3483 setKeyboardViewShown() : type = HEADER, shownType = SHOW_OPTIONAL
+06-12 17:26:06.416  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3530 setKeyboardViewShown() : shouldShow = true
+06-12 17:26:06.416  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3483 setKeyboardViewShown() : type = BODY, shownType = SHOW_MANDATORY
+06-12 17:26:06.416  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3530 setKeyboardViewShown() : shouldShow = true
+06-12 17:26:06.416  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3483 setKeyboardViewShown() : type = FLOATING_CANDIDATES, shownType = HIDE
+06-12 17:26:06.416  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3530 setKeyboardViewShown() : shouldShow = false
+06-12 17:26:06.423  1588  1588 I KeyboardViewUtil: KeyboardViewUtil.calculateMaxKeyboardBodyHeight():40 leave 354 height for app when screen height:2274, header height:116 and isFullscreenMode:false, so the max keyboard body height is:1804
+06-12 17:26:06.425  1588  1588 I DeviceModeUtil: DeviceModeUtil.getDeviceMode():122 Get device mode phone by ui mode:1 and smallestScreenWidthDp:411
+06-12 17:26:06.425  1588  1588 I DeviceModeUtil: DeviceModeUtil.getDeviceMode():122 Get device mode phone by ui mode:1 and smallestScreenWidthDp:411
+06-12 17:26:06.425  1588  1588 I KeyboardModeManager: KeyboardModeManager.setInputView():364 setInputView() : supportsOneHandedMode=true
+06-12 17:26:06.425  1588  1588 I NormalModeController: NormalModeController.getKeyboardBodyViewHolderPaddingBottom():116 currentPrimeKeyboardType:SOFT systemPaddingBottom:-1
+06-12 17:26:06.425  1588  1588 I AndroidIME: KeyboardViewManager.updateKeyboardBodyViewHolderPaddingBottom():604 Set finalPaddingBottom = 0 while keyboardBottomGapFromScreen = 0; navigationHeight = 126
+06-12 17:26:06.425  1588  1588 I NormalModeController: NormalModeController.getKeyboardBodyViewHolderPaddingBottom():116 currentPrimeKeyboardType:SOFT systemPaddingBottom:-1
+06-12 17:26:06.426  1588  1588 I AndroidIME: KeyboardViewManager.updateKeyboardBodyViewHolderPaddingBottom():604 Set finalPaddingBottom = 0 while keyboardBottomGapFromScreen = 0; navigationHeight = 126
+06-12 17:26:06.426  1588  1588 I KeyboardModeManager: KeyboardModeManager.setInputView():356 setInputView() : entry=hwn{languageTag=en-US, variant=qwerty, hasLocalizedResources=true, conditionCacheKey=_device=phone_device_size=default_enable_adaptive_text_editing=true_enable_inline_suggestions_on_client_side=false_enable_large_tablet_batch_1=false_enable_large_tablet_batch_2=false_enable_more_candidates_view_for_multilingual=false_enable_nav_redesign=false_enable_number_row=false_enable_preemptive_decode=true_enable_secondary_symbols=false_expressions=normal_four_or_more_letter_rows=false_keyboard_mode=normal_language=en-US_orientation=portrait_physical_keyboard=nokeys_show_secondary_digits=true_show_suggestions=true_split_with_duplicate_keys=true_variant=qwerty, imeDef.stringId=ime_english_united_states, imeDef.className=com.google.android.apps.inputmethod.libs.latin5.LatinIme, imeDef.languageTag=en-US}
+06-12 17:26:06.426  1588  1588 I VoiceImeExtension: VoiceImeExtension.shouldStartVoiceInputAutomatically():383 No private IME option set to start voice input.
+06-12 17:26:06.428  1588  1788 W ModuleManager: ModuleManager.loadModule():450 Module jjj is not available
+06-12 17:26:06.431  1588  1788 I NebulaeTrainingCacheMetricsProcessor: NebulaeTrainingCacheMetricsProcessor.processEndSession():447 No input action collection in this session, skip logging.
+06-12 17:26:06.435  1588  1588 I NormalModeController: NormalModeController.getKeyboardBodyViewHolderPaddingBottom():116 currentPrimeKeyboardType:SOFT systemPaddingBottom:-1
+06-12 17:26:06.436  1588  1588 W InputContextProxyV4: InputContextProxyV4.applyClientDiffInternal():897 Ignore [FetchSuggestions] diff due to stale request: 292<293, inputStateId=92, lastInputStateId=91
+06-12 17:26:06.459  1588  2493 I Delight5Decoder: Delight5DecoderWrapper.setKeyboardLayout():457 setKeyboardLayout()
+06-12 17:26:06.459  5549  5549 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+06-12 17:26:06.459  5549  5549 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+06-12 17:26:06.469  5549  5549 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+06-12 17:26:06.471  5549  5549 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+06-12 17:26:06.471  5549  5549 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+06-12 17:26:06.476  5549  5549 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.common.BIND_SHARED_PREFS pkg=com.google.android.gms }
+06-12 17:26:06.478  7974  7974 D InsetsController: show(ime(), fromIme=true)
+06-12 17:26:06.478  7974  7974 I ImeTracker: com.dazong.driver:58141ee2: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+06-12 17:26:06.508  7974  7974 D InsetsController: show(ime(), fromIme=true)
+06-12 17:26:06.510  7974  7974 I ImeTracker: com.dazong.driver:cf5d9b8c: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+06-12 17:26:06.756  1588  2493 I native  : I0000 00:00:1781256366.756018    2493 input-context-store.cc:255] Ignoring stale client request for FetchSuggestions
+06-12 17:26:06.757  1588  1588 W InputContextProxyV4: InputContextProxyV4.applyClientDiffInternal():897 Ignore [FetchSuggestions] diff due to stale request: 295<299, inputStateId=95, lastInputStateId=97
+06-12 17:26:06.757  1588  1588 W InputContextProxyV4: InputContextProxyV4.applyClientDiffInternal():897 Ignore [FetchSuggestions] diff due to stale request: 296<299, inputStateId=97, lastInputStateId=97
+06-12 17:26:06.793  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3483 setKeyboardViewShown() : type = HEADER, shownType = SHOW_MANDATORY_WITH_ANIMATION
+06-12 17:26:06.793  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3530 setKeyboardViewShown() : shouldShow = true
+06-12 17:26:06.850   537   624 D ActivityManager: freezing 3193 com.google.android.dialer
+06-12 17:26:06.970  1588  1588 W InputContextProxyV4: InputContextProxyV4.applyClientDiffInternal():897 Ignore [FetchSuggestions] diff due to stale request: 302<304, inputStateId=101, lastInputStateId=103
+06-12 17:26:06.970  1588  1588 W InputContextProxyV4: InputContextProxyV4.applyClientDiffInternal():897 Ignore [FetchSuggestions] diff due to stale request: 303<304, inputStateId=102, lastInputStateId=103
+06-12 17:26:07.011  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3483 setKeyboardViewShown() : type = HEADER, shownType = SHOW_MANDATORY_WITH_ANIMATION
+06-12 17:26:07.011  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3530 setKeyboardViewShown() : shouldShow = true
+06-12 17:26:07.098  1588  1923 D EGL_emulation: app_time_stats: avg=96.62ms min=16.04ms max=188.91ms count=10
+06-12 17:26:07.208  7974  8032 D EGL_emulation: app_time_stats: avg=30.03ms min=1.95ms max=61.82ms count=24
+06-12 17:26:07.263  1588  1588 W InputContextProxyV4: InputContextProxyV4.applyClientDiffInternal():897 Ignore [FetchSuggestions] diff due to stale request: 310<312, inputStateId=108, lastInputStateId=110
+06-12 17:26:07.270  1588  1588 W InputContextProxyV4: InputContextProxyV4.applyClientDiffInternal():897 Ignore [FetchSuggestions] diff due to stale request: 311<313, inputStateId=109, lastInputStateId=111
+06-12 17:26:07.317  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3483 setKeyboardViewShown() : type = HEADER, shownType = SHOW_MANDATORY_WITH_ANIMATION
+06-12 17:26:07.317  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3530 setKeyboardViewShown() : shouldShow = true
+06-12 17:26:07.523  1588  1588 W InputContextProxyV4: InputContextProxyV4.applyClientDiffInternal():897 Ignore [FetchSuggestions] diff due to stale request: 319<321, inputStateId=115, lastInputStateId=117
+06-12 17:26:07.577  1588  1588 W InputContextProxyV4: InputContextProxyV4.applyClientDiffInternal():897 Ignore [FetchSuggestions] diff due to stale request: 322<323, inputStateId=118, lastInputStateId=119
+06-12 17:26:07.585  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3483 setKeyboardViewShown() : type = HEADER, shownType = SHOW_MANDATORY_WITH_ANIMATION
+06-12 17:26:07.585  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.setKeyboardViewShown():3530 setKeyboardViewShown() : shouldShow = true
+06-12 17:26:07.688  1588  1588 W InputContextProxyV4: InputContextProxyV4.applyClientDiffInternal():897 Ignore [FetchSuggestions] diff due to stale request: 326<327, inputStateId=122, lastInputStateId=123
+06-12 17:26:07.761  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.onKeyDown():2444 Received KEYCODE_BACK. isAllViewsInvisible=false
+06-12 17:26:07.763  1588  2493 W Delight5Decoder: Delight5DecoderWrapper.shouldAbandonMessage():1983 Detected old [FetchSuggestions] request in background: 331<332
+06-12 17:26:07.772   537   555 D AutofillManagerService: onBackKeyPressed()
+06-12 17:26:07.788   537  2454 I ImeTracker: com.dazong.driver:462d0872: onRequestHide at ORIGIN_SERVER_HIDE_INPUT reason HIDE_SOFT_INPUT_BY_BACK_KEY
+06-12 17:26:07.792  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.onFinishInputView():2241 
+06-12 17:26:07.792  1588  1588 W TooltipLifecycleManager: TooltipLifecycleManager.dismissTooltips():159 Tooltip with id spell_check_add_to_dictionary not found in tooltipManager.
+06-12 17:26:07.793  1588  1588 I InputBundle: InputBundle.consumeEvent():923 Skip consuming an event as keyboard status is 0
+06-12 17:26:07.793  1588  1588 I KeyboardWrapper: KeyboardWrapper.consumeEvent():275 Skip consuming an event as current keyboard is deactivated (state=0, keyboard existence=true)
+06-12 17:26:07.793  1588  1588 I VoiceInputManagerWrapper: VoiceInputManagerWrapper.shutdown():77 shutdown()
+06-12 17:26:07.793  1588  1588 I AndroidIME: AbstractIme.onDeactivate():207 LatinIme.onDeactivate()
+06-12 17:26:07.800  1588  1788 W ModuleManager: ModuleManager.loadModule():450 Module jjj is not available
+06-12 17:26:07.850  7974  7974 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=ImeCallback=ImeOnBackInvokedCallback@23244111 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@f2a0768
+06-12 17:26:07.852   537   550 D CoreBackPreview: Window{b364f79 u0 com.dazong.driver/com.dazong.driver.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@4020c20, mPriority=0, mIsAnimationCallback=false}
+06-12 17:26:08.094  7974  7974 I ImeTracker: com.dazong.driver:9f8ba842: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT_BY_INSETS_API
+06-12 17:26:08.095   537  2454 I ImeTracker: com.dazong.driver:9f8ba842: onCancelled at PHASE_SERVER_SHOULD_HIDE
+06-12 17:26:08.095  7974  7974 I ImeTracker: com.dazong.driver:462d0872: onHidden
+06-12 17:26:08.151   891   891 D StatusBarIconController: ignoring old pipeline callbacks, because the new mobile icons are enabled
+06-12 17:26:08.716  7974  8032 D EGL_emulation: app_time_stats: avg=70.55ms min=6.37ms max=530.51ms count=19
+06-12 17:26:08.902  1166  1166 D TaplEvents: TIS / TouchInteractionService.onInputEvent: MotionEvent { action=ACTION_DOWN, actionButton=0, id[0]=0, x[0]=540.0, y[0]=1720.0, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, classification=NONE, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=385199, downTime=385199, deviceId=-1, source=0x1002, displayId=0, eventId=-278495646 }
+06-12 17:26:08.905  1166  1166 D TaplEvents: TIS / TouchInteractionService.onInputEvent: MotionEvent { action=ACTION_UP, actionButton=0, id[0]=0, x[0]=540.0, y[0]=1720.0, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, classification=NONE, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=385199, downTime=385199, deviceId=-1, source=0x1002, displayId=0, eventId=-65519671 }
+06-12 17:26:08.983  7974  8119 I okhttp.OkHttpClient: --> POST http://10.0.2.2:18000/api/driver/login (49-byte body)
+06-12 17:26:08.993  7974  8119 D TrafficStats: tagSocket(108) with statsTag=0xffffffff, statsUid=-1
+06-12 17:26:09.721  7974  8032 D EGL_emulation: app_time_stats: avg=17.59ms min=1.95ms max=224.10ms count=35
+06-12 17:26:09.921  7974  8119 I okhttp.OkHttpClient: <-- 200 OK http://10.0.2.2:18000/api/driver/login (937ms, 445-byte body)
+06-12 17:26:09.938  7974  8119 I okhttp.OkHttpClient: --> GET http://10.0.2.2:18000/api/driver/trips/today?planning_date=2026-06-12
+06-12 17:26:09.965  7974  8119 I okhttp.OkHttpClient: <-- 200 OK http://10.0.2.2:18000/api/driver/trips/today?planning_date=2026-06-12 (27ms, 122-byte body)
+06-12 17:26:10.018  7974  8119 I okhttp.OkHttpClient: --> GET http://10.0.2.2:18000/api/driver/trips/today?planning_date=2026-06-12
+06-12 17:26:10.030  7974  7974 I ImeTracker: com.dazong.driver:8b869ad6: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT_BY_INSETS_API
+06-12 17:26:10.030  7974  7974 I ImeTracker: com.dazong.driver:8b869ad6: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+06-12 17:26:10.032  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1877 onStartInput(EditorInfo{inputType=0x0(NULL) imeOptions=0x0 privateImeOptions=null actionName=UNSPECIFIED actionLabel=null actionId=0 initialSelStart=-1 initialSelEnd=-1 initialCapsMode=0x0 hintText=null label=null packageName=com.dazong.driver fieldId=0 fieldName=null extras=null}, true)
+06-12 17:26:10.032  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.shouldHideHeaderOnInitialState():4008 ShouldHideHeaderOnInitialState = false
+06-12 17:26:10.034  1588  1588 I GoogleInputMethodService: GoogleInputMethodService.updateDeviceLockedStatus():2087 repeatCheckTimes = 2, unlocked = true
+06-12 17:26:10.034  1588  1588 W SessionManager: SessionManager.beginSession():53 Try to begin an already begun session [INPUT_SESSION], end it first
+06-12 17:26:10.051  7974  8119 I okhttp.OkHttpClient: <-- 200 OK http://10.0.2.2:18000/api/driver/trips/today?planning_date=2026-06-12 (32ms, 122-byte body)
+06-12 17:26:10.742   876   876 I wpa_supplicant: wlan0: CTRL-EVENT-BEACON-LOSS 
+06-12 17:26:11.901   891   891 D StatusBarIconController: ignoring old pipeline callback because the new wifi icon is enabled
+06-12 17:26:14.752   537   624 D ActivityManager: freezing 1621 com.google.android.apps.wellbeing
+06-12 17:26:14.752   537   624 D ActivityManager: freezing 2090 com.android.keychain
+06-12 17:26:14.752   537   624 D ActivityManager: freezing 1731 com.google.process.gservices
+06-12 17:26:14.753   537   624 D ActivityManager: freezing 1125 com.android.settings
+06-12 17:26:14.753   537   624 D ActivityManager: freezing 3913 com.android.dynsystem:dynsystem
+06-12 17:26:14.754   537   624 D ActivityManager: freezing 3874 com.android.dynsystem
+06-12 17:26:14.754   537   624 D ActivityManager: freezing 2451 com.android.localtransport
+06-12 17:26:14.907   891   891 D StatusBarIconController: ignoring old pipeline callback because the new wifi icon is enabled
+06-12 17:26:14.995  8125  8125 W BpBinder: Linking to death on android.gui.ISurfaceComposer but there are no threads (yet?) listening to incoming transactions. See ProcessState::startThreadPool and ProcessState::setThreadPoolMaxThreadCount. Generally you should setup the binder threadpool before other initialization steps.
+06-12 17:26:14.996  8125  8125 W ProcessState: Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+06-12 17:26:15.003   153   153 I hwservicemanager: getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+06-12 17:26:15.004  8125  8126 I Gralloc4: mapper 4.x is not supported
+06-12 17:26:15.004   152   152 I servicemanager: Could not find android.hardware.graphics.allocator.IAllocator/default in the VINTF manifest.
+06-12 17:26:15.066  7974  7974 E FrameTracker: force finish cuj, time out: J<IME_INSETS_ANIMATION::0@0@com.dazong.driver>
+06-12 17:26:15.176  8127  8127 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+06-12 17:26:15.179  8127  8127 I AndroidRuntime: Using default boot image
+06-12 17:26:15.179  8127  8127 I AndroidRuntime: Leaving lock profiling enabled
+06-12 17:26:15.180  8127  8127 I app_process: Core platform API reporting enabled, enforcing=false
+06-12 17:26:15.181  8127  8127 I app_process: Using CollectorTypeCC GC.
+06-12 17:26:15.239  8127  8127 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+06-12 17:26:15.256  8127  8127 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+06-12 17:26:15.256  8127  8127 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt72l.dat
+06-12 17:26:15.282  8127  8127 W app_process: ClassLoaderContext shared library size mismatch. Expected=2, found=0 (PCL[]{PCL[/system/framework/android.test.base.jar*836642756]#PCL[/system/framework/android.test.mock.jar*3186112116]} | PCL[])
+06-12 17:26:15.285  8127  8127 W app_process: ClassLoaderContext classpath size mismatch. expected=0, found=1 (PCL[]{PCL[/system/framework/android.test.runner.jar*4168958247]{PCL[/system/framework/android.test.base.jar*836642756]#PCL[/system/framework/android.test.mock.jar*3186112116]}#PCL[/system/framework/android.test.base.jar*836642756]} | PCL[/system/framework/android.test.runner.jar*4168958247])
+06-12 17:26:15.324  8127  8127 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+06-12 17:26:15.327  8127  8127 D UiAutomationConnection: Created on user UserHandle{0}
+06-12 17:26:15.327  8127  8127 I UiAutomation: Initialized for user 0 on display 0
+06-12 17:26:15.327  8127  8127 W UiAutomation: Created with deprecatead constructor, assumes DEFAULT_DISPLAY
+06-12 17:26:15.329   537  2454 D AccessibilityManagerService: changeCurrentUserForTestAutomationIfNeededLocked(0): ignoring because device doesn't support visible background users
+06-12 17:26:15.329   537  2454 I UiAutomationManager: Registering UiTestAutomationService (id=com.android.server.accessibility/UiAutomation) when called by user 0
+06-12 17:26:15.332   537  2454 W WindowMagnificationMgr: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+06-12 17:26:15.333  8127  8143 V UiAutomation: Init UiAutomation@f663226[id=7, displayId=0, flags=0]
+06-12 17:26:15.333  1714  1954 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+06-12 17:26:15.335  1714  1818 I AiAiEcho: Predicting[0]: 
+06-12 17:26:15.335  1714  1818 I AiAiEcho: EchoTargets: 
+06-12 17:26:15.335  1714  1818 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:26:15.335  1714  1818 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:26:15.335  1714  1818 I AiAiEcho: Predicting[0]: 
+06-12 17:26:15.335  1714  1818 I AiAiEcho: EchoTargets: 
+06-12 17:26:15.335  1714  1818 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:26:15.335  1714  1818 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:26:15.336  1714  1818 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+06-12 17:26:15.336  1714  1818 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+06-12 17:26:15.350   537  2274 W WindowMagnificationMgr: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+06-12 17:26:15.364  1729  2098 I A11yListener: (REDACTED) #onAccessibilityStateChanged enabled: %s
+06-12 17:26:15.364  1714  1954 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+06-12 17:26:15.364  1729  2189 I A11yListener: #onChange
+06-12 17:26:15.365  1729  2189 E TraceManager: Duplicate trace
+06-12 17:26:15.365  1729  2189 E TraceManager: com.google.apps.tiktok.tracing.w: Starting new trace A11yEventListener_onChange when already associated with a trace: . For more help, see http://go/tiktok-tracing#fixing-duplicate-trace-issues
+06-12 17:26:15.365  1729  2189 E TraceManager: 	at com.google.apps.tiktok.tracing.el.f(PG:6)
+06-12 17:26:15.365  1729  2189 E TraceManager: 	at com.google.apps.tiktok.tracing.el.g(PG:2)
+06-12 17:26:15.365  1729  2189 E TraceManager: 	at com.google.apps.tiktok.tracing.dv.d(PG:1)
+06-12 17:26:15.365  1729  2189 E TraceManager: 	at com.google.android.libraries.search.assistant.a.g.a(PG:7)
+06-12 17:26:15.365  1729  2189 E TraceManager: 	at com.google.android.libraries.search.assistant.a.b.b(PG:2)
+06-12 17:26:15.365  1729  2189 E TraceManager: 	at i.c.b.a.a.h(PG:4)
+06-12 17:26:15.365  1729  2189 E TraceManager: 	at kotlinx.coroutines.bk.run(PG:14)
+06-12 17:26:15.365  1729  2189 E TraceManager: 	at com.google.apps.tiktok.coroutines.g.run(PG:1)
+06-12 17:26:15.365  1729  2189 E TraceManager: 	at com.google.android.libraries.i.z.run(PG:1)
+06-12 17:26:15.365  1729  2189 E TraceManager: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+06-12 17:26:15.365  1729  2189 E TraceManager: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+06-12 17:26:15.365  1729  2189 E TraceManager: 	at com.google.android.libraries.i.h.run(PG:2)
+06-12 17:26:15.365  1729  2189 E TraceManager: 	at java.lang.Thread.run(Thread.java:1012)
+06-12 17:26:15.365  1729  2189 E TraceManager: 	at com.google.android.libraries.i.ai.run(PG:5)
+06-12 17:26:15.365  1729  2189 E TraceManager: 	Suppressed: com.google.apps.tiktok.tracing.fv: 
+06-12 17:26:15.365  1729  2189 E TraceManager: 		at tk_trace.(Unknown Source:0)
+06-12 17:26:15.365  1729  2189 E TraceManager: 		at tk_trace.Missing root trace(Unknown Source:0)
+06-12 17:26:15.365  1729  2189 E TraceManager: Caused by: com.google.apps.tiktok.tracing.aa
+06-12 17:26:15.365   537   537 D BatterySaverPolicy: accessibility changed to true, updating policy.
+06-12 17:26:15.366  1729  2189 I Ma-Fcf-A11yChangeNotifier: #FCF: onChange
+06-12 17:26:15.366  1714  1818 I AiAiEcho: Predicting[0]: 
+06-12 17:26:15.367  1714  1818 I AiAiEcho: EchoTargets: 
+06-12 17:26:15.367  1714  1818 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:26:15.367  1714  1818 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:26:15.367  1869  2341 I A       : NGA disabled due to not being eligible.
+06-12 17:26:15.367  1714  1818 I AiAiEcho: Predicting[0]: 
+06-12 17:26:15.367  1714  1818 I AiAiEcho: EchoTargets: 
+06-12 17:26:15.367  1714  1818 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:26:15.367  1714  1818 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:26:15.371  1729  2189 I A       : FCF A11y Checker - readyForTngMa
+06-12 17:26:15.371  1714  1818 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+06-12 17:26:15.378   537  2457 D OomAdjuster: Not killing cached processes
+06-12 17:26:15.379  1729  2254 I A       : (REDACTED) #FCF: Continued Conversation Mode Enabled: %s
+06-12 17:26:15.379  1729  2254 I A       : (REDACTED) #FCF: Headset Connected Status: %s
+06-12 17:26:15.379  1729  2254 I A       : (REDACTED) #FCF: Assistant primary locale : %s
+06-12 17:26:15.379  1729  2254 I A       : (REDACTED) #FCF: Assistant Primary locale check status : %s
+06-12 17:26:15.380  1729  2254 W A       : Unable to check for productivity accounts. Assuming there are none.
+06-12 17:26:15.380  1729  2254 W A       : com.google.android.libraries.geller.portable.GellerException: Code: INVALID_ARGUMENT, Message: Account name is null.
+06-12 17:26:15.380  1729  2254 W A       : 	at com.google.android.libraries.search.h.k.a(PG:6)
+06-12 17:26:15.380  1729  2254 W A       : 	at com.google.apps.tiktok.tracing.es.a(PG:3)
+06-12 17:26:15.380  1729  2254 W A       : 	at com.google.common.w.a.bc.a(PG:1)
+06-12 17:26:15.380  1729  2254 W A       : 	at com.google.common.w.a.cw.run(PG:4)
+06-12 17:26:15.380  1729  2254 W A       : 	at com.google.android.libraries.i.z.run(PG:1)
+06-12 17:26:15.380  1729  2254 W A       : 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+06-12 17:26:15.380  1729  2254 W A       : 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+06-12 17:26:15.380  1729  2254 W A       : 	at com.google.android.libraries.i.h.run(PG:2)
+06-12 17:26:15.380  1729  2254 W A       : 	at java.lang.Thread.run(Thread.java:1012)
+06-12 17:26:15.380  1729  2254 W A       : 	at com.google.android.libraries.i.ai.run(PG:5)
+06-12 17:26:15.380  1729  2189 I A       : (REDACTED) #FCF evaluate: %s
+06-12 17:26:15.380  1729  2189 I A       : (REDACTED) TngMaStatusChecker#evaluateInternal completed in %s millis
+06-12 17:26:15.380  1729  2189 I Ma-Entry-Triggering: (REDACTED) TNG:MA status updated: %s
+06-12 17:26:15.380  1729  2189 I Ma-Entry-Triggering: TNG:MA became ineligible, client should disconnect
+06-12 17:26:15.381  1729  2189 I Ma-Entry-Triggering: #disconnectAndStop - preventing double stop
+06-12 17:26:15.381  1729  2189 I A       : #invalidationSource: adding headset checker
+06-12 17:26:15.381   891   891 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+06-12 17:26:15.382  1729  2189 I A       : #invalidationSource : adding a11y checker
+06-12 17:26:15.383  1714  1818 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+06-12 17:26:15.384   891   891 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+06-12 17:26:16.398  8127  8127 W AccessibilityNodeInfoDumper: Fetch time: 21ms
+06-12 17:26:16.402   537  2454 W WindowMagnificationMgr: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+06-12 17:26:16.402   537  2454 D AccessibilityManagerService: restoreCurrentUserForTestAutomationIfNeededLocked(): ignoring because device doesn't support visible background users
+06-12 17:26:16.403  1714  1954 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+06-12 17:26:16.403   537   537 D BatterySaverPolicy: accessibility changed to false, updating policy.
+06-12 17:26:16.404  1729  2098 I A11yListener: (REDACTED) #onAccessibilityStateChanged enabled: %s
+06-12 17:26:16.406  8127  8127 D AndroidRuntime: Shutting down VM
+06-12 17:26:16.407  1714  1818 I AiAiEcho: Predicting[0]: 
+06-12 17:26:16.407  1714  1818 I AiAiEcho: EchoTargets: 
+06-12 17:26:16.407  1714  1818 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:26:16.407  1714  1818 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:26:16.407  1714  1818 I AiAiEcho: Predicting[0]: 
+06-12 17:26:16.407  1714  1818 I AiAiEcho: EchoTargets: 
+06-12 17:26:16.407  1714  1818 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:26:16.407  1714  1818 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:26:16.407  1714  1818 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+06-12 17:26:16.408  1714  1818 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+06-12 17:26:16.408  1729  2189 I A11yListener: #onChange
+06-12 17:26:16.408  1729  2189 E TraceManager: Duplicate trace
+06-12 17:26:16.408  1729  2189 E TraceManager: com.google.apps.tiktok.tracing.w: Starting new trace A11yEventListener_onChange when already associated with a trace: . For more help, see http://go/tiktok-tracing#fixing-duplicate-trace-issues
+06-12 17:26:16.408  1729  2189 E TraceManager: 	at com.google.apps.tiktok.tracing.el.f(PG:6)
+06-12 17:26:16.408  1729  2189 E TraceManager: 	at com.google.apps.tiktok.tracing.el.g(PG:2)
+06-12 17:26:16.408  1729  2189 E TraceManager: 	at com.google.apps.tiktok.tracing.dv.d(PG:1)
+06-12 17:26:16.408  1729  2189 E TraceManager: 	at com.google.android.libraries.search.assistant.a.g.a(PG:7)
+06-12 17:26:16.408  1729  2189 E TraceManager: 	at com.google.android.libraries.search.assistant.a.b.b(PG:2)
+06-12 17:26:16.408  1729  2189 E TraceManager: 	at i.c.b.a.a.h(PG:4)
+06-12 17:26:16.408  1729  2189 E TraceManager: 	at kotlinx.coroutines.bk.run(PG:14)
+06-12 17:26:16.408  1729  2189 E TraceManager: 	at com.google.apps.tiktok.coroutines.g.run(PG:1)
+06-12 17:26:16.408  1729  2189 E TraceManager: 	at com.google.android.libraries.i.z.run(PG:1)
+06-12 17:26:16.408  1729  2189 E TraceManager: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+06-12 17:26:16.408  1729  2189 E TraceManager: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+06-12 17:26:16.408  1729  2189 E TraceManager: 	at com.google.android.libraries.i.h.run(PG:2)
+06-12 17:26:16.408  1729  2189 E TraceManager: 	at java.lang.Thread.run(Thread.java:1012)
+06-12 17:26:16.408  1729  2189 E TraceManager: 	at com.google.android.libraries.i.ai.run(PG:5)
+06-12 17:26:16.408  1729  2189 E TraceManager: 	Suppressed: com.google.apps.tiktok.tracing.fv: 
+06-12 17:26:16.408  1729  2189 E TraceManager: 		at tk_trace.(Unknown Source:0)
+06-12 17:26:16.408  1729  2189 E TraceManager: 		at tk_trace.Missing root trace(Unknown Source:0)
+06-12 17:26:16.408  1729  2189 E TraceManager: Caused by: com.google.apps.tiktok.tracing.aa
+06-12 17:26:16.408  1729  2189 I Ma-Fcf-A11yChangeNotifier: #FCF: onChange
+06-12 17:26:16.409  1729  2189 I A       : FCF A11y Checker - readyForTngMa
+06-12 17:26:16.409  1729  2254 I A       : (REDACTED) #FCF: Continued Conversation Mode Enabled: %s
+06-12 17:26:16.411  1729  2189 I A       : (REDACTED) #FCF: Headset Connected Status: %s
+06-12 17:26:16.411  1729  2189 I A       : (REDACTED) #FCF: Assistant primary locale : %s
+06-12 17:26:16.411  1729  2189 I A       : (REDACTED) #FCF: Assistant Primary locale check status : %s
+06-12 17:26:16.412  1729  2189 W A       : Unable to check for productivity accounts. Assuming there are none.
+06-12 17:26:16.412  1729  2189 W A       : com.google.android.libraries.geller.portable.GellerException: Code: INVALID_ARGUMENT, Message: Account name is null.
+06-12 17:26:16.412  1729  2189 W A       : 	at com.google.android.libraries.search.h.k.a(PG:6)
+06-12 17:26:16.412  1729  2189 W A       : 	at com.google.apps.tiktok.tracing.es.a(PG:3)
+06-12 17:26:16.412  1729  2189 W A       : 	at com.google.common.w.a.bc.a(PG:1)
+06-12 17:26:16.412  1729  2189 W A       : 	at com.google.common.w.a.cw.run(PG:4)
+06-12 17:26:16.412  1729  2189 W A       : 	at com.google.android.libraries.i.z.run(PG:1)
+06-12 17:26:16.412  1729  2189 W A       : 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+06-12 17:26:16.412  1729  2189 W A       : 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+06-12 17:26:16.412  1729  2189 W A       : 	at com.google.android.libraries.i.h.run(PG:2)
+06-12 17:26:16.412  1729  2189 W A       : 	at java.lang.Thread.run(Thread.java:1012)
+06-12 17:26:16.412  1729  2189 W A       : 	at com.google.android.libraries.i.ai.run(PG:5)
+06-12 17:26:16.412  1729  2189 I A       : (REDACTED) #FCF evaluate: %s
+06-12 17:26:16.412  1729  2189 I A       : (REDACTED) TngMaStatusChecker#evaluateInternal completed in %s millis
+06-12 17:26:16.412  1729  2189 I Ma-Entry-Triggering: (REDACTED) TNG:MA status updated: %s
+06-12 17:26:16.412  1729  2189 I Ma-Entry-Triggering: TNG:MA became ineligible, client should disconnect
+06-12 17:26:16.412  1729  2189 I Ma-Entry-Triggering: #disconnectAndStop - preventing double stop
+06-12 17:26:16.412  1729  2189 I A       : #invalidationSource: adding headset checker
+06-12 17:26:16.412  1729  2189 I A       : #invalidationSource : adding a11y checker
+06-12 17:26:16.413   891   891 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+06-12 17:26:16.414  1869  2340 I A       : NGA disabled due to not being eligible.

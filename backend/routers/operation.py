@@ -1,9 +1,11 @@
 from datetime import date, datetime, time, timedelta
+from decimal import Decimal
 from typing import Optional
 
 import bcrypt
 from fastapi import APIRouter, Depends, File, HTTPException, Query, Request, UploadFile
 from fastapi.encoders import jsonable_encoder
+from pydantic import BaseModel
 from sqlalchemy import and_, cast, Date, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -11,6 +13,8 @@ from database import _ensure_client_canteens_for_user, get_db
 from dependencies import require_role
 from models import (
     Category,
+    BillingStatement,
+    BillingCycle,
     ClientCanteen,
     Contract,
     Order,
@@ -32,11 +36,27 @@ from schemas.operation import (
     TicketUpdateIn,
 )
 from services.audit_service import write_audit_log
-from services.order_quality_missing import assert_quality_missing_ticket_can_close
-from services.amap_geocode import geocode_address, search_address_tips
+from services.billing_service import compute_billing_period
+from services.order_receiving_differences import receiving_difference_summary_map
+from services.order_quality_missing import (
+    assert_quality_missing_ticket_can_close,
+    refresh_order_has_abnormal_for_quality,
+)
+from services.amap_geocode import search_address_tips
+from services.geo_coords import ensure_usable_geo_coord, resolve_locatable_address_coord
 from services.notification_service import push_notification
 from services.product_dimension_fill import fill_product_dimensions
-from services.storage.minio_client import upload_product_image
+from services.storage.minio_client import normalize_public_image_url, upload_product_image
+from schemas.camera_ptz import CameraPtzIn
+from services.fleet_monitor import (
+    build_beidou_history_track_payload,
+    build_camera_live_url_payload,
+    build_fleet_monitor_vehicles,
+    build_fleet_monitor_warehouses,
+    control_ys7_camera_ptz,
+    load_camera_device_or_404,
+    load_vehicle_beidou_device_or_404,
+)
 from services.order_detail_aggregator import build_order_detail_extensions
 from services.ticket_service import (
     complaint_phase,
@@ -48,6 +68,26 @@ from services.ticket_state_machine import ensure_ticket_transition
 from routers.contracts import _serialize_contract_row
 
 router = APIRouter(prefix="/operation", tags=["operation"])
+
+
+def _normalize_signature_payload(sig: dict | None) -> dict | None:
+    if not isinstance(sig, dict):
+        return sig
+    out = dict(sig)
+    for key in (
+        "warehouse_signature",
+        "carrier_signature",
+        "warehouse_signature_url",
+        "carrier_signature_url",
+    ):
+        out[key] = normalize_public_image_url(out.get(key)) or out.get(key)
+    return out
+
+
+class FleetHistoryTrackIn(BaseModel):
+    start_time: int
+    end_time: int
+    force_demo: bool = False
 
 
 def _audit_meta(request: Request) -> dict:
@@ -121,6 +161,8 @@ async def _validate_category_payload(
 
 
 async def _validate_product_categories(db: AsyncSession, payload: ProductIn):
+    if payload.quality_report_mode not in {"batch", "periodic"}:
+        raise HTTPException(400, "质检模式仅支持批次报告或周期报告")
     category1 = await db.scalar(
         select(Category).where(
             Category.id == payload.category1_id, Category.level == 1, Category.is_deleted.is_(False)
@@ -170,6 +212,15 @@ async def operation_dashboard(
     }
 
 
+def _category_image_out(value: str | None) -> str | None:
+    """图片 URL 走 MinIO 规范化；emoji: token / 空值原样透传。"""
+    if not value:
+        return value
+    if value.startswith("http") or value.startswith("/"):
+        return normalize_public_image_url(value) or value
+    return value
+
+
 @router.get("/categories")
 async def list_categories(_=Depends(require_role("operation")), db: AsyncSession = Depends(get_db)):
     rows = (
@@ -179,7 +230,21 @@ async def list_categories(_=Depends(require_role("operation")), db: AsyncSession
             .order_by(Category.level, Category.sort_order, Category.id)
         )
     ).all()
-    return rows
+    out = []
+    for row in rows:
+        d = jsonable_encoder(row)
+        d["image_url"] = _category_image_out(row.image_url)
+        out.append(d)
+    return out
+
+
+@router.post("/categories/upload-image")
+async def upload_category_image_api(
+    file: UploadFile = File(...),
+    _=Depends(require_role("operation")),
+):
+    file_url = await upload_product_image(file)
+    return {"url": file_url}
 
 
 @router.post("/categories")
@@ -420,6 +485,9 @@ async def update_product(
         bool(payload.is_designated_factory) != bool(row.is_designated_factory)
         or int(payload.designated_factory_id or 0) != int(row.designated_factory_id or 0)
     )
+    quality_mode_changed = str(payload.quality_report_mode or "batch") != str(
+        row.quality_report_mode or "batch"
+    )
     if designated_changed and active_order_exists:
         raise HTTPException(400, "商品正在订单流程中，禁止修改指定厂家属性")
     await _validate_product_categories(db, payload)
@@ -431,6 +499,20 @@ async def update_product(
     }
     for k, v in payload.model_dump().items():
         setattr(row, k, v)
+    if quality_mode_changed:
+        affected_orders = (
+            await db.scalars(
+                select(Order)
+                .join(OrderItemAllocation, OrderItemAllocation.order_id == Order.id)
+                .where(
+                    OrderItemAllocation.product_id == product_id,
+                    Order.status.in_(active_statuses),
+                )
+                .distinct()
+            )
+        ).all()
+        for order in affected_orders:
+            await refresh_order_has_abnormal_for_quality(db, order)
     await write_audit_log(
         db=db,
         actor_user_id=user.id,
@@ -524,12 +606,39 @@ async def fill_product_dimensions_api(
 @router.get("/accounts", response_model=list[AccountOut])
 async def list_accounts(
     role: Optional[str] = None,
+    keyword: Optional[str] = Query(
+        None,
+        description="模糊匹配用户名、企业名、地址",
+    ),
+    status: Optional[str] = Query(
+        None,
+        description="账号状态：active（启用）| disabled（停用）",
+    ),
+    supplier_delivery_id: Optional[int] = Query(
+        None,
+        ge=1,
+        description="供货商所属配送方 users.id",
+    ),
     _=Depends(require_role("operation")),
     db: AsyncSession = Depends(get_db),
 ):
     stmt = select(User).order_by(User.id.desc())
     if role:
         stmt = stmt.where(User.role == role)
+    if status and status.strip():
+        stmt = stmt.where(User.status == status.strip())
+    if supplier_delivery_id is not None:
+        stmt = stmt.where(User.supplier_delivery_id == int(supplier_delivery_id))
+    kw = (keyword or "").strip()
+    if kw:
+        pattern = f"%{kw}%"
+        stmt = stmt.where(
+            or_(
+                User.username.like(pattern),
+                User.company_name.like(pattern),
+                User.address.like(pattern),
+            )
+        )
     rows = (await db.scalars(stmt)).all()
     return [AccountOut.model_validate(r) for r in rows]
 
@@ -560,13 +669,16 @@ async def create_account(
         raise HTTPException(403, "供货商账号请在配送商端维护")
     coord = None
     if payload.role in {"delivery", "client", "factory"}:
-        if not payload.address:
-            role_label = "配送方" if payload.role == "delivery" else ("采购方" if payload.role == "client" else "生产方")
-            raise HTTPException(400, f"{role_label}地址不能为空")
-        coord = await geocode_address(payload.address)
-        if not coord:
-            role_label = "配送方" if payload.role == "delivery" else ("采购方" if payload.role == "client" else "生产方")
-            raise HTTPException(400, f"{role_label}地址无法解析，请填写更准确地址")
+        role_label = "配送方" if payload.role == "delivery" else ("采购方" if payload.role == "client" else "生产方")
+        try:
+            coord = await resolve_locatable_address_coord(
+                address=payload.address,
+                lng=payload.lng,
+                lat=payload.lat,
+                role_label=f"{role_label}地址",
+            )
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
     exists = await db.scalar(select(User).where(User.username == payload.username))
     if exists:
         raise HTTPException(400, "用户名已存在")
@@ -582,6 +694,7 @@ async def create_account(
         lng=coord[0] if coord else None,
         lat=coord[1] if coord else None,
         status=payload.status,
+        return_review_required=bool(payload.return_review_required) if payload.role == "delivery" else False,
     )
     db.add(row)
     await db.flush()
@@ -620,13 +733,16 @@ async def update_account(
         raise HTTPException(403, "供货商账号请在配送商端维护")
     coord = None
     if payload.role in {"delivery", "client", "factory"}:
-        if not payload.address:
-            role_label = "配送方" if payload.role == "delivery" else ("采购方" if payload.role == "client" else "生产方")
-            raise HTTPException(400, f"{role_label}地址不能为空")
-        coord = await geocode_address(payload.address)
-        if not coord:
-            role_label = "配送方" if payload.role == "delivery" else ("采购方" if payload.role == "client" else "生产方")
-            raise HTTPException(400, f"{role_label}地址无法解析，请填写更准确地址")
+        role_label = "配送方" if payload.role == "delivery" else ("采购方" if payload.role == "client" else "生产方")
+        try:
+            coord = await resolve_locatable_address_coord(
+                address=payload.address,
+                lng=payload.lng,
+                lat=payload.lat,
+                role_label=f"{role_label}地址",
+            )
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
     row.role = payload.role
     row.bind_client_id = None
     row.company_name = payload.company_name
@@ -635,6 +751,7 @@ async def update_account(
     row.lng = coord[0] if coord else None
     row.lat = coord[1] if coord else None
     row.status = payload.status
+    row.return_review_required = bool(payload.return_review_required) if row.role == "delivery" else False
     if payload.password:
         row.password_hash = bcrypt.hashpw(
             payload.password.encode("utf-8"), bcrypt.gensalt()
@@ -757,15 +874,22 @@ async def create_client_canteen_operation(
     name = (payload.name or "").strip()
     if not name:
         raise HTTPException(400, "食堂名称不能为空")
+    addr = (payload.address or "").strip()
+    if not addr:
+        raise HTTPException(400, "食堂地址不能为空")
+    try:
+        lng, lat = ensure_usable_geo_coord(payload.lng, payload.lat, field_label="食堂位置")
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
     st = (payload.status or "active").strip()
     if st not in {"active", "disabled"}:
         raise HTTPException(400, "状态仅支持 active 或 disabled")
     row = ClientCanteen(
         school_client_id=int(payload.school_client_id),
         name=name,
-        address=(payload.address or "").strip(),
-        lng=payload.lng,
-        lat=payload.lat,
+        address=addr,
+        lng=lng,
+        lat=lat,
         status=st,
         sort_order=int(payload.sort_order or 0),
     )
@@ -805,14 +929,21 @@ async def update_client_canteen_operation(
     name = (payload.name or "").strip()
     if not name:
         raise HTTPException(400, "食堂名称不能为空")
+    addr = (payload.address or "").strip()
+    if not addr:
+        raise HTTPException(400, "食堂地址不能为空")
+    try:
+        lng, lat = ensure_usable_geo_coord(payload.lng, payload.lat, field_label="食堂位置")
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
     st = (payload.status or "active").strip()
     if st not in {"active", "disabled"}:
         raise HTTPException(400, "状态仅支持 active 或 disabled")
     row.school_client_id = int(payload.school_client_id)
     row.name = name
-    row.address = (payload.address or "").strip()
-    row.lng = payload.lng
-    row.lat = payload.lat
+    row.address = addr
+    row.lng = lng
+    row.lat = lat
     row.status = st
     row.sort_order = int(payload.sort_order or 0)
     await write_audit_log(
@@ -1042,27 +1173,61 @@ async def list_operation_orders(
     order_no: Optional[str] = None,
     created_date_start: Optional[str] = None,
     created_date_end: Optional[str] = None,
+    expected_delivery_date_start: Optional[str] = None,
+    expected_delivery_date_end: Optional[str] = None,
     _=Depends(require_role("operation")),
     db: AsyncSession = Depends(get_db),
 ):
     today = datetime.utcnow().date()
+    use_delivery_filter = bool(expected_delivery_date_start or expected_delivery_date_end)
     try:
-        start_date = date.fromisoformat(created_date_start) if created_date_start else today
-        end_date = date.fromisoformat(created_date_end) if created_date_end else today
+        if use_delivery_filter:
+            ed_start = date.fromisoformat(expected_delivery_date_start) if expected_delivery_date_start else today
+            ed_end = date.fromisoformat(expected_delivery_date_end) if expected_delivery_date_end else ed_start
+        else:
+            start_date = date.fromisoformat(created_date_start) if created_date_start else today
+            end_date = date.fromisoformat(created_date_end) if created_date_end else today
     except ValueError:
         raise HTTPException(400, "时间筛选格式错误，需为 YYYY-MM-DD")
-    if end_date < start_date:
-        raise HTTPException(400, "结束日期不能早于开始日期")
-    start_dt = datetime.combine(start_date, time.min)
-    end_dt = datetime.combine(end_date + timedelta(days=1), time.min)
+    if use_delivery_filter:
+        if ed_end < ed_start:
+            raise HTTPException(400, "结束日期不能早于开始日期")
+    else:
+        if end_date < start_date:
+            raise HTTPException(400, "结束日期不能早于开始日期")
+        start_dt = datetime.combine(start_date, time.min)
+        end_dt = datetime.combine(end_date + timedelta(days=1), time.min)
 
     stmt = select(Order).order_by(Order.id.desc())
     if status:
         stmt = stmt.where(Order.status == status)
     if order_no and order_no.strip():
         stmt = stmt.where(Order.order_no.like(f"%{order_no.strip()}%"))
-    stmt = stmt.where(Order.created_at >= start_dt, Order.created_at < end_dt)
-    return (await db.scalars(stmt)).all()
+    if use_delivery_filter:
+        stmt = stmt.where(
+            Order.expected_delivery_date >= ed_start,
+            Order.expected_delivery_date <= ed_end,
+        )
+    else:
+        stmt = stmt.where(Order.created_at >= start_dt, Order.created_at < end_dt)
+    orders = (await db.scalars(stmt)).all()
+    diff_map = await receiving_difference_summary_map(db, orders)
+    rows = []
+    for order in orders:
+        row = jsonable_encoder(order)
+        row["receiving_difference"] = diff_map.get(
+            int(order.id),
+            {
+                "has_receiving_difference": False,
+                "difference_type": "none",
+                "difference_label": "无差异",
+                "shortage_kg": 0,
+                "overage_kg": 0,
+                "deduction_amount": 0,
+            },
+        )
+        rows.append(row)
+    return rows
 
 
 @router.get("/orders/{order_id}")
@@ -1077,9 +1242,65 @@ async def operation_order_detail(
         raise HTTPException(404, "订单不存在")
 
     payload = jsonable_encoder(order)
+    payload["receive_signatures_json"] = _normalize_signature_payload(payload.get("receive_signatures_json"))
     ext = await build_order_detail_extensions(db, order, viewer_role="operation")
     payload.update(ext)
     return payload
+
+
+@router.get("/fleet-monitor/vehicles")
+async def operation_fleet_monitor_vehicles(
+    _=Depends(require_role("operation")),
+    db: AsyncSession = Depends(get_db),
+):
+    return await build_fleet_monitor_vehicles(db)
+
+
+@router.get("/fleet-monitor/warehouses")
+async def operation_fleet_monitor_warehouses(
+    _=Depends(require_role("operation")),
+    db: AsyncSession = Depends(get_db),
+):
+    return await build_fleet_monitor_warehouses(db)
+
+
+@router.get("/fleet-monitor/cameras/{device_id}/live-url")
+async def operation_fleet_monitor_camera_live_url(
+    device_id: int,
+    _=Depends(require_role("operation")),
+    db: AsyncSession = Depends(get_db),
+):
+    row = await load_camera_device_or_404(db, device_id)
+    return await build_camera_live_url_payload(row)
+
+
+@router.post("/fleet-monitor/cameras/{device_id}/camera-ptz")
+async def operation_fleet_monitor_camera_ptz(
+    device_id: int,
+    body: CameraPtzIn,
+    _=Depends(require_role("operation")),
+    db: AsyncSession = Depends(get_db),
+):
+    row = await load_camera_device_or_404(db, device_id)
+    return await control_ys7_camera_ptz(
+        row, action=body.action, direction=body.direction, speed=body.speed
+    )
+
+
+@router.post("/fleet-monitor/vehicles/{vehicle_id}/beidou-history-track")
+async def operation_fleet_monitor_vehicle_history_track(
+    vehicle_id: int,
+    body: FleetHistoryTrackIn,
+    _=Depends(require_role("operation")),
+    db: AsyncSession = Depends(get_db),
+):
+    dev = await load_vehicle_beidou_device_or_404(db, vehicle_id)
+    return await build_beidou_history_track_payload(
+        dev,
+        start_time=body.start_time,
+        end_time=body.end_time,
+        force_demo=body.force_demo,
+    )
 
 
 @router.get("/tickets")
@@ -1097,7 +1318,8 @@ async def list_tickets(
     rows = (await db.scalars(stmt)).all()
     if not rows:
         return []
-    order_ids = sorted({int(r.order_id) for r in rows})
+    order_ids = sorted({int(r.order_id) for r in rows if r.order_id is not None})
+    statement_ids = sorted({int(r.billing_statement_id) for r in rows if getattr(r, "billing_statement_id", None) is not None})
     user_ids = sorted({int(r.created_by) for r in rows})
     order_map: dict[int, str] = {}
     if order_ids:
@@ -1105,6 +1327,16 @@ async def list_tickets(
             await db.execute(select(Order.id, Order.order_no).where(Order.id.in_(order_ids)))
         ).all()
         order_map = {int(o[0]): o[1] for o in order_rows}
+    statement_map: dict[int, BillingStatement] = {}
+    statement_cycle_map: dict[int, BillingCycle] = {}
+    if statement_ids:
+        statement_rows = (
+            await db.scalars(select(BillingStatement).where(BillingStatement.id.in_(statement_ids)))
+        ).all()
+        statement_map = {int(s.id): s for s in statement_rows}
+        cycle_ids = sorted({int(s.cycle_id) for s in statement_rows if s.cycle_id})
+        cycles = (await db.scalars(select(BillingCycle).where(BillingCycle.id.in_(cycle_ids)))).all() if cycle_ids else []
+        statement_cycle_map = {int(c.id): c for c in cycles}
     user_map: dict[int, str] = {}
     if user_ids:
         urows = (
@@ -1132,8 +1364,9 @@ async def list_tickets(
     for r in rows:
         entry = {
             "id": int(r.id),
-            "order_id": int(r.order_id),
-            "order_no": order_map.get(int(r.order_id), ""),
+            "order_id": int(r.order_id) if r.order_id is not None else None,
+            "order_no": order_map.get(int(r.order_id), "") if r.order_id is not None else "",
+            "billing_statement_id": int(r.billing_statement_id) if getattr(r, "billing_statement_id", None) is not None else None,
             "type": r.type,
             "description": r.description,
             "status": r.status,
@@ -1143,6 +1376,20 @@ async def list_tickets(
             "created_at": r.created_at.isoformat() if r.created_at else None,
             "updated_at": r.updated_at.isoformat() if r.updated_at else None,
         }
+        if getattr(r, "billing_statement_id", None) is not None:
+            st = statement_map.get(int(r.billing_statement_id))
+            snap = st.source_snapshot_json if st and isinstance(st.source_snapshot_json, dict) else {}
+            period = compute_billing_period(st.created_at or datetime.utcnow(), statement_cycle_map.get(int(st.cycle_id))) if st else {}
+            entry.update(
+                {
+                    "statement_no": st.statement_no if st else "",
+                    "statement_amount": float(st.amount or 0) if st else 0,
+                    "statement_status": st.status if st else "",
+                    "statement_direction": st.direction if st else "",
+                    "statement_period_label": period.get("period_label") or "",
+                    "statement_counterparty_name": snap.get("counterparty_name") or "",
+                }
+            )
         if r.type == "售后投诉":
             aid = getattr(r, "assigned_delivery_id", None)
             logs = getattr(r, "flow_logs_json", None)

@@ -12,6 +12,7 @@ import mCard from "@/components/mCard/index.vue"
 import TianshuNativeEchart from "./TianshuNativeEchart.vue"
 import {
   fetchJson,
+  isTianshuAuthMissingError,
   resolveRangeQueryString,
   appendDistrictToQueryString,
   TIANSHU_CHART_QUERY_DISTRICT_KEY,
@@ -203,7 +204,7 @@ async function load(opts = {}) {
       series: [{ ...option.value.series[0], data: valuesYuan }],
     }
   } catch (e) {
-    if (g === loadGen) console.warn("[tianshu] 近日 GMV", e)
+    if (g === loadGen && !isTianshuAuthMissingError(e)) console.warn("[tianshu] 近日 GMV", e)
   } finally {
     if (g === loadGen && !silent) chartRefreshing.value = false
   }

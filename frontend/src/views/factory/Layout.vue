@@ -6,6 +6,7 @@ const menu = [
   { label: '对配送商应收', path: '/factory/bills' },
   { label: '报告列表', path: '/factory/reports' },
   { label: '上传报告', path: '/factory/reports/upload' },
+  { label: '周期报告', path: '/factory/periodic-reports' },
   { label: '消息中心', path: '/factory/notifications' },
 ]
 </script>

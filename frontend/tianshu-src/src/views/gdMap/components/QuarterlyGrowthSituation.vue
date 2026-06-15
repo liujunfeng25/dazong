@@ -12,6 +12,7 @@ import mCard from "@/components/mCard/index.vue"
 import TianshuNativeEchart from "./TianshuNativeEchart.vue"
 import {
   fetchJson,
+  isTianshuAuthMissingError,
   aggregateIntradayTo6hBins,
   SIX_HOUR_LABELS,
   appendDistrictToQueryString,
@@ -182,7 +183,7 @@ async function load(opts = {}) {
       ],
     }
   } catch (e) {
-    if (g === loadGen) console.warn("[tianshu] 今日时段分布", e)
+    if (g === loadGen && !isTianshuAuthMissingError(e)) console.warn("[tianshu] 今日时段分布", e)
   } finally {
     if (g === loadGen && !silent) chartRefreshing.value = false
   }

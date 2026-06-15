@@ -1,18 +1,20 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Food, Switch } from '@element-plus/icons-vue'
+import { Expand, Food, Switch } from '@element-plus/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 import { changePasswordApi } from '../api/auth'
 import { getBeijingWeatherApi } from '../api/delivery'
 import { useNotificationStore } from '../stores/notifications'
 import { useUserStore } from '../stores/user'
 import { formatChinaClock } from '../utils/datetime'
+import { notificationCenterRouteForRole, resolveNotificationRoute } from '../utils/notificationRoute'
 
 const props = defineProps({
   title: { type: String, default: '大宗供应链系统' },
   roleLabel: { type: String, default: '' },
 })
+const emit = defineEmits(['toggle-nav'])
 
 const router = useRouter()
 const route = useRoute()
@@ -46,8 +48,7 @@ const onOpenNotifications = () => {
 }
 
 const centerRoute = computed(() => {
-  if (!userStore.role) return '/login'
-  return `/${userStore.role}/notifications`
+  return notificationCenterRouteForRole(userStore.role)
 })
 
 const recentItems = computed(() => notificationStore.viewItems.slice(0, 8))
@@ -91,7 +92,7 @@ const goMessageCenter = () => {
 const onClickNotification = (item) => {
   if (item?.id) notificationStore.markReadOne(item.id)
   if (!item?.route) return
-  const to = router.resolve(item.route)
+  const to = resolveNotificationRoute(router, userStore.role, item.route)
   router.push({
     path: to.path,
     query: { ...to.query, _notify_refresh: String(Date.now()) },
@@ -177,6 +178,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="h-18 px-5 pt-3">
     <div class="glass-card h-full px-5 flex items-center gap-3 min-h-[4.5rem]">
+      <el-button class="nav-toggle" text :icon="Expand" @click="emit('toggle-nav')" aria-label="菜单" />
       <div class="header-left shrink-0">
         <div class="text-base font-semibold text-slate-900">{{ props.title }}</div>
         <div class="text-xs text-slate-500 mt-0.5">{{ nowText }}</div>
@@ -232,15 +234,20 @@ onBeforeUnmount(() => {
                 v-for="(item, idx) in recentItems"
                 :key="idx"
                 class="notify-item"
-                :class="{ unread: !item.is_read }"
+                :class="[`tone-${item.event_meta?.tone || 'general'}`, { unread: !item.is_read }]"
                 @click="onClickNotification(item)"
               >
-                <div class="notify-item-top">
-                  <div class="notify-title">{{ item.title || '消息提醒' }}</div>
-                  <div class="notify-time">{{ item.time_text || '' }}</div>
+                <div class="notify-item-row">
+                  <div class="notify-item-dot">{{ item.event_meta?.icon || '系' }}</div>
+                  <div class="notify-item-body">
+                    <div class="notify-item-top">
+                      <div class="notify-title">{{ item.title || '消息提醒' }}</div>
+                      <div class="notify-time">{{ item.time_text || '' }}</div>
+                    </div>
+                    <div class="notify-content">{{ item.content || '有新的业务动态，请查看。' }}</div>
+                    <div class="notify-meta">{{ item.event_label || '系统通知' }}</div>
+                  </div>
                 </div>
-                <div class="notify-content">{{ item.content || '有新的业务动态，请查看。' }}</div>
-                <div class="notify-meta">{{ item.event_label || '系统通知' }}</div>
               </div>
             </div>
             <div v-if="recentItems.length" class="notify-footer">
@@ -296,6 +303,32 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+.nav-toggle {
+  display: none;
+  font-size: 22px;
+  padding: 4px 6px;
+}
+
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: inline-flex;
+  }
+  .header-left .text-base {
+    font-size: 14px;
+    max-width: 42vw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* 窄屏隐藏中间食堂 ribbon / 天气，避免挤压（食堂名仍在用户菜单与看板可见） */
+  .header-center {
+    display: none !important;
+  }
+  .cc-name {
+    font-size: 1rem;
+  }
+}
+
 .role-chip {
   background: color-mix(in srgb, var(--role-accent, #4f7cff) 12%, #ffffff 88%);
   color: color-mix(in srgb, var(--role-accent, #4f7cff) 88%, #0f172a 12%);

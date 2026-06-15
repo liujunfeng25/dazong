@@ -26,3 +26,34 @@ export function orderMainStatusTagType(status) {
   if (status === '发货') return 'warning'
   return 'info'
 }
+
+/**
+ * 主单状态自定义配色：el-tag 内置 type 仅 5 种、状态有 7 个，统一用自定义底色
+ * （配合 effect="dark" 白字）让各状态清晰可分。
+ */
+export const ORDER_STATUS_COLORS = {
+  下单: '#3b82f6', // 蓝 · 待履约
+  配货: '#06b6d4', // 青 · 配货中
+  发货: '#f59e0b', // 橙 · 向客户送货中
+  收货: '#8b5cf6', // 紫 · 待确认收货
+  收货确认: '#22c55e', // 绿 · 已收货
+  已结算: '#475569', // 深灰蓝 · 终态
+  取消: '#ef4444', // 红 · 已取消
+}
+
+/** 返回主单状态底色（hex）；未知状态返回 ''（调用方回退默认 tag 颜色） */
+export function orderStatusTagColor(status) {
+  return ORDER_STATUS_COLORS[status] || ''
+}
+
+/** 供货商视角状态（supplier_status：英文枚举）配色，与主单观感统一 */
+export const SUPPLIER_STATUS_COLORS = {
+  pending_ship: '#f59e0b', // 待发货 · 橙
+  shipped: '#3b82f6', // 已发货 · 蓝
+  completed: '#22c55e', // 已完成 · 绿
+  cancelled: '#ef4444', // 已取消 · 红
+}
+
+export function supplierStatusTagColor(status) {
+  return SUPPLIER_STATUS_COLORS[status] || ''
+}

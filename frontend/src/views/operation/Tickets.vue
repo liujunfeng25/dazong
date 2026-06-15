@@ -20,7 +20,7 @@ const resolveDrawer = ref(false)
 const resolveRow = ref(null)
 const resolutionText = ref('')
 
-const TICKET_TYPES = ['异常订单', '售后投诉', '配送异常']
+const TICKET_TYPES = ['异常订单', '售后投诉', '配送异常', '账务异常']
 
 const load = async () => {
   loading.value = true
@@ -85,14 +85,25 @@ const statusTagType = (s) => {
 }
 
 const typeTagType = (t) => {
+  if (t === '账务异常') return 'danger'
   if (t === '配送异常') return 'warning'
   if (t === '售后投诉') return 'info'
   return 'danger'
 }
 
-const goToOrder = (orderId) => {
+const goToObject = (row) => {
+  if (row.type === '账务异常') {
+    router.push('/operation/billing-overview')
+    return
+  }
+  const orderId = row.order_id
   if (!orderId) return
   router.push(`/operation/orders/${orderId}`)
+}
+
+const objectLabel = (row) => {
+  if (row.type === '账务异常') return row.statement_no || `账单 #${row.billing_statement_id}`
+  return row.order_no || `#${row.order_id}`
 }
 
 const counts = computed(() => {
@@ -135,11 +146,14 @@ onMounted(load)
 
     <el-table v-loading="loading" :data="list" border>
       <el-table-column prop="id" label="编号" width="70" />
-      <el-table-column label="订单" min-width="160">
+      <el-table-column label="关联对象" min-width="180">
         <template #default="{ row }">
-          <el-button link type="primary" @click="goToOrder(row.order_id)">
-            {{ row.order_no || `#${row.order_id}` }}
+          <el-button link type="primary" @click="goToObject(row)">
+            {{ objectLabel(row) }}
           </el-button>
+          <div v-if="row.type === '账务异常'" class="muted">
+            {{ row.statement_direction || '—' }} · ¥{{ Number(row.statement_amount || 0).toLocaleString() }}
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="类型" width="110">
@@ -153,6 +167,15 @@ onMounted(load)
           <el-tag v-else-if="row.phase === 'delivery_handling'" type="warning" size="small">{{ phaseLabel(row) }}</el-tag>
           <el-tag v-else-if="row.phase === 'operation_review'" type="primary" size="small">{{ phaseLabel(row) }}</el-tag>
           <el-tag v-else type="success" size="small">{{ phaseLabel(row) }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="账务信息" min-width="180">
+        <template #default="{ row }">
+          <span v-if="row.type !== '账务异常'" class="muted">—</span>
+          <div v-else class="small">
+            <div>状态：{{ row.statement_status || '—' }}</div>
+            <div class="muted">对方：{{ row.statement_counterparty_name || '—' }}</div>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="描述" min-width="200" show-overflow-tooltip>

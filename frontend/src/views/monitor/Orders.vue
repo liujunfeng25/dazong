@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { monitorOrdersApi } from '../../api/monitor'
 import { formatChinaDateTime } from '../../utils/datetime'
-import { MAIN_ORDER_STATUS_OPTIONS, orderMainStatusTagType, orderStatusLabel } from '../../utils/orderStatus'
+import { MAIN_ORDER_STATUS_OPTIONS, orderStatusLabel, orderStatusTagColor } from '../../utils/orderStatus'
 
 const list = ref([])
 const status = ref('')
@@ -74,7 +74,7 @@ onMounted(() => {
         <el-table-column prop="order_no" label="订单号" min-width="150" />
         <el-table-column prop="status" label="状态" width="120">
           <template #default="{ row }">
-            <el-tag :type="orderMainStatusTagType(row.status)">{{ orderStatusLabel(row.status) }}</el-tag>
+            <el-tag :color="orderStatusTagColor(row.status)" effect="dark">{{ orderStatusLabel(row.status) }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="has_abnormal" label="异常">

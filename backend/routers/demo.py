@@ -1,11 +1,12 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
+from decimal import Decimal
 from typing import Any
 from uuid import uuid4
 from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import settings
@@ -166,6 +167,27 @@ class DispatchDemoPrepareIn(BaseModel):
     create_if_missing: bool = True
     mark_shipped: bool = True
     mark_sorted: bool = True
+
+
+class TianshuDemoSeedIn(BaseModel):
+    order_count: int = Field(default=36, ge=12, le=120)
+    delivery_username: str = "delivery001"
+    clear_existing: bool = True
+
+
+TIANSHU_DEMO_PREFIX = "TSDEMO"
+TIANSHU_DEMO_POINTS = [
+    ("朝阳区", "望京保障点", "北京市朝阳区望京街道天枢演示点", 116.4812, 39.9894),
+    ("海淀区", "中关村保障点", "北京市海淀区中关村街道天枢演示点", 116.3162, 39.9831),
+    ("丰台区", "丽泽保障点", "北京市丰台区丽泽商务区天枢演示点", 116.3265, 39.8677),
+    ("西城区", "金融街保障点", "北京市西城区金融街街道天枢演示点", 116.3606, 39.9155),
+    ("通州区", "运河保障点", "北京市通州区潞城镇天枢演示点", 116.7349, 39.9028),
+    ("昌平区", "回龙观保障点", "北京市昌平区回龙观街道天枢演示点", 116.3368, 40.0709),
+    ("大兴区", "亦庄保障点", "北京市大兴区亦庄镇天枢演示点", 116.5062, 39.8086),
+    ("顺义区", "后沙峪保障点", "北京市顺义区后沙峪镇天枢演示点", 116.5467, 40.1095),
+    ("房山区", "良乡保障点", "北京市房山区良乡镇天枢演示点", 116.1435, 39.7486),
+    ("石景山区", "古城保障点", "北京市石景山区古城街道天枢演示点", 116.1909, 39.9076),
+]
 
 
 def _empty_delete_summary(requested_orders: int = 0) -> dict[str, int]:
@@ -462,6 +484,475 @@ async def _delete_orders_cascade(db: AsyncSession, order_ids: list[int]) -> dict
 
     summary["deleted_orders"] += await delete_count(delete(Order).where(Order.id.in_(matched_ids)))
     return summary
+
+
+async def _tianshu_demo_order_ids(db: AsyncSession) -> list[int]:
+    return [
+        int(x)
+        for x in (
+            await db.scalars(select(Order.id).where(Order.order_no.like(f"{TIANSHU_DEMO_PREFIX}%")))
+        ).all()
+    ]
+
+
+async def _clear_tianshu_demo_batch(db: AsyncSession) -> dict[str, int]:
+    ids = await _tianshu_demo_order_ids(db)
+    summary = _empty_delete_summary(len(ids))
+    if ids:
+        summary = await _delete_orders_cascade(db, ids)
+
+    async def delete_count(stmt) -> int:
+        res = await db.execute(stmt)
+        return int(res.rowcount or 0)
+
+    summary["deleted_alerts"] += await delete_count(delete(Alert).where(Alert.type == "tianshu_demo"))
+    summary["deleted_iot_data"] += await delete_count(delete(IoTData).where(IoTData.device_id.like(f"{TIANSHU_DEMO_PREFIX}%")))
+    summary["deleted_notifications"] += await delete_count(
+        delete(Notification).where(Notification.event_type.like("tianshu_demo%"))
+    )
+    summary["deleted_audit_logs"] += await delete_count(
+        delete(AuditLog).where(AuditLog.detail.like("%天枢演示%"))
+    )
+    return summary
+
+
+async def _tianshu_demo_batch_status(db: AsyncSession) -> dict[str, Any]:
+    ids = await _tianshu_demo_order_ids(db)
+    if not ids:
+        return {
+            "data_prefix": TIANSHU_DEMO_PREFIX,
+            "exists": False,
+            "orders": 0,
+            "allocations": 0,
+            "sort_scan_records": 0,
+            "dispatch_trips": 0,
+            "dispatch_stops": 0,
+            "dispatch_items": 0,
+            "returns": 0,
+            "bills": 0,
+            "alerts": 0,
+            "notifications": 0,
+            "latest_order_no": "",
+            "delivery_date": "",
+        }
+
+    async def count_where(stmt) -> int:
+        return int((await db.scalar(stmt)) or 0)
+
+    trip_ids = [
+        int(x)
+        for x in (
+            await db.scalars(
+                select(DeliveryDispatchTrip.id).where(DeliveryDispatchTrip.source == "tianshu_demo")
+            )
+        ).all()
+    ]
+    return_rows = (
+        await db.scalars(select(OrderReturn.id).where(OrderReturn.order_id.in_(ids)))
+    ).all()
+    return_ids = [int(x) for x in return_rows]
+    latest_order = await db.scalar(
+        select(Order).where(Order.id.in_(ids)).order_by(Order.id.desc()).limit(1)
+    )
+    return {
+        "data_prefix": TIANSHU_DEMO_PREFIX,
+        "exists": True,
+        "orders": len(ids),
+        "allocations": await count_where(
+            select(func.count()).select_from(OrderItemAllocation).where(OrderItemAllocation.order_id.in_(ids))
+        ),
+        "sort_scan_records": await count_where(
+            select(func.count()).select_from(DeliverySortScanRecord).where(DeliverySortScanRecord.order_id.in_(ids))
+        ),
+        "dispatch_trips": len(trip_ids),
+        "dispatch_stops": await count_where(
+            select(func.count()).select_from(DeliveryDispatchStop).where(DeliveryDispatchStop.order_id.in_(ids))
+        ),
+        "dispatch_items": await count_where(
+            select(func.count()).select_from(DeliveryDispatchItem).where(DeliveryDispatchItem.order_id.in_(ids))
+        ),
+        "returns": len(return_ids),
+        "return_lines": await count_where(
+            select(func.count()).select_from(OrderReturnLine).where(OrderReturnLine.order_return_id.in_(return_ids))
+        ) if return_ids else 0,
+        "bills": await count_where(select(func.count()).select_from(Bill).where(Bill.order_id.in_(ids))),
+        "alerts": await count_where(select(func.count()).select_from(Alert).where(Alert.type == "tianshu_demo")),
+        "notifications": await count_where(
+            select(func.count()).select_from(Notification).where(Notification.event_type.like("tianshu_demo%"))
+        ),
+        "latest_order_no": latest_order.order_no if latest_order else "",
+        "delivery_date": latest_order.expected_delivery_date.isoformat()
+        if latest_order and latest_order.expected_delivery_date
+        else "",
+    }
+
+
+async def _ensure_tianshu_demo_quote(
+    db: AsyncSession,
+    *,
+    supplier_id: int,
+    product_id: int,
+    price: float,
+) -> None:
+    row = await db.scalar(
+        select(SupplierProductQuote).where(
+            SupplierProductQuote.supplier_id == supplier_id,
+            SupplierProductQuote.product_id == product_id,
+        )
+    )
+    if row:
+        return
+    db.add(
+        SupplierProductQuote(
+            supplier_id=supplier_id,
+            product_id=product_id,
+            quote_price=Decimal(str(round(price, 2))),
+            remark="天枢演示报价",
+            updated_by=supplier_id,
+        )
+    )
+
+
+async def _seed_tianshu_demo_batch(
+    db: AsyncSession,
+    *,
+    order_count: int,
+    delivery_username: str,
+    clear_existing: bool,
+) -> dict[str, Any]:
+    removed = await _clear_tianshu_demo_batch(db) if clear_existing else _empty_delete_summary(0)
+    today = datetime.now(ZoneInfo("Asia/Shanghai")).date()
+    now = datetime.utcnow()
+    delivery = await db.scalar(select(User).where(User.username == delivery_username, User.role == "delivery"))
+    if not delivery:
+        raise HTTPException(400, f"配送商账号 {delivery_username} 不存在")
+    delivery_id = int(delivery.id)
+    vehicles = await _ensure_dispatch_demo_vehicles(db, delivery_id)
+    suppliers = await _dispatch_demo_suppliers(db, delivery_id)
+    products = await _dispatch_demo_product_pool(db, limit=80)
+    canteens = (
+        await db.scalars(
+            select(ClientCanteen)
+            .where(ClientCanteen.status == "active")
+            .order_by(ClientCanteen.id.asc())
+            .limit(max(order_count, 12))
+        )
+    ).all()
+    if not canteens:
+        raise HTTPException(500, "缺少启用食堂，无法生成天枢演示数据")
+
+    statuses = ["配货", "发货", "收货", "收货确认", "已结算", "配货"]
+    orders: list[Order] = []
+    allocs_by_order: dict[int, list[OrderItemAllocation]] = {}
+    inserted_orders = allocations_created = scan_records = returns_created = alerts_created = bills_created = notifications_created = 0
+    for idx in range(order_count):
+        canteen = canteens[idx % len(canteens)]
+        point = TIANSHU_DEMO_POINTS[idx % len(TIANSHU_DEMO_POINTS)]
+        status = statuses[idx % len(statuses)]
+        created_at = now - timedelta(minutes=max(0, order_count - idx) * 7)
+        items: list[dict] = []
+        snaps: list[dict] = []
+        total = Decimal("0.00")
+        weight = Decimal("0.000")
+        volume = Decimal("0.0000")
+        picked: list[tuple[Product, dict]] = []
+        for line_no in range(1, 4):
+            product = products[(idx * 5 + line_no * 3) % len(products)]
+            qty = round(6 + ((idx + line_no) % 8) * 1.5, 3)
+            unit_price = round(float(product.reference_price or 10) * (1.08 + (line_no * 0.025)), 2)
+            item = {"product_id": int(product.id), "quantity": qty, "unit_price": unit_price}
+            snap = {
+                "product_id": int(product.id),
+                "product_name": product.name,
+                "unit": product.unit or "kg",
+                "reference_price": float(product.reference_price or unit_price),
+                "category1_id": int(product.category1_id or 0),
+                "category2_id": int(product.category2_id or 0),
+                "order_quantity": qty,
+                "order_unit_price": unit_price,
+                "category_float_rate": 0.12,
+                "standard_type": product.standard_type or "standard",
+                "spec": product.spec or "标准",
+            }
+            items.append(item)
+            snaps.append(snap)
+            picked.append((product, item))
+            total += Decimal(str(qty)) * Decimal(str(unit_price))
+            weight += Decimal(str(qty))
+            volume += Decimal(str(qty)) * Decimal("0.006")
+
+        order = Order(
+            order_no=f"{TIANSHU_DEMO_PREFIX}{today.strftime('%Y%m%d')}{idx + 1:04d}",
+            client_id=int(canteen.school_client_id),
+            canteen_id=int(canteen.id),
+            delivery_id=delivery_id,
+            supplier_id=None,
+            items_json=items,
+            items_snapshot_json=snaps,
+            total_amount=total.quantize(Decimal("0.01")),
+            total_volume_m3=volume.quantize(Decimal("0.0001")),
+            total_weight_kg=weight.quantize(Decimal("0.001")),
+            delivery_address=point[2],
+            delivery_lng=point[3],
+            delivery_lat=point[4],
+            expected_delivery_date=today,
+            expected_delivery_slot=f"{6 + (idx % 10):02d}:00-{7 + (idx % 10):02d}:00",
+            service_duration_min=20 + (idx % 3) * 10,
+            status=status,
+            has_abnormal=(idx % 9 == 0),
+            created_at=created_at,
+            updated_at=created_at + timedelta(minutes=15),
+        )
+        db.add(order)
+        await db.flush()
+        inserted_orders += 1
+        orders.append(order)
+
+        order_allocs: list[OrderItemAllocation] = []
+        for line_no, (product, item) in enumerate(picked, 1):
+            supplier = suppliers[(idx + line_no - 1) % len(suppliers)]
+            cost_price = round(float(item["unit_price"]) * 0.82, 2)
+            await _ensure_tianshu_demo_quote(db, supplier_id=int(supplier.id), product_id=int(product.id), price=cost_price)
+            alloc = OrderItemAllocation(
+                order_id=int(order.id),
+                delivery_id=delivery_id,
+                supplier_id=int(supplier.id),
+                line_no=line_no,
+                product_id=int(product.id),
+                quantity=Decimal(str(item["quantity"])),
+                unit_price=Decimal(str(cost_price)),
+                allocation_batch_no=f"{TIANSHU_DEMO_PREFIX}-B{today.strftime('%m%d')}-{idx + 1:04d}",
+                status="已出库" if status in {"发货", "收货", "收货确认", "已结算"} else "已分配",
+                created_by=delivery_id,
+                created_at=created_at + timedelta(minutes=3),
+                updated_at=created_at + timedelta(minutes=8),
+                label_print_count=1 if status in {"发货", "收货", "收货确认", "已结算"} else 0,
+            )
+            db.add(alloc)
+            await db.flush()
+            order_allocs.append(alloc)
+            allocations_created += 1
+            if status in {"发货", "收货", "收货确认", "已结算"} or line_no < 3:
+                db.add(
+                    DeliverySortScanRecord(
+                        allocation_id=int(alloc.id),
+                        order_id=int(order.id),
+                        delivery_id=delivery_id,
+                        operator_id=delivery_id,
+                        barcode_value=f"{TIANSHU_DEMO_PREFIX}-{alloc.id}",
+                        device_code="tianshu-demo-sorter",
+                        scanned_at=created_at + timedelta(minutes=18),
+                        created_at=created_at + timedelta(minutes=18),
+                    )
+                )
+                scan_records += 1
+        allocs_by_order[int(order.id)] = order_allocs
+
+        if status in {"收货确认", "已结算"}:
+            db.add(
+                IoTData(
+                    device_type="scale",
+                    device_id=f"SCALE-{int(order.id)}",
+                    payload_json={"weight": float(weight), "product_name": "天枢演示混合物资", "unit": "kg"},
+                    recorded_at=created_at + timedelta(hours=2),
+                )
+            )
+            try:
+                await create_receive_bills(db, order)
+                await create_receive_billing_statements(db, order)
+                bill_ids = (await db.scalars(select(Bill.id).where(Bill.order_id == int(order.id)))).all()
+                bills_created += len(bill_ids)
+            except Exception:
+                # 演示批次不因账期/报价边界阻塞主数据生成；分单和订单仍可展示。
+                pass
+            await _demo_notify(
+                db,
+                order,
+                title="天枢演示账单已生成",
+                content=f"订单 {order.order_no} 已生成演示账单，用于大屏真实模式联调。",
+                to_client=True,
+                to_delivery=True,
+                to_suppliers=True,
+                event_type="tianshu_demo_bill",
+                client_route="/client/bills",
+                delivery_route="/delivery/bills",
+                supplier_route="/supplier/bills",
+            )
+            notifications_created += 2
+
+        if idx % 11 == 0:
+            ret = OrderReturn(
+                order_id=int(order.id),
+                return_no=f"{TIANSHU_DEMO_PREFIX}RET{today.strftime('%Y%m%d')}{idx + 1:04d}",
+                source="tianshu_demo",
+                client_id=int(order.client_id),
+                status="confirmed",
+                created_at=created_at + timedelta(hours=3),
+            )
+            db.add(ret)
+            await db.flush()
+            product, item = picked[0]
+            ordered = Decimal(str(item["quantity"]))
+            received = max(Decimal("0"), ordered - Decimal("1.5"))
+            db.add(
+                OrderReturnLine(
+                    order_return_id=int(ret.id),
+                    line_index=0,
+                    product_id=int(product.id),
+                    product_name=product.name,
+                    ordered_kg=ordered,
+                    received_kg=received,
+                    delta_kg=(ordered - received),
+                    reason_code="quality",
+                    reason_detail="天枢演示少收/品质退货",
+                    deduction_amount=Decimal("12.00"),
+                )
+            )
+            returns_created += 1
+
+        if idx % 9 == 0:
+            db.add(
+                OrderAbnormal(
+                    order_id=int(order.id),
+                    product_id=int(picked[0][0].id),
+                    reason="天枢演示：履约节点超时或退单风险",
+                    created_at=created_at + timedelta(minutes=22),
+                )
+            )
+            db.add(
+                Alert(
+                    level="high" if idx % 18 == 0 else "medium",
+                    type="tianshu_demo",
+                    description=f"天枢演示预警：订单 {order.order_no} 在 {point[0]} 存在履约/退单风险",
+                    status="open",
+                    payload_json={"order_id": int(order.id), "order_no": order.order_no, "district": point[0]},
+                    created_at=created_at + timedelta(minutes=24),
+                )
+            )
+            alerts_created += 1
+        db.add(
+            OrderStatusLog(
+                order_id=int(order.id),
+                old_status="N/A",
+                new_status=status,
+                actor_user_id=delivery_id,
+                created_at=created_at,
+            )
+        )
+
+    trip_count = min(3, len(vehicles), max(1, len(orders) // 8))
+    dispatch_trips = dispatch_stops = dispatch_items = 0
+    if trip_count:
+        buckets = [orders[i::trip_count] for i in range(trip_count)]
+        for trip_idx, bucket in enumerate(buckets):
+            if not bucket:
+                continue
+            vehicle = vehicles[trip_idx % len(vehicles)]
+            trip_status = ["待发车", "运输中", "有阻塞"][trip_idx % 3]
+            trip = DeliveryDispatchTrip(
+                route_no=f"{TIANSHU_DEMO_PREFIX}-R{today.strftime('%m%d')}-{trip_idx + 1:02d}",
+                delivery_id=delivery_id,
+                planning_date=today,
+                source="tianshu_demo",
+                status=trip_status,
+                depart_mode="cold_chain" if trip_idx == 0 else "normal",
+                vehicle_id=int(vehicle.id),
+                vehicle_no=vehicle.vehicle_no,
+                driver_name=vehicle.driver_name or f"天枢司机{trip_idx + 1}",
+                departure_time=f"{7 + trip_idx:02d}:30",
+                total_orders=len(bucket),
+                total_allocations=sum(len(allocs_by_order.get(int(o.id), [])) for o in bucket),
+                ready_count=sum(len(allocs_by_order.get(int(o.id), [])) for o in bucket),
+                blocked_count=1 if trip_status == "有阻塞" else 0,
+                not_loaded_count=1 if trip_status == "有阻塞" else 0,
+                distance_km=round(18.5 + trip_idx * 7.2, 2),
+                duration_minutes=75 + trip_idx * 18,
+                load_weight_kg=sum(float(o.total_weight_kg or 0) for o in bucket),
+                load_volume_m3=sum(float(o.total_volume_m3 or 0) for o in bucket),
+                route_path_json=[
+                    {"lng": 116.4074, "lat": 39.9042, "name": "监管指挥中心"},
+                    *[
+                        {"lng": float(o.delivery_lng), "lat": float(o.delivery_lat), "name": o.delivery_address}
+                        for o in bucket[:6]
+                    ],
+                ],
+                risk_alerts_json=[{"message": "天枢演示阻塞节点", "level": "medium"}] if trip_status == "有阻塞" else [],
+                planning_snapshot_json={"source": "tianshu_demo", "order_ids": [int(o.id) for o in bucket]},
+                exception_summary_json={"blocked": trip_status == "有阻塞"},
+                departed_at=now - timedelta(minutes=25) if trip_status == "运输中" else None,
+                completed_at=None,
+                created_by=delivery_id,
+                created_at=now - timedelta(hours=1),
+                updated_at=now,
+            )
+            db.add(trip)
+            await db.flush()
+            dispatch_trips += 1
+            for seq, order in enumerate(bucket, 1):
+                stop = DeliveryDispatchStop(
+                    trip_id=int(trip.id),
+                    order_id=int(order.id),
+                    sequence=seq,
+                    order_no=order.order_no,
+                    client_name=f"客户#{order.client_id}",
+                    canteen_name=f"食堂#{order.canteen_id}",
+                    address=order.delivery_address or "",
+                    expected_delivery_date=today,
+                    expected_delivery_slot=order.expected_delivery_slot or "",
+                    planned_arrive_time=f"{8 + (seq % 7):02d}:{(seq * 7) % 60:02d}",
+                    planned_leave_time=f"{8 + (seq % 7):02d}:{(seq * 7 + 15) % 60:02d}",
+                    status="有阻塞" if trip_status == "有阻塞" and seq == 1 else ("运输中" if trip_status == "运输中" else "待发车"),
+                    affected=(trip_status == "有阻塞" and seq == 1),
+                    created_at=now,
+                    updated_at=now,
+                )
+                db.add(stop)
+                await db.flush()
+                dispatch_stops += 1
+                for alloc in allocs_by_order.get(int(order.id), []):
+                    product = await db.scalar(select(Product).where(Product.id == int(alloc.product_id)))
+                    db.add(
+                        DeliveryDispatchItem(
+                            trip_id=int(trip.id),
+                            stop_id=int(stop.id),
+                            allocation_id=int(alloc.id),
+                            order_id=int(order.id),
+                            supplier_id=int(alloc.supplier_id),
+                            product_id=int(alloc.product_id),
+                            product_name=product.name if product else f"商品#{alloc.product_id}",
+                            spec_unit=(product.unit if product else "") or "kg",
+                            quantity=float(alloc.quantity or 0),
+                            unit=(product.unit if product else "") or "kg",
+                            supplier_name=f"供货商#{alloc.supplier_id}",
+                            status="未随车" if trip_status == "有阻塞" and seq == 1 else "已装车",
+                            reason_code="demo_block" if trip_status == "有阻塞" and seq == 1 else "",
+                            reason_detail="天枢演示阻塞：未随车" if trip_status == "有阻塞" and seq == 1 else "",
+                            attachments_json=[],
+                            loaded_at=now - timedelta(minutes=35),
+                            created_at=now,
+                            updated_at=now,
+                        )
+                    )
+                    dispatch_items += 1
+
+    await db.commit()
+    return {
+        "message": "天枢真实模式演示数据已生成",
+        "data_prefix": TIANSHU_DEMO_PREFIX,
+        "date": today.isoformat(),
+        "removed": removed,
+        "inserted_orders": inserted_orders,
+        "allocations": allocations_created,
+        "sort_scan_records": scan_records,
+        "dispatch_trips": dispatch_trips,
+        "dispatch_stops": dispatch_stops,
+        "dispatch_items": dispatch_items,
+        "returns": returns_created,
+        "alerts": alerts_created,
+        "bills": bills_created,
+        "notifications": notifications_created,
+        "order_ids": [int(o.id) for o in orders],
+    }
 
 
 async def _ensure_dispatch_demo_vehicles(db: AsyncSession, delivery_id: int) -> list[DeliveryVehicle]:
@@ -1016,6 +1507,45 @@ async def _demo_allocate_orders(db: AsyncSession, orders: list[Order], now: date
     }
 
 
+@router.post("/tianshu/seed")
+async def demo_seed_tianshu_real_mode(
+    payload: TianshuDemoSeedIn | None = None,
+    _=Depends(require_role("monitor")),
+    db: AsyncSession = Depends(get_db),
+):
+    """生成天枢大屏真实模式演示批次：今日配送日订单、分单、车次、退单、告警、账单和通知。"""
+    _ensure_demo_mode()
+    payload = payload or TianshuDemoSeedIn()
+    return await _seed_tianshu_demo_batch(
+        db,
+        order_count=int(payload.order_count),
+        delivery_username=payload.delivery_username,
+        clear_existing=bool(payload.clear_existing),
+    )
+
+
+@router.get("/tianshu/status")
+async def demo_tianshu_real_mode_status(
+    _=Depends(require_role("monitor")),
+    db: AsyncSession = Depends(get_db),
+):
+    """查看当前天枢 TSDEMO 批次状态，供演示台生成/清理前后确认。"""
+    _ensure_demo_mode()
+    return await _tianshu_demo_batch_status(db)
+
+
+@router.post("/tianshu/clear")
+async def demo_clear_tianshu_real_mode(
+    _=Depends(require_role("monitor")),
+    db: AsyncSession = Depends(get_db),
+):
+    """仅清理天枢大屏 TSDEMO 批次，不影响普通演示订单或真实业务数据。"""
+    _ensure_demo_mode()
+    summary = await _clear_tianshu_demo_batch(db)
+    await db.commit()
+    return {"message": "天枢演示批次已清理", "data_prefix": TIANSHU_DEMO_PREFIX, **summary}
+
+
 @router.post("/orders/allocate")
 async def demo_allocate_orders(
     payload: OrderIdsIn,
@@ -1366,6 +1896,7 @@ async def demo_prepare_dispatch(
                 .join(DeliveryDispatchTrip, DeliveryDispatchTrip.id == DeliveryDispatchStop.trip_id)
                 .where(
                     DeliveryDispatchTrip.delivery_id == delivery_id,
+                    DeliveryDispatchTrip.planning_date == planning_date,
                     DeliveryDispatchTrip.status.in_(["待发车", "有阻塞", "运输中"]),
                 )
             )

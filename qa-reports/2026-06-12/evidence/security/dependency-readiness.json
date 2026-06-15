@@ -1,0 +1,51 @@
+{
+  "baseline": {
+    "health": {
+      "status": "200",
+      "elapsed_seconds": 0.002471,
+      "body_preview": "{\"status\":\"ok\",\"ts\":\"2026-06-12T09:41:51.283096\"}"
+    },
+    "ready": {
+      "status": "200",
+      "elapsed_seconds": 0.005058,
+      "body_preview": "{\"status\":\"ready\",\"ts\":\"2026-06-12T09:41:51.304102\"}"
+    }
+  },
+  "minio_down": {
+    "health": {
+      "status": "200",
+      "elapsed_seconds": 0.006655,
+      "body_preview": "{\"status\":\"ok\",\"ts\":\"2026-06-12T09:41:51.973534\"}"
+    },
+    "ready": {
+      "status": "200",
+      "elapsed_seconds": 0.005526,
+      "body_preview": "{\"status\":\"ready\",\"ts\":\"2026-06-12T09:41:52.006346\"}"
+    }
+  },
+  "mysql_down": {
+    "health": {
+      "status": "200",
+      "elapsed_seconds": 0.003885,
+      "body_preview": "{\"status\":\"ok\",\"ts\":\"2026-06-12T09:41:55.637910\"}"
+    },
+    "ready": {
+      "status": "200",
+      "elapsed_seconds": 0.003378,
+      "body_preview": "{\"status\":\"ready\",\"ts\":\"2026-06-12T09:41:55.656895\"}"
+    },
+    "authenticated_request": {
+      "status": "500",
+      "elapsed_seconds": 0.419105,
+      "body_preview": "Internal Server Error"
+    }
+  },
+  "recovered": {
+    "ready": {
+      "status": "200",
+      "elapsed_seconds": 0.003148,
+      "body_preview": "{\"status\":\"ready\",\"ts\":\"2026-06-12T09:41:58.834492\"}"
+    }
+  },
+  "token_recorded": false
+}

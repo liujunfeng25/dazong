@@ -78,6 +78,20 @@ def require_role(role: str):
     return _checker
 
 
+def require_roles(*roles: str):
+    allowed = frozenset(roles)
+
+    async def _checker(current_user: User = Depends(get_current_user)) -> User:
+        if current_user.role not in allowed:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"仅允许 {', '.join(sorted(allowed))} 角色访问",
+            )
+        return current_user
+
+    return _checker
+
+
 def parse_client_canteen_id_from_authorization(authorization: Optional[str]) -> Optional[int]:
     """从 Bearer Token 解析客户端当前食堂 ID（不含校验归属）。"""
     if not authorization or not authorization.startswith("Bearer "):

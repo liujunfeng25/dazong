@@ -1,0 +1,245 @@
+{
+  "version": "xfd-20260522010927",
+  "forecast": [
+    {
+      "date": "2026-05-22",
+      "yhat": 171.1945,
+      "yhat_lower": 158.2372,
+      "yhat_upper": 184.1519,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-05-23",
+      "yhat": 171.0664,
+      "yhat_lower": 158.1187,
+      "yhat_upper": 184.014,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-05-24",
+      "yhat": 170.4727,
+      "yhat_lower": 157.57,
+      "yhat_upper": 183.3754,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-05-25",
+      "yhat": 172.2145,
+      "yhat_lower": 159.1799,
+      "yhat_upper": 185.2491,
+      "confidence": 0.8578,
+      "trend": "up"
+    },
+    {
+      "date": "2026-05-26",
+      "yhat": 172.9249,
+      "yhat_lower": 159.8366,
+      "yhat_upper": 186.0132,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-05-27",
+      "yhat": 173.3414,
+      "yhat_lower": 160.2215,
+      "yhat_upper": 186.4612,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-05-28",
+      "yhat": 173.6957,
+      "yhat_lower": 160.549,
+      "yhat_upper": 186.8424,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-05-29",
+      "yhat": 173.6327,
+      "yhat_lower": 160.4908,
+      "yhat_upper": 186.7747,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-05-30",
+      "yhat": 173.8061,
+      "yhat_lower": 160.651,
+      "yhat_upper": 186.9611,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-05-31",
+      "yhat": 174.2579,
+      "yhat_lower": 161.0687,
+      "yhat_upper": 187.4472,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-01",
+      "yhat": 173.9723,
+      "yhat_lower": 160.8047,
+      "yhat_upper": 187.1399,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-02",
+      "yhat": 173.8076,
+      "yhat_lower": 160.6524,
+      "yhat_upper": 186.9627,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-03",
+      "yhat": 173.7233,
+      "yhat_lower": 160.5745,
+      "yhat_upper": 186.8721,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-04",
+      "yhat": 173.6515,
+      "yhat_lower": 160.5082,
+      "yhat_upper": 186.7948,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-05",
+      "yhat": 173.6978,
+      "yhat_lower": 160.551,
+      "yhat_upper": 186.8447,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-06",
+      "yhat": 173.6863,
+      "yhat_lower": 160.5404,
+      "yhat_upper": 186.8323,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-07",
+      "yhat": 173.5469,
+      "yhat_lower": 160.4115,
+      "yhat_upper": 186.6823,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-08",
+      "yhat": 173.5864,
+      "yhat_lower": 160.448,
+      "yhat_upper": 186.7248,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-09",
+      "yhat": 173.6335,
+      "yhat_lower": 160.4915,
+      "yhat_upper": 186.7754,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-10",
+      "yhat": 173.6564,
+      "yhat_lower": 160.5127,
+      "yhat_upper": 186.8001,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-11",
+      "yhat": 173.6659,
+      "yhat_lower": 160.5214,
+      "yhat_upper": 186.8103,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-12",
+      "yhat": 173.6278,
+      "yhat_lower": 160.4863,
+      "yhat_upper": 186.7693,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-13",
+      "yhat": 173.5876,
+      "yhat_lower": 160.4491,
+      "yhat_upper": 186.7261,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-14",
+      "yhat": 173.5845,
+      "yhat_lower": 160.4462,
+      "yhat_upper": 186.7228,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-15",
+      "yhat": 173.5317,
+      "yhat_lower": 160.3975,
+      "yhat_upper": 186.666,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-16",
+      "yhat": 173.457,
+      "yhat_lower": 160.3284,
+      "yhat_upper": 186.5856,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-17",
+      "yhat": 173.3758,
+      "yhat_lower": 160.2534,
+      "yhat_upper": 186.4983,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-18",
+      "yhat": 173.3392,
+      "yhat_lower": 160.2195,
+      "yhat_upper": 186.4589,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-19",
+      "yhat": 173.3319,
+      "yhat_lower": 160.2127,
+      "yhat_upper": 186.451,
+      "confidence": 0.8578,
+      "trend": "flat"
+    },
+    {
+      "date": "2026-06-20",
+      "yhat": 173.3366,
+      "yhat_lower": 160.2171,
+      "yhat_upper": 186.4561,
+      "confidence": 0.8578,
+      "trend": "flat"
+    }
+  ]
+}

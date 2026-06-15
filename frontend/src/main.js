@@ -8,6 +8,8 @@ import 'element-plus/dist/index.css'
 import '@unocss/reset/tailwind.css'
 import 'uno.css'
 import './styles/theme.css'
+import './styles/mobile-theme.css'
+import './styles/portal-skin.css'
 import App from './App.vue'
 import router from './router'
 

@@ -26,7 +26,7 @@ import { ref, reactive, shallowRef, onMounted, onBeforeUnmount } from "vue"
 import * as echarts from "echarts"
 import mCard from "@/components/mCard/index.vue"
 import TianshuNativeEchart from "./TianshuNativeEchart.vue"
-import { fetchJson } from "@/api/tianshuInsights.js"
+import { fetchJson, isTianshuAuthMissingError } from "@/api/tianshuInsights.js"
 import { useTianshuChartResize } from "../composables/useTianshuChartResize.js"
 import {
   startStaggeredPoll,
@@ -151,7 +151,7 @@ async function load(opts = {}) {
       ],
     }
   } catch (e) {
-    if (g === loadGen) console.warn("[tianshu] 补单 · 退单 · 订单", e)
+    if (g === loadGen && !isTianshuAuthMissingError(e)) console.warn("[tianshu] 补单 · 退单 · 订单", e)
   } finally {
     if (g === loadGen && !silent) chartRefreshing.value = false
   }

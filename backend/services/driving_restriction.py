@@ -83,6 +83,30 @@ def _extract_restriction_for_date(
     return None
 
 
+def _restriction_unavailable(want: date, message: str) -> dict[str, Any]:
+    return {
+        "source": "seniverse",
+        "available": False,
+        "message": message,
+        "city": "北京",
+        "date": want.isoformat(),
+        "digits": [],
+        "raw_text": "",
+    }
+
+
+def _weather_unavailable(message: str) -> dict[str, Any]:
+    return {
+        "source": "seniverse",
+        "available": False,
+        "message": message,
+        "city": "北京",
+        "text": "",
+        "temperature": "",
+        "last_update": "",
+    }
+
+
 async def fetch_beijing_driving_restriction(*, target_date: date | None = None) -> dict[str, Any]:
     sh_tz = ZoneInfo("Asia/Shanghai")
     today_sh = datetime.now(sh_tz).date()
@@ -90,26 +114,13 @@ async def fetch_beijing_driving_restriction(*, target_date: date | None = None) 
 
     key = (settings.seniverse_api_key or "").strip()
     if not key:
-        return {
-            "source": "seniverse",
-            "available": False,
-            "message": "未配置实时限号 API Key（SENIVERSE_API_KEY）",
-            "city": "北京",
-            "date": want.isoformat(),
-            "digits": [],
-            "raw_text": "",
-        }
+        return _restriction_unavailable(want, "未配置实时限号 API Key（SENIVERSE_API_KEY）")
 
     if want < today_sh:
-        return {
-            "source": "seniverse",
-            "available": False,
-            "message": f"限行预报接口不支持早于今日（{today_sh.isoformat()}）的历史日期：{want.isoformat()}",
-            "city": "北京",
-            "date": want.isoformat(),
-            "digits": [],
-            "raw_text": "",
-        }
+        return _restriction_unavailable(
+            want,
+            f"限行预报接口不支持早于今日（{today_sh.isoformat()}）的历史日期：{want.isoformat()}",
+        )
 
     offset = (want - today_sh).days
     days_req = min(15, max(1, offset + 1))
@@ -122,10 +133,16 @@ async def fetch_beijing_driving_restriction(*, target_date: date | None = None) 
         "start": 0,
         "days": days_req,
     }
-    async with httpx.AsyncClient(timeout=10) as client:
-        resp = await client.get(url, params=params)
-    resp.raise_for_status()
-    data = resp.json() if resp.content else {}
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            resp = await client.get(url, params=params)
+        resp.raise_for_status()
+        data = resp.json() if resp.content else {}
+    except (httpx.RequestError, httpx.HTTPStatusError, ValueError) as exc:
+        return _restriction_unavailable(
+            want,
+            f"实时限号接口暂不可用，已按不限行降级：{type(exc).__name__}",
+        )
 
     results = data.get("results") if isinstance(data, dict) else None
     if not isinstance(results, list) or not results:
@@ -164,15 +181,7 @@ async def fetch_beijing_driving_restriction(*, target_date: date | None = None) 
 async def fetch_beijing_weather_now() -> dict[str, Any]:
     key = (settings.seniverse_api_key or "").strip()
     if not key:
-        return {
-            "source": "seniverse",
-            "available": False,
-            "message": "未配置实时天气 API Key（SENIVERSE_API_KEY）",
-            "city": "北京",
-            "text": "",
-            "temperature": "",
-            "last_update": "",
-        }
+        return _weather_unavailable("未配置实时天气 API Key（SENIVERSE_API_KEY）")
 
     url = "https://api.seniverse.com/v3/weather/now.json"
     params = {
@@ -181,10 +190,13 @@ async def fetch_beijing_weather_now() -> dict[str, Any]:
         "language": "zh-Hans",
         "unit": "c",
     }
-    async with httpx.AsyncClient(timeout=10) as client:
-        resp = await client.get(url, params=params)
-    resp.raise_for_status()
-    data = resp.json() if resp.content else {}
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            resp = await client.get(url, params=params)
+        resp.raise_for_status()
+        data = resp.json() if resp.content else {}
+    except (httpx.RequestError, httpx.HTTPStatusError, ValueError) as exc:
+        return _weather_unavailable(f"实时天气接口暂不可用：{type(exc).__name__}")
 
     results = data.get("results") if isinstance(data, dict) else None
     if not isinstance(results, list) or not results:

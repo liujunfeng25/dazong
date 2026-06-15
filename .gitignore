@@ -31,5 +31,6 @@ backend/.env
 
 # 本地数据与发版产物（勿入 Git）
 mysql_data/
+backups/
 apk-share/
 *.apk

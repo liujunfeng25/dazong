@@ -1,0 +1,41 @@
+/* portal-skin.css —— 内页共享皮肤
+ * 目的:让 6 端门户内页(列表/表单)继承首屏门面的精致度,消除"驾驶舱漂亮、内页通用后台"的断层。
+ * 机制:只作用于门户内容区 .app-content-area,颜色全部由 --role-accent(PortalLayout 按端注入)派生,
+ *      所以每个端自动套自己的主色(客户蓝/供货橙/配送青/厂家绿/运营紫),无需逐页改色。
+ * 安全:纯展示样式,不改任何模板/交互/状态语义(状态标签、按钮一律保持原样)。
+ *      监管端大屏走全屏分支(无 .app-content-area),不受影响。
+ */
+
+/* 卡片统一 chrome:圆角 + 轻边 + 柔阴影 */
+.app-content-area .el-card {
+  border-radius: 14px;
+  border-color: #eef0f4;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+/* 表格整体:中性淡边框 */
+.app-content-area .el-table {
+  --el-table-border-color: #eef0f4;
+  --el-table-header-text-color: color-mix(in srgb, var(--role-accent, #4f7cff) 70%, #334155);
+}
+
+/* 表头:按端主色极淡渲染,跟门面同一套语言 */
+.app-content-area .el-table thead th.el-table__cell {
+  background: color-mix(in srgb, var(--role-accent, #4f7cff) 8%, #ffffff);
+  color: color-mix(in srgb, var(--role-accent, #4f7cff) 70%, #334155);
+  font-weight: 700;
+  border-bottom: 1px solid color-mix(in srgb, var(--role-accent, #4f7cff) 16%, #ffffff);
+}
+
+/* 表体:淡横线 + 行 hover 主色微染 */
+.app-content-area .el-table tbody td.el-table__cell {
+  border-bottom: 1px solid #f2f3f6;
+}
+.app-content-area .el-table .el-table__row:hover > td.el-table__cell {
+  background: color-mix(in srgb, var(--role-accent, #4f7cff) 6%, #ffffff) !important;
+}
+
+/* el-table 左侧竖分隔线淡化,避免重网格感 */
+.app-content-area .el-table .el-table__inner-wrapper::before {
+  background-color: #eef0f4;
+}

@@ -1,6 +1,8 @@
 from typing import Optional
 
-from sqlalchemy import Boolean, ForeignKey, Integer, String, Text
+from datetime import datetime
+
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import Base, TimestampMixin
@@ -23,3 +25,4 @@ class Notification(Base, TimestampMixin):
     object_id: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     route: Mapped[str] = mapped_column(String(255), nullable=False, default="")
     is_read: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, index=True)
+    read_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)

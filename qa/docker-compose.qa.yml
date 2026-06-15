@@ -1,0 +1,108 @@
+name: dazong-qa
+
+services:
+  mysql-qa:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: qa_root_password
+      MYSQL_DATABASE: dazong_qa
+    volumes:
+      - mysql_qa_data:/var/lib/mysql
+    ports:
+      - "127.0.0.1:13306:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  minio-qa:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: qa-minio
+      MINIO_ROOT_PASSWORD: qa-minio-password
+    volumes:
+      - minio_qa_data:/data
+    ports:
+      - "127.0.0.1:19000:9000"
+      - "127.0.0.1:19001:9001"
+
+  backend-qa:
+    build:
+      context: ../backend
+    restart: unless-stopped
+    entrypoint: ["/bin/sh", "./docker-entrypoint.sh"]
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    environment:
+      MYSQL_HOST: mysql-qa
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: qa_root_password
+      MYSQL_DB: dazong_qa
+      JWT_SECRET_KEY: dazong_qa_secret_20260612
+      DEMO_MODE: "true"
+      AUTO_CREATE_SCHEMA: "false"
+      SEED_ON_START: "false"
+      SIMULATOR_ENABLED: "false"
+      MINIO_ENDPOINT: minio-qa:9000
+      MINIO_ACCESS_KEY: qa-minio
+      MINIO_SECRET_KEY: qa-minio-password
+      MINIO_SECURE: "false"
+      MINIO_PUBLIC_BASE_URL: http://127.0.0.1:19000/dazong-quality
+      AMAP_WEB_KEY: ${AMAP_WEB_KEY:-}
+      AMAP_WEB_SECURITY_CODE: ${AMAP_WEB_SECURITY_CODE:-}
+      AI_API_KEY: ${AI_API_KEY:-}
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:-}
+      BAIDU_TABLE_API_KEY: ${BAIDU_TABLE_API_KEY:-}
+      BAIDU_TABLE_SECRET_KEY: ${BAIDU_TABLE_SECRET_KEY:-}
+      GPS18_USERNAME: ${GPS18_USERNAME:-}
+      GPS18_PASSWORD: ${GPS18_PASSWORD:-}
+      GPS18_APP_ID: ${GPS18_APP_ID:-}
+      YS7_APP_KEY: ${YS7_APP_KEY:-}
+      YS7_APP_SECRET: ${YS7_APP_SECRET:-}
+      ELITECH_APP_ID: ${ELITECH_APP_ID:-}
+      ELITECH_KEY_SECRET: ${ELITECH_KEY_SECRET:-}
+      KUAIMAI_APP_KEY: ${KUAIMAI_APP_KEY:-}
+      KUAIMAI_APP_SECRET: ${KUAIMAI_APP_SECRET:-}
+    depends_on:
+      mysql-qa:
+        condition: service_healthy
+      minio-qa:
+        condition: service_started
+    volumes:
+      - ../backend:/app
+    ports:
+      - "127.0.0.1:18000:8000"
+    healthcheck:
+      test:
+        ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/system/healthz', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  frontend-qa:
+    image: node:20-alpine
+    restart: unless-stopped
+    working_dir: /app
+    entrypoint: ["/bin/sh", "/app/docker/dev-entrypoint.sh"]
+    environment:
+      VITE_API_PROXY_TARGET: http://backend-qa:8000
+    depends_on:
+      backend-qa:
+        condition: service_healthy
+    volumes:
+      - ../frontend:/app
+      - frontend_qa_node_modules:/app/node_modules
+      - ../demo-console:/demo-console
+    ports:
+      - "127.0.0.1:18080:80"
+
+volumes:
+  mysql_qa_data:
+  minio_qa_data:
+  frontend_qa_node_modules:

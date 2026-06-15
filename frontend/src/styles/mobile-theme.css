@@ -1,0 +1,150 @@
+:root {
+  /* ── 鲜活食材风：暖纸白 + 深森绿 + 柑橘琥珀点缀 ── */
+  --m-primary: #1f7a53;            /* 深森绿（主色） */
+  --m-primary-container: #2e9e6b;  /* 渐变 / 容器绿 */
+  --m-secondary: #3fa66b;
+  --m-secondary-fixed: #d3eedd;    /* 浅绿底（chip/active 弱底） */
+  --m-surface: #f7f4ec;            /* 暖纸白画布 */
+  --m-surface-container-lowest: #ffffff;
+  --m-surface-container-low: #fffdf7;
+  --m-surface-container: #f3efe4;
+  --m-surface-container-high: #ece7d9;
+  --m-surface-container-highest: #e6e0d0;
+  --m-outline-variant: #e3ddcb;    /* 暖描边 */
+  --m-outline: #9a917c;
+  --m-on-surface: #23271f;         /* 暖墨黑 */
+  --m-on-surface-variant: #5e6657;
+  --m-on-primary: #ffffff;
+  --m-on-primary-container: #bdf0d2;
+  --m-error: #ba1a1a;
+  --m-error-container: #ffdad6;
+  /* 柑橘琥珀点缀 + 语义色（KPI/标签用） */
+  --m-accent: #f2a03d;
+  --m-accent-soft: #fcebd2;
+  --m-tertiary-fixed: #ffe2c4;
+  --m-on-tertiary-fixed-variant: #8a4b12;
+  --m-teal: #0e8a8a;
+  --m-terracotta: #c2553d;
+  --m-indigo: #3f51b5;
+  --m-font-display: 'Plus Jakarta Sans', sans-serif;
+  --m-font-body: 'Be Vietnam Pro', sans-serif;
+  --m-font-accent: 'Fraunces', 'Plus Jakarta Sans', serif; /* hero 大标题 / 大金额 */
+}
+
+/*
+ * 让 Element Plus 主色在手机壳内与鲜活食材主题对齐（FAB / 输入聚焦 / EP 按钮）。
+ * 只作用于 .m-shell，PC（PortalLayout）不受影响。
+ */
+.m-shell {
+  --el-color-primary: #1f7a53;
+  --el-color-primary-light-3: #4f9a76;
+  --el-color-primary-light-5: #7ab399;
+  --el-color-primary-light-7: #a6ccba;
+  --el-color-primary-light-8: #c3ddd1;
+  --el-color-primary-light-9: #e3f1ea;
+  --el-color-primary-dark-2: #196244;
+}
+
+/*
+ * el-button 颜色救援（手机版 + 弹窗）
+ *
+ * theme.css 把 button 颜色救援都 scoped 到 .app-content-area（PC 端 PortalLayout 的内容区）。
+ * 手机端用 MobileClientLayout（.m-shell），从而没有救援；@unocss/reset/tailwind.css 在
+ * element-plus CSS 之后加载，会把所有 <button> 的 background-color 重置为 transparent，
+ * 结果手机端 el-button--primary 显示为「蓝色描边 + 透明背景 + 白色文字」=> 看起来是空的。
+ *
+ * 弹窗 (el-dialog) 通过 teleport 挂到 body，同样不在 .app-content-area 内，无救援，
+ * footer 按钮也是「空白胶囊」状态。
+ *
+ * 下方规则在手机壳 + EP 弹窗/抽屉容器内重新打上按钮底色 / 字色，与 theme.css 保持一致。
+ */
+.m-shell .el-button,
+.el-overlay .el-button,
+.el-overlay-dialog .el-button {
+  font-weight: 600;
+}
+
+.m-shell .el-button > span,
+.el-overlay .el-button > span,
+.el-overlay-dialog .el-button > span {
+  color: inherit;
+}
+
+.m-shell .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.is-link):not(.is-text),
+.el-overlay .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.is-link):not(.is-text),
+.el-overlay-dialog .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.is-link):not(.is-text) {
+  color: #334155;
+  border-color: #cbd5e1;
+  background: #fff;
+}
+
+.m-shell .el-button--primary:not(.is-plain),
+.el-overlay .el-button--primary:not(.is-plain),
+.el-overlay-dialog .el-button--primary:not(.is-plain) {
+  color: #fff;
+  border-color: var(--el-color-primary);
+  background: var(--el-color-primary);
+}
+
+.m-shell .el-button--primary:not(.is-plain) > span,
+.el-overlay .el-button--primary:not(.is-plain) > span,
+.el-overlay-dialog .el-button--primary:not(.is-plain) > span {
+  color: #fff;
+}
+
+.m-shell .el-button--success:not(.is-plain),
+.el-overlay .el-button--success:not(.is-plain),
+.el-overlay-dialog .el-button--success:not(.is-plain) {
+  color: #fff;
+  background: #16a34a;
+  border-color: #16a34a;
+}
+
+.m-shell .el-button--warning:not(.is-plain),
+.el-overlay .el-button--warning:not(.is-plain),
+.el-overlay-dialog .el-button--warning:not(.is-plain) {
+  color: #fff;
+  background: #f59e0b;
+  border-color: #f59e0b;
+}
+
+.m-shell .el-button--danger:not(.is-plain):not(.is-text):not(.is-link),
+.el-overlay .el-button--danger:not(.is-plain):not(.is-text):not(.is-link),
+.el-overlay-dialog .el-button--danger:not(.is-plain):not(.is-text):not(.is-link) {
+  color: #fff;
+  background: #ef4444;
+  border-color: #ef4444;
+}
+
+.m-shell .el-button--danger.is-plain,
+.el-overlay .el-button--danger.is-plain,
+.el-overlay-dialog .el-button--danger.is-plain {
+  color: #dc2626;
+  background: #fff;
+  border-color: #fca5a5;
+}
+
+.m-shell .el-button.is-plain,
+.el-overlay .el-button.is-plain,
+.el-overlay-dialog .el-button.is-plain {
+  color: var(--el-color-primary);
+  border-color: color-mix(in srgb, var(--el-color-primary) 35%, #ffffff 65%);
+  background: color-mix(in srgb, var(--el-color-primary) 8%, #ffffff 92%);
+}
+
+.m-shell .el-button.is-text,
+.m-shell .el-button.is-link,
+.m-shell .el-button--text,
+.m-shell .el-button--link,
+.el-overlay .el-button.is-text,
+.el-overlay .el-button.is-link,
+.el-overlay .el-button--text,
+.el-overlay .el-button--link,
+.el-overlay-dialog .el-button.is-text,
+.el-overlay-dialog .el-button.is-link,
+.el-overlay-dialog .el-button--text,
+.el-overlay-dialog .el-button--link {
+  color: var(--el-color-primary);
+  border-color: transparent;
+  background: transparent;
+}

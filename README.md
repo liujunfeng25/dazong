@@ -1,123 +1,110 @@
-# 大宗物资供应链全链路管理系统（阶段四）
+# 大宗物资供应链全链路管理系统
 
-本项目已覆盖六端业务闭环、监管驾驶舱实时监控、OCR/语音辅助下单、智能分单与路线规划（Mock）以及一键容器化部署。
+本项目面向食堂大宗物资采购与履约场景，覆盖招投标、合约、下单、分单、供货、分检、排线、配送、收货、退货、质检、对账和监管分析。
 
-## 1. 生产部署（Docker Compose）
+当前系统由 **六类业务角色和三个 Android 专用终端**组成：
 
-执行：
+| 类型 | 角色或终端 | 主要职责 |
+| --- | --- | --- |
+| PC 业务角色 | 采购方 | 选择食堂、招标、下单、收货、投诉、账单 |
+| PC 业务角色 | 供货方 | 报价、查看分单、打印标签、出库、质检资料、账单 |
+| PC 业务角色 | 配送商 | 供应商、车辆、仓库、智能分单、路线排程、车次、投诉、账单 |
+| PC 业务角色 | 指定厂家 | 履约指定厂家商品、提交质检资料、查看账单 |
+| PC 业务角色 | 运营方 | 商品、账号、食堂、合约、订单、工单、账期、识别训练 |
+| PC 业务角色 | 监管方 | 核心态势、履约、价格、稽核、广播、AI 分析 |
+| Android 终端 | 智能秤 | 采购方食堂收货、称重、拍照、退货留痕、双签 |
+| Android 终端 | 分检 PDA | 配送商分单标签扫码和分检进度 |
+| Android 终端 | 司机端 | 按车辆登录、查看车次、导航和确认送达 |
+
+演示控制台、监管天枢大屏、BI 看板和图像识别工作台是辅助工具或功能模块，不额外计算为业务角色。
+
+## 文档
+
+- [文档中心](docs/README.md)
+- [系统技术文档](docs/系统技术文档.md)
+- [操作手册](docs/操作手册/README.md)
+- [运维手册](docs/ops-runbook.md)
+- [系统技术文档 Word 版](docs/系统技术文档.docx)
+
+Markdown 是技术事实的唯一来源，Word 文档由 Markdown 生成。
+
+## 技术栈
+
+- 前端：Vue 3、Vite、Pinia、Element Plus、ECharts、Three.js
+- 后端：FastAPI、SQLAlchemy Async、Alembic、MySQL 8
+- 对象存储：MinIO
+- Android：Kotlin、Jetpack Compose、Retrofit
+- 模型与分析：PyTorch、scikit-learn、XGBoost、DashScope
+- 运行方式：Docker Compose
+
+仓库中当前没有 Kubernetes、Helm Chart、Deployment 或 Ingress 配置，不能将本项目描述为已使用 K8s 部署。
+
+## 本地启动
+
+要求 Docker Desktop 或兼容的 Docker Engine，并支持 `docker compose`。
 
 ```bash
-docker compose up --build
+cp .env.example .env
+make dev-up
 ```
 
-访问地址：
-- 前端：<http://localhost>
-- 后端 API 文档：<http://localhost:8000/docs>
-- MySQL：`127.0.0.1:3306`
+默认访问入口：
 
-重置并重建：
+- 主前端：<http://127.0.0.1>
+- 后端 OpenAPI：<http://127.0.0.1:8000/docs>
+- 前端接口说明：<http://127.0.0.1/docs>
+- 演示控制台：<http://127.0.0.1/demo-console/>
+- MinIO 控制台：<http://127.0.0.1:9001>
+
+停止开发环境：
 
 ```bash
-docker compose down
-docker compose up --build
+make dev-down
 ```
 
-## 2. 演示账号
+生产 profile：
 
-统一密码：`demo123`
+```bash
+make prod-up
+```
 
-- `client001`～`client006`（client，演示多采购方）
-- `supplier001`～`supplier003`（supplier，演示多供货方，均绑定同一配送商 `delivery001`）
-- `delivery001`（delivery）
-- `factory001`（factory）
-- `operation001`（operation）
-- `monitor001`（monitor）
+生产环境必须覆盖数据库密码、JWT 密钥、MinIO 凭据、CORS、公开地址和第三方服务密钥，并关闭演示数据与自动建表能力。
 
-## 3. 关键功能清单
+## 核心业务状态
 
-- 六端可独立登录并操作。
-- 订单主线：下单 -> 分拣 -> 发货 -> 配送 -> 收货 -> 结算。
-- 合约招标流程完整（发标、投标、中标、合约）。
-- 异常商品自动校验并生成工单。
-- 收货自动生成账单。
-- 监管端驾驶舱支持 WebSocket 实时更新与演示控制台。
-- `POST /api/demo/reset` 支持演示数据一键重置。
-- 独立「演示数据 API 控制台」见仓库 [`demo-console/`](demo-console/) 与下文 **4.5**。
+主订单状态由后端状态机控制：
 
-## 4. 第四阶段新增能力
+```text
+下单 -> 配货 -> 发货 -> 收货 -> 收货确认 -> 已结算
+  \-> 取消
+```
 
-### 4.1 OCR 下单（百度表格 / 演示）
-- `GET /api/ocr/engine`：当前引擎、是否已配置百度 Key、是否使用演示数据。
-- `POST /api/ocr/parse-order`：请求 `multipart/form-data` 图片文件。
-- 若配置 **百度表格识别**（与 ai-agent 一致：`https://aip.baidubce.com/rest/2.0/ocr/v1/table`），返回表格结构化结果 `structured`，解析品名/数量/单位行，并与商品库做子串匹配；未匹配、多匹配时在响应 `warnings` / `match_summary` 中说明，客户端弹窗展示表格并引导在购物车中处理。
-- 未配置 Key 或 `OCR_ENGINE=mock` 时返回固定示例表（可演示流程）。
-- 环境变量（任选其一的 Key 名即可）：`BAIDU_TABLE_API_KEY` 或 `DOCUMENTS_BAIDU_TABLE_API_KEY`；`OCR_ENGINE` 或 `DOCUMENTS_OCR_ENGINE` 为 `auto`（有 Key 走百度否则 mock）/`baidu`/`mock`。
-- 客户端下单页支持「上传采购单」：识别结果弹窗 + 购物车匹配状态标签。
+配送工作台还会根据分单和分检记录派生“待分单、待供货商发货、待分拣、待取货、配送中、待客户收货、待结算、已完成”等操作阶段。派生阶段不是数据库中的另一套订单状态。
 
-### 4.2 语音下单（规则解析）
-- `POST /api/voice/parse-order`
-- 请求：`{ "text": "我要订100斤大白菜和50斤西红柿" }`
-- 后端使用正则解析数量、单位、品名，并做商品名称模糊匹配。
-- 下单页支持输入“语音转文字”内容并自动填充。
+## 项目目录
 
-### 4.3 智能分单（配送端）
-- `POST /api/delivery/smart-split`
-- 请求：`{ "order_ids": [1,2,3] }`
-- 规则（Mock）：蔬菜优先 `supplier001`，司机随机分配。
-- 页面：`/delivery/smart-split`
+```text
+backend/          FastAPI、模型、迁移、服务、测试
+frontend/         六角色 PC 前端、监管驾驶舱和天枢源码
+demo-console/     开发与演示数据操盘台
+docs/             权威技术文档、操作手册和运维手册
+scripts/          部署、演示、APK 发布和文档工具
+首衡电子秤资料/    第三方设备资料，不属于系统事实文档
+```
 
-### 4.4 智能物流规划（配送端）
-- `POST /api/delivery/route-plan`
-- 请求：`{ "driver_id": 3, "order_ids": [1,2] }`
-- 返回：司机、总里程、预计时长、停靠顺序。
-- 页面：`/delivery/route-plan`
+三个 Android 项目位于同级目录：
 
-### 4.5 演示数据 API 控制台（独立 H5）
-- 目录：[`demo-console/`](demo-console/)：本地开发 **http://127.0.0.1:15175**；**Docker** 与主站同端口 **http://127.0.0.1/demo-console/**（详见 [`demo-console/README.md`](demo-console/README.md)）。
-- 多采购账号串行登录；每个账号需 `GET /client/canteens` → `POST /client/canteen-session` 换取带 `canteen_id` 的 JWT 后再做合约与配送日校验、`orders/meta` 预览、按商品搜索批量 `POST /orders`（单配送商 + 多账号；多供货商体现在分单/行级 `supplier_id`）。
-- 在 **`DEMO_MODE=true`** 且使用 **`monitor`** 账号时，可调用：
-  - `POST /api/demo/orders/delete`：`{ "order_ids": [...] }` 级联删单；
-  - `POST /api/demo/orders/mark-allocations-shipped`：将订单下全部分单行标为 **已出库**；
-  - `POST /api/demo/orders/supplier-ship-bulk`：按供货商对指定订单的分单行 **一键发货（已出库）**（演示跳过打印门禁）。
-- 直连后端时的 CORS：默认已包含 `http://127.0.0.1:15175` 等来源，生产请在环境变量中扩展 `CORS_ORIGINS`。
+```text
+/Users/Admin/Project/smart-scale-android
+/Users/Admin/Project/sorter-pda-android
+/Users/Admin/Project/driver-android
+```
 
-## 5. 演示顺序建议
+## 文档一致性
 
-1. 运营端检查分类、商品、账号。
-2. 客户端通过 OCR 或语音辅助创建订单。
-3. 供货商完成配货、打印、发货。
-4. 配送商执行取货、智能分单、路线规划、送达。
-5. 客户端收货、评价、结算。
-6. 监管端查看驾驶舱、预警与实时物流变化。
-7. 使用演示控制台触发模拟动作，必要时调用 `/api/demo/reset`。
+```bash
+make docs-build
+make docs-check
+```
 
-## 6. 环境变量说明（容器）
-
-`docker-compose.yml` 中已包含：
-
-- 数据库：`DB_HOST/DB_PORT/DB_USER/DB_PASSWORD/DB_NAME` 及 `MYSQL_*`
-- 鉴权：`JWT_SECRET`、`JWT_SECRET_KEY`
-- 演示模式：`DEMO_MODE=true`
-- OCR（可选）：`BAIDU_TABLE_API_KEY` 或 `DOCUMENTS_BAIDU_TABLE_API_KEY`；`OCR_ENGINE` 或 `DOCUMENTS_OCR_ENGINE`（`auto` / `baidu` / `mock`）
-
-## 7. 部署结构
-
-- `mysql:8.0`：持久化目录 `./mysql_data`。
-- `backend`：`python:3.11-slim` 多阶段构建，`uvicorn` 生产启动。
-- `frontend`：`node:20-alpine` 构建，`nginx:alpine` 运行。
-- Nginx 规则：
-  - `/` 静态资源并支持 Vue Router history（`try_files`）
-  - `/api` 代理到 `backend:8000`
-  - `/ws` 代理到 `backend:8000`（支持 WebSocket Upgrade）
-
-## 8. 生产化改造新增项
-
-- 订单域增强：状态机校验、幂等键支持、状态变更日志与审计日志。
-- WebSocket 鉴权：`/ws/*` 连接需携带 `token` 查询参数。
-- 安全基线：CORS 支持按环境配置，默认收敛到本地域名列表。
-- 系统健康探针：
-  - `GET /api/system/healthz`
-  - `GET /api/system/readyz`
-- 数据库迁移：引入 Alembic（目录：`backend/migrations`）。
-- 运维手册：见 `docs/ops-runbook.md`。
-- 备份脚本：`scripts/mysql_backup.sh`。
+`docs-build` 由技术 Markdown 生成 Word 并重建操作手册 RAG 索引；`docs-check` 校验文档链接、公开 API、前端路由、RAG 来源和已禁用的旧描述。

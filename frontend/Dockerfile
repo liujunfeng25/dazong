@@ -11,6 +11,12 @@ RUN npm run build
 FROM node:20-alpine AS frontend-builder
 WORKDIR /app
 
+# Vite 在 build 时固化 VITE_*；docker compose 未用本镜像时，可 docker build --build-arg VITE_AMAP_KEY=...
+ARG VITE_AMAP_KEY
+ARG VITE_AMAP_SECURITY_JS_CODE
+ENV VITE_AMAP_KEY=$VITE_AMAP_KEY \
+    VITE_AMAP_SECURITY_JS_CODE=$VITE_AMAP_SECURITY_JS_CODE
+
 COPY frontend/package*.json ./
 RUN npm install
 

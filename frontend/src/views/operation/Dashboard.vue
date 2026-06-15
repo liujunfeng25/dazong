@@ -8,8 +8,10 @@ import {
   listTicketsApi,
   operationDashboardApi,
 } from '../../api/operation'
+import FleetMonitorMapCard from '../../components/FleetMonitorMapCard.vue'
 import OperationContractsTable from './OperationContractsTable.vue'
 import { formatChinaClock, formatChinaDateTime } from '../../utils/datetime'
+import { orderStatusLabel, orderStatusTagColor } from '../../utils/orderStatus'
 
 const router = useRouter()
 const loading = ref(false)
@@ -57,7 +59,7 @@ const buildTrend = (list) => {
 const buildStatusDist = (list) => {
   const dist = {}
   list.forEach((item) => {
-    const key = item.status || '未知'
+    const key = item.status ? orderStatusLabel(item.status) : '未知'
     dist[key] = (dist[key] || 0) + 1
   })
   return dist
@@ -86,14 +88,17 @@ const renderCharts = () => {
   if (statusChartRef.value) {
     const ins = chartInstances.status || echarts.init(statusChartRef.value)
     ins.setOption({
-      tooltip: { trigger: 'item' },
-      legend: { bottom: 0 },
+      tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+      legend: { bottom: 0, type: 'scroll' },
       series: [
         {
           type: 'pie',
-          radius: ['44%', '72%'],
+          radius: ['44%', '70%'],
+          center: ['50%', '44%'],
+          avoidLabelOverlap: true,
           data: Object.entries(statusDist.value).map(([name, value]) => ({ name, value })),
-          label: { formatter: '{b}: {d}%' },
+          label: { show: false },
+          labelLine: { show: false },
         },
       ],
       color: ['#4f46e5', '#0891b2', '#16a34a', '#f59e0b', '#dc2626', '#475569'],
@@ -234,6 +239,8 @@ onBeforeUnmount(() => {
       </el-col>
     </el-row>
 
+    <FleetMonitorMapCard scope="operation" title="北京市车辆监控" :height="520" />
+
     <el-row :gutter="16">
       <el-col :span="16">
         <el-row :gutter="16" class="mb-4">
@@ -254,7 +261,11 @@ onBeforeUnmount(() => {
           <template #header><span class="font-semibold">实时订单追踪</span></template>
           <el-table :data="orders" border>
             <el-table-column prop="order_no" label="订单号" min-width="140" />
-            <el-table-column prop="status" label="状态" width="100" />
+            <el-table-column label="状态" width="120">
+              <template #default="{ row }">
+                <el-tag :color="orderStatusTagColor(row.status)" effect="dark">{{ orderStatusLabel(row.status) }}</el-tag>
+              </template>
+            </el-table-column>
             <el-table-column prop="total_amount" label="金额" width="120" />
             <el-table-column label="更新时间" min-width="180">
               <template #default="{ row }">{{ formatChinaDateTime(row.updated_at) }}</template>

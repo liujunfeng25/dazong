@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import DateTime, ForeignKey, Integer, Numeric, String, UniqueConstraint
+from sqlalchemy import DateTime, ForeignKey, Integer, JSON, Numeric, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import Base
@@ -19,7 +19,10 @@ class OrderReturn(Base):
     source: Mapped[str] = mapped_column(String(32), nullable=False, default="receive_shortage")
     client_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     receive_idempotency_key: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
-    status: Mapped[str] = mapped_column(String(16), nullable=False, default="confirmed")
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="confirmed")
+    reviewed_by_user_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"), nullable=True)
+    reviewed_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    review_note: Mapped[Optional[str]] = mapped_column(String(1000), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.utcnow)
 
 
@@ -38,3 +41,5 @@ class OrderReturnLine(Base):
     delta_kg: Mapped[float] = mapped_column(Numeric(14, 4), nullable=False)
     reason_code: Mapped[str] = mapped_column(String(16), nullable=False)
     reason_detail: Mapped[Optional[str]] = mapped_column(String(2000), nullable=True)
+    photo_urls_json: Mapped[Optional[list]] = mapped_column(JSON, nullable=True)
+    deduction_amount: Mapped[Optional[float]] = mapped_column(Numeric(12, 2), nullable=True)

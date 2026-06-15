@@ -12,6 +12,7 @@ import mCard from "@/components/mCard/index.vue"
 import TianshuNativeEchart from "./TianshuNativeEchart.vue"
 import {
   fetchJson,
+  isTianshuAuthMissingError,
   todayRangeQueryString,
   truncateLabel,
   appendDistrictToQueryString,
@@ -235,7 +236,7 @@ async function load(opts = {}) {
       series: [{ ...option.value.series[0], data: barSeries }, { ...option.value.series[1], data: [bg, bg, bg, bg] }],
     }
   } catch (e) {
-    if (g === loadGen) console.warn("[tianshu] 订单排名", e)
+    if (g === loadGen && !isTianshuAuthMissingError(e)) console.warn("[tianshu] 订单排名", e)
   } finally {
     if (g === loadGen && !silent) chartRefreshing.value = false
   }

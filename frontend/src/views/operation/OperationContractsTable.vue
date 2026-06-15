@@ -66,7 +66,7 @@ const periodText = (row) => {
     <el-table-column label="订单金额" width="120" align="right">
       <template #default="{ row }">{{ money(row.order_total_amount) }}</template>
     </el-table-column>
-    <el-table-column v-if="!compact" label="操作" width="100" align="center" @click.stop>
+    <el-table-column v-if="!compact" label="操作" width="100" align="center">
       <template #default="{ row }">
         <el-button type="primary" link @click.stop="emit('view-contract', row)">详情</el-button>
       </template>

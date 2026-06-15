@@ -1,0 +1,23 @@
+{
+  "health_before": {
+    "status": 200,
+    "elapsed_seconds": 0.003,
+    "body_preview": "{\"status\":\"ok\",\"ts\":\"2026-06-12T09:41:31.264540\"}"
+  },
+  "ready_before": {
+    "status": 200,
+    "elapsed_seconds": 0.002,
+    "body_preview": "{\"status\":\"ready\",\"ts\":\"2026-06-12T09:41:31.266610\"}"
+  },
+  "delivery_vehicles": {
+    "error_type": "ReadTimeout",
+    "error": "timed out",
+    "elapsed_seconds": 5.005
+  },
+  "health_after_timeout": {
+    "status": 200,
+    "elapsed_seconds": 0.012,
+    "body_preview": "{\"status\":\"ok\",\"ts\":\"2026-06-12T09:41:36.276667\"}"
+  },
+  "token_recorded": false
+}

@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Optional
 
 from sqlalchemy import Boolean, Date, Enum, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
@@ -15,6 +16,10 @@ class BillingCycle(Base, TimestampMixin):
     owner_user_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
     scope_type: Mapped[str] = mapped_column(String(32), nullable=False, default="canteen")
     scope_ref_id: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    # client↔delivery 腿派生规则细到食堂；供货腿与全局规则为 NULL
+    canteen_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, index=True)
+    # 运营改过参数的定向规则不再跟随全局；False=下次出账时同步全局参数
+    is_customized: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     cycle_type: Mapped[str] = mapped_column(Enum("daily", "weekly", "monthly"), nullable=False, default="monthly")
     start_date: Mapped[date] = mapped_column(Date, nullable=False)
     end_date: Mapped[date] = mapped_column(Date, nullable=False)

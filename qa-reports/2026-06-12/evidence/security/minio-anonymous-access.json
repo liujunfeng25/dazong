@@ -1,0 +1,32 @@
+[
+  {
+    "kind": "direct",
+    "object": "complaint/6010db9db1fa475bb2584eff3e4f08a5_499.PNG",
+    "result": "200 4204533 image/png"
+  },
+  {
+    "kind": "proxy",
+    "object": "complaint/6010db9db1fa475bb2584eff3e4f08a5_499.PNG",
+    "result": "200 4204533 image/png"
+  },
+  {
+    "kind": "direct",
+    "object": "quality/0c2298685a1143b08677eb448e667da3.png",
+    "result": "200 4204533 image/png"
+  },
+  {
+    "kind": "proxy",
+    "object": "quality/0c2298685a1143b08677eb448e667da3.png",
+    "result": "200 4204533 image/png"
+  },
+  {
+    "kind": "direct",
+    "object": "receiving/06eef466be864deda6d84c1342c1314f.jpg",
+    "result": "200 1038957 image/jpeg"
+  },
+  {
+    "kind": "proxy",
+    "object": "receiving/06eef466be864deda6d84c1342c1314f.jpg",
+    "result": "200 1038957 image/jpeg"
+  }
+]

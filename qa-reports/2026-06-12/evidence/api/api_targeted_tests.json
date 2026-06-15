@@ -1,0 +1,1021 @@
+[
+  {
+    "method": "POST",
+    "path": "/api/operation/products",
+    "payload": {
+      "name": "QA-AUDIT-PRODUCT",
+      "category1_id": 1,
+      "category2_id": 2,
+      "unit": "斤",
+      "reference_price": 10,
+      "standard_type": "standard",
+      "quality_report_mode": "batch",
+      "status": "active"
+    },
+    "status": 422,
+    "body": {
+      "detail": [
+        {
+          "type": "value_error",
+          "loc": [
+            "body"
+          ],
+          "msg": "Value error, 标品（按件清点）的单位必须为计数单位（如 ['件', '袋', '箱', '盒', '包', '桶'] 等），当前为「斤」",
+          "input": {
+            "name": "QA-AUDIT-PRODUCT",
+            "category1_id": 1,
+            "category2_id": 2,
+            "unit": "斤",
+            "reference_price": 10,
+            "standard_type": "standard",
+            "quality_report_mode": "batch",
+            "status": "active"
+          },
+          "ctx": {
+            "error": {}
+          }
+        }
+      ]
+    },
+    "case": "product.standard_with_jin"
+  },
+  {
+    "method": "POST",
+    "path": "/api/operation/products",
+    "payload": {
+      "name": "QA-AUDIT-PRODUCT",
+      "category1_id": 1,
+      "category2_id": 2,
+      "unit": "件",
+      "reference_price": 10,
+      "standard_type": "non_standard",
+      "quality_report_mode": "batch",
+      "status": "active"
+    },
+    "status": 422,
+    "body": {
+      "detail": [
+        {
+          "type": "value_error",
+          "loc": [
+            "body"
+          ],
+          "msg": "Value error, 非标品（按重量收货）的单位必须为计量单位 ['kg', '斤']，当前为「件」",
+          "input": {
+            "name": "QA-AUDIT-PRODUCT",
+            "category1_id": 1,
+            "category2_id": 2,
+            "unit": "件",
+            "reference_price": 10,
+            "standard_type": "non_standard",
+            "quality_report_mode": "batch",
+            "status": "active"
+          },
+          "ctx": {
+            "error": {}
+          }
+        }
+      ]
+    },
+    "case": "product.non_standard_with_piece"
+  },
+  {
+    "method": "POST",
+    "path": "/api/operation/products",
+    "payload": {
+      "name": "   ",
+      "category1_id": 1,
+      "category2_id": 2,
+      "unit": "件",
+      "reference_price": 10,
+      "standard_type": "standard",
+      "quality_report_mode": "batch",
+      "status": "active"
+    },
+    "status": 200,
+    "body": {
+      "category2_id": 2,
+      "height_cm": null,
+      "expire_date": null,
+      "float_rate_max": null,
+      "weight": null,
+      "deleted_at": null,
+      "unit_weight_kg": null,
+      "manufacturer": null,
+      "float_rate_min": null,
+      "remark": null,
+      "created_at": "2026-06-12T09:08:25",
+      "id": 2048,
+      "reference_price": 10.0,
+      "volume_adjust_factor": null,
+      "model": null,
+      "supplier_id": null,
+      "logo": null,
+      "spec": "",
+      "is_designated_factory": false,
+      "source": null,
+      "supplier_name": null,
+      "slogo": null,
+      "name": "   ",
+      "unit": "件",
+      "origin": "",
+      "designated_factory_id": null,
+      "attr": null,
+      "goods_channel": null,
+      "detail_images_json": null,
+      "category1_id": 1,
+      "goods_sn": null,
+      "standard_type": "standard",
+      "quality_report_mode": "batch",
+      "level": null,
+      "finance_code": null,
+      "image_list_json": null,
+      "length_cm": null,
+      "status": "active",
+      "limit_price": null,
+      "finance_rate": null,
+      "external_url": null,
+      "width_cm": null,
+      "brand": null,
+      "discount_rate": null,
+      "number": null,
+      "is_deleted": false
+    },
+    "case": "product.blank_name",
+    "cleanup_status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/api/operation/products",
+    "payload": {
+      "name": "QA-AUDIT-PRODUCT",
+      "category1_id": 1,
+      "category2_id": 2,
+      "unit": "件",
+      "reference_price": -0.01,
+      "standard_type": "standard",
+      "quality_report_mode": "batch",
+      "status": "active"
+    },
+    "status": 200,
+    "body": {
+      "category2_id": 2,
+      "height_cm": null,
+      "expire_date": null,
+      "float_rate_max": null,
+      "weight": null,
+      "deleted_at": null,
+      "unit_weight_kg": null,
+      "manufacturer": null,
+      "float_rate_min": null,
+      "remark": null,
+      "created_at": "2026-06-12T09:08:25",
+      "id": 2049,
+      "reference_price": -0.01,
+      "volume_adjust_factor": null,
+      "model": null,
+      "supplier_id": null,
+      "logo": null,
+      "spec": "",
+      "is_designated_factory": false,
+      "source": null,
+      "supplier_name": null,
+      "slogo": null,
+      "name": "QA-AUDIT-PRODUCT",
+      "unit": "件",
+      "origin": "",
+      "designated_factory_id": null,
+      "attr": null,
+      "goods_channel": null,
+      "detail_images_json": null,
+      "category1_id": 1,
+      "goods_sn": null,
+      "standard_type": "standard",
+      "quality_report_mode": "batch",
+      "level": null,
+      "finance_code": null,
+      "image_list_json": null,
+      "length_cm": null,
+      "status": "active",
+      "limit_price": null,
+      "finance_rate": null,
+      "external_url": null,
+      "width_cm": null,
+      "brand": null,
+      "discount_rate": null,
+      "number": null,
+      "is_deleted": false
+    },
+    "case": "product.negative_price",
+    "cleanup_status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/api/operation/products",
+    "payload": {
+      "name": "QA-AUDIT-PRODUCT",
+      "category1_id": 1,
+      "category2_id": 2,
+      "unit": "件",
+      "reference_price": 0,
+      "standard_type": "standard",
+      "quality_report_mode": "batch",
+      "status": "active"
+    },
+    "status": 200,
+    "body": {
+      "category2_id": 2,
+      "height_cm": null,
+      "expire_date": null,
+      "float_rate_max": null,
+      "weight": null,
+      "deleted_at": null,
+      "unit_weight_kg": null,
+      "manufacturer": null,
+      "float_rate_min": null,
+      "remark": null,
+      "created_at": "2026-06-12T09:08:25",
+      "id": 2050,
+      "reference_price": 0.0,
+      "volume_adjust_factor": null,
+      "model": null,
+      "supplier_id": null,
+      "logo": null,
+      "spec": "",
+      "is_designated_factory": false,
+      "source": null,
+      "supplier_name": null,
+      "slogo": null,
+      "name": "QA-AUDIT-PRODUCT",
+      "unit": "件",
+      "origin": "",
+      "designated_factory_id": null,
+      "attr": null,
+      "goods_channel": null,
+      "detail_images_json": null,
+      "category1_id": 1,
+      "goods_sn": null,
+      "standard_type": "standard",
+      "quality_report_mode": "batch",
+      "level": null,
+      "finance_code": null,
+      "image_list_json": null,
+      "length_cm": null,
+      "status": "active",
+      "limit_price": null,
+      "finance_rate": null,
+      "external_url": null,
+      "width_cm": null,
+      "brand": null,
+      "discount_rate": null,
+      "number": null,
+      "is_deleted": false
+    },
+    "case": "product.zero_price",
+    "cleanup_status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/api/operation/products",
+    "payload": {
+      "name": "QA-AUDIT-PRODUCT",
+      "category1_id": 1,
+      "category2_id": 2,
+      "unit": "件",
+      "reference_price": 10,
+      "standard_type": "standard",
+      "quality_report_mode": "batch",
+      "status": "active",
+      "length_cm": -1,
+      "width_cm": -2,
+      "height_cm": -3,
+      "unit_weight_kg": -1
+    },
+    "status": 200,
+    "body": {
+      "category2_id": 2,
+      "height_cm": -3.0,
+      "expire_date": null,
+      "float_rate_max": null,
+      "weight": null,
+      "deleted_at": null,
+      "unit_weight_kg": -1.0,
+      "manufacturer": null,
+      "float_rate_min": null,
+      "remark": null,
+      "created_at": "2026-06-12T09:08:25",
+      "id": 2051,
+      "reference_price": 10.0,
+      "volume_adjust_factor": null,
+      "model": null,
+      "supplier_id": null,
+      "logo": null,
+      "spec": "",
+      "is_designated_factory": false,
+      "source": null,
+      "supplier_name": null,
+      "slogo": null,
+      "name": "QA-AUDIT-PRODUCT",
+      "unit": "件",
+      "origin": "",
+      "designated_factory_id": null,
+      "attr": null,
+      "goods_channel": null,
+      "detail_images_json": null,
+      "category1_id": 1,
+      "goods_sn": null,
+      "standard_type": "standard",
+      "quality_report_mode": "batch",
+      "level": null,
+      "finance_code": null,
+      "image_list_json": null,
+      "length_cm": -1.0,
+      "status": "active",
+      "limit_price": null,
+      "finance_rate": null,
+      "external_url": null,
+      "width_cm": -2.0,
+      "brand": null,
+      "discount_rate": null,
+      "number": null,
+      "is_deleted": false
+    },
+    "case": "product.negative_dimensions",
+    "cleanup_status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/api/operation/accounts",
+    "payload": {
+      "username": "qa_short_password",
+      "password": "1",
+      "role": "operation",
+      "company_name": "QA 短密码",
+      "status": "active"
+    },
+    "status": 200,
+    "body": {
+      "id": 76,
+      "username": "qa_short_password",
+      "role": "operation",
+      "company_name": "QA 短密码",
+      "contact_phone": "",
+      "address": "",
+      "lng": null,
+      "lat": null,
+      "supplier_delivery_id": null,
+      "return_review_required": false,
+      "status": "active",
+      "created_at": "2026-06-12T09:08:26"
+    },
+    "case": "account.short_password",
+    "short_password_login": {
+      "username": "qa_short_password",
+      "status": 200,
+      "body": {
+        "token": "<redacted>",
+        "role": "operation",
+        "company_name": "QA 短密码"
+      },
+      "role": "operation"
+    },
+    "cleanup_status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/api/operation/accounts",
+    "payload": {
+      "username": "qa_invalid_status",
+      "password": "demo123",
+      "role": "operation",
+      "company_name": "QA 非法状态",
+      "status": "not-a-status"
+    },
+    "status": 500,
+    "body": "Internal Server Error",
+    "case": "account.invalid_status"
+  },
+  {
+    "method": "POST",
+    "path": "/api/operation/accounts",
+    "payload": {
+      "username": "qa_invalid_role",
+      "password": "demo123",
+      "role": "admin",
+      "company_name": "QA 非法角色",
+      "status": "active"
+    },
+    "status": 500,
+    "body": "Internal Server Error",
+    "case": "account.invalid_role"
+  },
+  {
+    "method": "POST",
+    "path": "/api/client/canteen-session",
+    "payload": {
+      "canteen_id": 53
+    },
+    "status": 404,
+    "body": {
+      "detail": "食堂不存在、已停用或不属于本校"
+    },
+    "case": "client.cross_school_canteen"
+  },
+  {
+    "method": "POST",
+    "path": "/api/orders",
+    "payload": {
+      "delivery_id": 3,
+      "items": [],
+      "expected_delivery_date": "2026-06-14",
+      "expected_delivery_slot": "14:00-15:00",
+      "service_duration_min": 30,
+      "force": true
+    },
+    "status": 200,
+    "body": {
+      "canteen_id": 51,
+      "expected_delivery_date": "2026-06-14",
+      "created_at": "2026-06-12T09:08:27",
+      "items_snapshot_json": [],
+      "expected_delivery_slot": "14:00-15:00",
+      "total_amount": 0.0,
+      "service_duration_min": 30,
+      "client_id": 1,
+      "supplier_id": null,
+      "total_volume_m3": null,
+      "status": "下单",
+      "items_json": [],
+      "total_weight_kg": null,
+      "has_abnormal": false,
+      "delivery_address": "北京市朝阳区望京演示点",
+      "receive_signatures_json": null,
+      "delivery_id": 3,
+      "delivery_lng": 116.481181,
+      "version": 1,
+      "order_no": "OD12090827080694",
+      "id": 2728,
+      "delivery_lat": 39.98941,
+      "updated_at": "2026-06-12T09:08:27"
+    },
+    "case": "order.empty_items"
+  },
+  {
+    "method": "POST",
+    "path": "/api/orders",
+    "payload": {
+      "delivery_id": 3,
+      "items": [
+        {
+          "product_id": 2043,
+          "quantity": 0,
+          "unit_price": 0.01
+        }
+      ],
+      "expected_delivery_date": "2026-06-14",
+      "expected_delivery_slot": "14:00-15:00",
+      "service_duration_min": 30,
+      "force": true
+    },
+    "status": 200,
+    "body": {
+      "canteen_id": 51,
+      "expected_delivery_date": "2026-06-14",
+      "created_at": "2026-06-12T09:08:27",
+      "items_snapshot_json": [
+        {
+          "unit": "箱",
+          "width_cm": 2.0,
+          "height_cm": 2.0,
+          "length_cm": 2.0,
+          "product_id": 2043,
+          "category1_id": 1,
+          "category2_id": 5,
+          "product_name": "鸡腿肉（测试）",
+          "standard_type": "standard",
+          "category1_name": "肉",
+          "category2_name": "禽肉类",
+          "order_quantity": 0,
+          "unit_weight_kg": 2.0,
+          "reference_price": 1.0,
+          "order_unit_price": 1.5,
+          "category_float_rate": 0.5,
+          "volume_adjust_factor": null
+        }
+      ],
+      "expected_delivery_slot": "14:00-15:00",
+      "total_amount": 0.0,
+      "service_duration_min": 30,
+      "client_id": 1,
+      "supplier_id": null,
+      "total_volume_m3": 0.0,
+      "status": "下单",
+      "items_json": [
+        {
+          "quantity": 0,
+          "product_id": 2043,
+          "unit_price": 1.5
+        }
+      ],
+      "total_weight_kg": 0.0,
+      "has_abnormal": false,
+      "delivery_address": "北京市朝阳区望京演示点",
+      "receive_signatures_json": null,
+      "delivery_id": 3,
+      "delivery_lng": 116.481181,
+      "version": 1,
+      "order_no": "OD12090827101927",
+      "id": 2729,
+      "delivery_lat": 39.98941,
+      "updated_at": "2026-06-12T09:08:27"
+    },
+    "case": "order.zero_quantity"
+  },
+  {
+    "method": "POST",
+    "path": "/api/orders",
+    "payload": {
+      "delivery_id": 3,
+      "items": [
+        {
+          "product_id": 2043,
+          "quantity": -1,
+          "unit_price": 0.01
+        }
+      ],
+      "expected_delivery_date": "2026-06-14",
+      "expected_delivery_slot": "14:00-15:00",
+      "service_duration_min": 30,
+      "force": true
+    },
+    "status": 200,
+    "body": {
+      "canteen_id": 51,
+      "expected_delivery_date": "2026-06-14",
+      "created_at": "2026-06-12T09:08:27",
+      "items_snapshot_json": [
+        {
+          "unit": "箱",
+          "width_cm": 2.0,
+          "height_cm": 2.0,
+          "length_cm": 2.0,
+          "product_id": 2043,
+          "category1_id": 1,
+          "category2_id": 5,
+          "product_name": "鸡腿肉（测试）",
+          "standard_type": "standard",
+          "category1_name": "肉",
+          "category2_name": "禽肉类",
+          "order_quantity": -1,
+          "unit_weight_kg": 2.0,
+          "reference_price": 1.0,
+          "order_unit_price": 1.5,
+          "category_float_rate": 0.5,
+          "volume_adjust_factor": null
+        }
+      ],
+      "expected_delivery_slot": "14:00-15:00",
+      "total_amount": -1.5,
+      "service_duration_min": 30,
+      "client_id": 1,
+      "supplier_id": null,
+      "total_volume_m3": 0.0,
+      "status": "下单",
+      "items_json": [
+        {
+          "quantity": -1,
+          "product_id": 2043,
+          "unit_price": 1.5
+        }
+      ],
+      "total_weight_kg": -2.0,
+      "has_abnormal": false,
+      "delivery_address": "北京市朝阳区望京演示点",
+      "receive_signatures_json": null,
+      "delivery_id": 3,
+      "delivery_lng": 116.481181,
+      "version": 1,
+      "order_no": "OD12090827121123",
+      "id": 2730,
+      "delivery_lat": 39.98941,
+      "updated_at": "2026-06-12T09:08:27"
+    },
+    "case": "order.negative_quantity"
+  },
+  {
+    "case": "order.concurrent_duplicate_submit",
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/api/orders",
+        "payload": {
+          "delivery_id": 3,
+          "items": [
+            {
+              "product_id": 2043,
+              "quantity": 1,
+              "unit_price": 0.01
+            }
+          ],
+          "expected_delivery_date": "2026-06-14",
+          "expected_delivery_slot": "14:00-15:00",
+          "service_duration_min": 30,
+          "force": true
+        },
+        "status": 200,
+        "body": {
+          "canteen_id": 51,
+          "expected_delivery_date": "2026-06-14",
+          "created_at": "2026-06-12T09:08:27",
+          "items_snapshot_json": [
+            {
+              "unit": "箱",
+              "width_cm": 2.0,
+              "height_cm": 2.0,
+              "length_cm": 2.0,
+              "product_id": 2043,
+              "category1_id": 1,
+              "category2_id": 5,
+              "product_name": "鸡腿肉（测试）",
+              "standard_type": "standard",
+              "category1_name": "肉",
+              "category2_name": "禽肉类",
+              "order_quantity": 1,
+              "unit_weight_kg": 2.0,
+              "reference_price": 1.0,
+              "order_unit_price": 1.5,
+              "category_float_rate": 0.5,
+              "volume_adjust_factor": null
+            }
+          ],
+          "expected_delivery_slot": "14:00-15:00",
+          "total_amount": 1.5,
+          "service_duration_min": 30,
+          "client_id": 1,
+          "supplier_id": null,
+          "total_volume_m3": 0.0,
+          "status": "下单",
+          "items_json": [
+            {
+              "quantity": 1,
+              "product_id": 2043,
+              "unit_price": 1.5
+            }
+          ],
+          "total_weight_kg": 2.0,
+          "has_abnormal": false,
+          "delivery_address": "北京市朝阳区望京演示点",
+          "receive_signatures_json": null,
+          "delivery_id": 3,
+          "delivery_lng": 116.481181,
+          "version": 1,
+          "order_no": "OD12090827144853",
+          "id": 2731,
+          "delivery_lat": 39.98941,
+          "updated_at": "2026-06-12T09:08:27"
+        }
+      },
+      {
+        "method": "POST",
+        "path": "/api/orders",
+        "payload": {
+          "delivery_id": 3,
+          "items": [
+            {
+              "product_id": 2043,
+              "quantity": 1,
+              "unit_price": 0.01
+            }
+          ],
+          "expected_delivery_date": "2026-06-14",
+          "expected_delivery_slot": "14:00-15:00",
+          "service_duration_min": 30,
+          "force": true
+        },
+        "status": 200,
+        "body": {
+          "canteen_id": 51,
+          "expected_delivery_date": "2026-06-14",
+          "created_at": "2026-06-12T09:08:27",
+          "items_snapshot_json": [
+            {
+              "unit": "箱",
+              "width_cm": 2.0,
+              "height_cm": 2.0,
+              "length_cm": 2.0,
+              "product_id": 2043,
+              "category1_id": 1,
+              "category2_id": 5,
+              "product_name": "鸡腿肉（测试）",
+              "standard_type": "standard",
+              "category1_name": "肉",
+              "category2_name": "禽肉类",
+              "order_quantity": 1,
+              "unit_weight_kg": 2.0,
+              "reference_price": 1.0,
+              "order_unit_price": 1.5,
+              "category_float_rate": 0.5,
+              "volume_adjust_factor": null
+            }
+          ],
+          "expected_delivery_slot": "14:00-15:00",
+          "total_amount": 1.5,
+          "service_duration_min": 30,
+          "client_id": 1,
+          "supplier_id": null,
+          "total_volume_m3": 0.0,
+          "status": "下单",
+          "items_json": [
+            {
+              "quantity": 1,
+              "product_id": 2043,
+              "unit_price": 1.5
+            }
+          ],
+          "total_weight_kg": 2.0,
+          "has_abnormal": false,
+          "delivery_address": "北京市朝阳区望京演示点",
+          "receive_signatures_json": null,
+          "delivery_id": 3,
+          "delivery_lng": 116.481181,
+          "version": 1,
+          "order_no": "OD12090827146212",
+          "id": 2732,
+          "delivery_lat": 39.98941,
+          "updated_at": "2026-06-12T09:08:27"
+        }
+      }
+    ],
+    "created_order_ids": [
+      2731,
+      2732
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/api/orders/2732/review",
+    "payload": {
+      "rating": 99,
+      "comment": "QA-AUDIT review before completion"
+    },
+    "status": 200,
+    "body": {
+      "message": "评价成功"
+    },
+    "case": "order.review_before_completion_invalid_rating"
+  },
+  {
+    "case": "cleanup.cancel_order",
+    "order_id": 2728,
+    "status": 200,
+    "body": {
+      "canteen_id": 51,
+      "expected_delivery_date": "2026-06-14",
+      "created_at": "2026-06-12T09:08:27",
+      "items_snapshot_json": [],
+      "expected_delivery_slot": "14:00-15:00",
+      "total_amount": 0.0,
+      "service_duration_min": 30,
+      "client_id": 1,
+      "supplier_id": null,
+      "total_volume_m3": null,
+      "status": "取消",
+      "items_json": [],
+      "total_weight_kg": null,
+      "has_abnormal": false,
+      "delivery_address": "北京市朝阳区望京演示点",
+      "receive_signatures_json": null,
+      "delivery_id": 3,
+      "delivery_lng": 116.481181,
+      "version": 2,
+      "order_no": "OD12090827080694",
+      "id": 2728,
+      "delivery_lat": 39.98941,
+      "updated_at": "2026-06-12T09:08:27.175997"
+    }
+  },
+  {
+    "case": "cleanup.cancel_order",
+    "order_id": 2729,
+    "status": 200,
+    "body": {
+      "canteen_id": 51,
+      "expected_delivery_date": "2026-06-14",
+      "created_at": "2026-06-12T09:08:27",
+      "items_snapshot_json": [
+        {
+          "unit": "箱",
+          "width_cm": 2.0,
+          "height_cm": 2.0,
+          "length_cm": 2.0,
+          "product_id": 2043,
+          "category1_id": 1,
+          "category2_id": 5,
+          "product_name": "鸡腿肉（测试）",
+          "standard_type": "standard",
+          "category1_name": "肉",
+          "category2_name": "禽肉类",
+          "order_quantity": 0,
+          "unit_weight_kg": 2.0,
+          "reference_price": 1.0,
+          "order_unit_price": 1.5,
+          "category_float_rate": 0.5,
+          "volume_adjust_factor": null
+        }
+      ],
+      "expected_delivery_slot": "14:00-15:00",
+      "total_amount": 0.0,
+      "service_duration_min": 30,
+      "client_id": 1,
+      "supplier_id": null,
+      "total_volume_m3": 0.0,
+      "status": "取消",
+      "items_json": [
+        {
+          "quantity": 0,
+          "product_id": 2043,
+          "unit_price": 1.5
+        }
+      ],
+      "total_weight_kg": 0.0,
+      "has_abnormal": false,
+      "delivery_address": "北京市朝阳区望京演示点",
+      "receive_signatures_json": null,
+      "delivery_id": 3,
+      "delivery_lng": 116.481181,
+      "version": 2,
+      "order_no": "OD12090827101927",
+      "id": 2729,
+      "delivery_lat": 39.98941,
+      "updated_at": "2026-06-12T09:08:27.191141"
+    }
+  },
+  {
+    "case": "cleanup.cancel_order",
+    "order_id": 2730,
+    "status": 200,
+    "body": {
+      "canteen_id": 51,
+      "expected_delivery_date": "2026-06-14",
+      "created_at": "2026-06-12T09:08:27",
+      "items_snapshot_json": [
+        {
+          "unit": "箱",
+          "width_cm": 2.0,
+          "height_cm": 2.0,
+          "length_cm": 2.0,
+          "product_id": 2043,
+          "category1_id": 1,
+          "category2_id": 5,
+          "product_name": "鸡腿肉（测试）",
+          "standard_type": "standard",
+          "category1_name": "肉",
+          "category2_name": "禽肉类",
+          "order_quantity": -1,
+          "unit_weight_kg": 2.0,
+          "reference_price": 1.0,
+          "order_unit_price": 1.5,
+          "category_float_rate": 0.5,
+          "volume_adjust_factor": null
+        }
+      ],
+      "expected_delivery_slot": "14:00-15:00",
+      "total_amount": -1.5,
+      "service_duration_min": 30,
+      "client_id": 1,
+      "supplier_id": null,
+      "total_volume_m3": 0.0,
+      "status": "取消",
+      "items_json": [
+        {
+          "quantity": -1,
+          "product_id": 2043,
+          "unit_price": 1.5
+        }
+      ],
+      "total_weight_kg": -2.0,
+      "has_abnormal": false,
+      "delivery_address": "北京市朝阳区望京演示点",
+      "receive_signatures_json": null,
+      "delivery_id": 3,
+      "delivery_lng": 116.481181,
+      "version": 2,
+      "order_no": "OD12090827121123",
+      "id": 2730,
+      "delivery_lat": 39.98941,
+      "updated_at": "2026-06-12T09:08:27.205116"
+    }
+  },
+  {
+    "case": "cleanup.cancel_order",
+    "order_id": 2731,
+    "status": 200,
+    "body": {
+      "canteen_id": 51,
+      "expected_delivery_date": "2026-06-14",
+      "created_at": "2026-06-12T09:08:27",
+      "items_snapshot_json": [
+        {
+          "unit": "箱",
+          "width_cm": 2.0,
+          "height_cm": 2.0,
+          "length_cm": 2.0,
+          "product_id": 2043,
+          "category1_id": 1,
+          "category2_id": 5,
+          "product_name": "鸡腿肉（测试）",
+          "standard_type": "standard",
+          "category1_name": "肉",
+          "category2_name": "禽肉类",
+          "order_quantity": 1,
+          "unit_weight_kg": 2.0,
+          "reference_price": 1.0,
+          "order_unit_price": 1.5,
+          "category_float_rate": 0.5,
+          "volume_adjust_factor": null
+        }
+      ],
+      "expected_delivery_slot": "14:00-15:00",
+      "total_amount": 1.5,
+      "service_duration_min": 30,
+      "client_id": 1,
+      "supplier_id": null,
+      "total_volume_m3": 0.0,
+      "status": "取消",
+      "items_json": [
+        {
+          "quantity": 1,
+          "product_id": 2043,
+          "unit_price": 1.5
+        }
+      ],
+      "total_weight_kg": 2.0,
+      "has_abnormal": false,
+      "delivery_address": "北京市朝阳区望京演示点",
+      "receive_signatures_json": null,
+      "delivery_id": 3,
+      "delivery_lng": 116.481181,
+      "version": 2,
+      "order_no": "OD12090827144853",
+      "id": 2731,
+      "delivery_lat": 39.98941,
+      "updated_at": "2026-06-12T09:08:27.221050"
+    }
+  },
+  {
+    "case": "cleanup.cancel_order",
+    "order_id": 2732,
+    "status": 200,
+    "body": {
+      "canteen_id": 51,
+      "expected_delivery_date": "2026-06-14",
+      "created_at": "2026-06-12T09:08:27",
+      "items_snapshot_json": [
+        {
+          "unit": "箱",
+          "width_cm": 2.0,
+          "height_cm": 2.0,
+          "length_cm": 2.0,
+          "product_id": 2043,
+          "category1_id": 1,
+          "category2_id": 5,
+          "product_name": "鸡腿肉（测试）",
+          "standard_type": "standard",
+          "category1_name": "肉",
+          "category2_name": "禽肉类",
+          "order_quantity": 1,
+          "unit_weight_kg": 2.0,
+          "reference_price": 1.0,
+          "order_unit_price": 1.5,
+          "category_float_rate": 0.5,
+          "volume_adjust_factor": null
+        }
+      ],
+      "expected_delivery_slot": "14:00-15:00",
+      "total_amount": 1.5,
+      "service_duration_min": 30,
+      "client_id": 1,
+      "supplier_id": null,
+      "total_volume_m3": 0.0,
+      "status": "取消",
+      "items_json": [
+        {
+          "quantity": 1,
+          "product_id": 2043,
+          "unit_price": 1.5
+        }
+      ],
+      "total_weight_kg": 2.0,
+      "has_abnormal": false,
+      "delivery_address": "北京市朝阳区望京演示点",
+      "receive_signatures_json": null,
+      "delivery_id": 3,
+      "delivery_lng": 116.481181,
+      "version": 2,
+      "order_no": "OD12090827146212",
+      "id": 2732,
+      "delivery_lat": 39.98941,
+      "updated_at": "2026-06-12T09:08:27.235694"
+    }
+  }
+]

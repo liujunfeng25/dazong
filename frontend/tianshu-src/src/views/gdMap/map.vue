@@ -32,15 +32,18 @@ onBeforeUnmount(() => {
 });
 function loadMap(assets) {
   canvasMap.value = new World(document.getElementById("canvasMap"), assets);
+  if (import.meta.env.DEV || new URLSearchParams(window.location.search).get("demo")) {
+    window.__TIANSHU_MAP_WORLD__ = canvasMap.value;
+  }
   canvasMap.value.time.pause();
-}
-function toggleDistrictDrill(name) {
-  canvasMap.value?.toggleDistrictDrill?.(name);
 }
 async function play() {
   canvasMap.value.time.resume();
   canvasMap.value.animateTl.timeScale(1); // 设置播放速度正常
   canvasMap.value.animateTl.play();
+}
+function toggleDistrictDrill(name) {
+  canvasMap.value?.toggleDistrictDrill?.(name);
 }
 defineExpose({
   loadMap,

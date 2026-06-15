@@ -1,7 +1,11 @@
 <script setup>
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { computed, onMounted, ref } from 'vue'
-import { listSupplierProductQuotesApi, saveSupplierProductQuotesApi } from '../../api/supplier'
+import {
+  listSupplierProductQuotesApi,
+  saveSupplierProductQuotesApi,
+  withdrawSupplierProductQuoteApi,
+} from '../../api/supplier'
 
 const loading = ref(false)
 const saving = ref(false)
@@ -87,6 +91,27 @@ const onQuoteStatusChange = () => {
 const rateDisplay = (val) => {
   if (val == null) return '--'
   return `${(Number(val) * 100).toFixed(2)}%`
+}
+
+const withdraw = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      `确定撤回 ${row.product_name || '该商品'} 的报价吗？撤回后将不再向分包配送商提供该商品的供货能力。`,
+      '撤回报价',
+      {
+        type: 'warning',
+        confirmButtonText: '撤回',
+        cancelButtonText: '取消',
+        customClass: 'danger-confirm-dialog',
+        confirmButtonClass: 'danger-confirm-btn',
+      },
+    )
+  } catch {
+    return
+  }
+  await withdrawSupplierProductQuoteApi(row.product_id)
+  ElMessage.success('已撤回报价')
+  await load()
 }
 
 onMounted(load)
@@ -176,6 +201,19 @@ onMounted(load)
       <el-table-column label="变更" width="90" align="center">
         <template #default="{ row }">
           <el-tag v-if="row._dirty" type="warning">待保存</el-tag>
+          <span v-else>-</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="110" align="center">
+        <template #default="{ row }">
+          <el-button
+            v-if="row.my_quote_price != null"
+            type="danger"
+            link
+            @click="withdraw(row)"
+          >
+            撤回报价
+          </el-button>
           <span v-else>-</span>
         </template>
       </el-table-column>

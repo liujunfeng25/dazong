@@ -2,6 +2,7 @@
  * 天枢实时链路条：WebSocket（/api/insights/business/ws/live-gmv）+ 服务端 ping 心跳脉冲
  */
 import { ref, computed, onMounted, onUnmounted } from "vue"
+import { hasTianshuAuthToken, isTianshuNoAuthDemoMode } from "@/api/tianshuInsights.js"
 
 const WS_PATH = "/api/insights/business/ws/live-gmv"
 const BAR_N = 16
@@ -88,8 +89,13 @@ export function useTianshuOpsConsole() {
 
   function connect() {
     if (ws) return
+    if (isTianshuNoAuthDemoMode()) {
+      wsConnected.value = false
+      return
+    }
     const proto = window.location.protocol === "https:" ? "wss:" : "ws:"
     const token = window.localStorage?.getItem("dz_token") || ""
+    if (!token && !hasTianshuAuthToken()) return
     const q = new URLSearchParams()
     if (token) q.set("token", token)
     const qs = q.toString()
@@ -211,6 +217,17 @@ export function useTianshuOpsConsole() {
     return `${ago} · 下次 ~${nextSec}s`
   })
 
+  /**
+   * 模拟器接口：把合成消息丢进真实消息处理管线，UI 完全分辨不出。
+   * 用于「模拟数据」按钮在前端注入 batch/snapshot/ping，让 KPI/心跳条/活动条都跳起来。
+   * 仅本地内存，不发送任何网络帧。
+   */
+  function pushSyntheticEvent(msg) {
+    if (msg && typeof msg === "object") {
+      handleMsg(msg)
+    }
+  }
+
   return {
     wsConnected,
     pingPulse,
@@ -224,5 +241,6 @@ export function useTianshuOpsConsole() {
     lastPingLabel,
     heartbeatInline,
     applyClientKpiReconcile,
+    pushSyntheticEvent,
   }
 }

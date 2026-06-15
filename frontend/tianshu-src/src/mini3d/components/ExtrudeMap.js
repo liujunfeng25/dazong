@@ -51,10 +51,19 @@ export class ExtrudeMap {
     this.create(mapData)
   }
   geoProjection(args) {
-    return geoMercator()
+    if (!Array.isArray(args) || args.length < 2) return null
+    const lng = Number(args[0])
+    const lat = Number(args[1])
+    if (!Number.isFinite(lng) || !Number.isFinite(lat)) return null
+    const p = geoMercator()
       .center(this.config.geoProjectionCenter)
       .scale(this.config.geoProjectionScale)
-      .translate([0, 0])(args)
+      .translate([0, 0])([lng, lat])
+    if (!Array.isArray(p) || p.length < 2) return null
+    const x = Number(p[0])
+    const y = Number(p[1])
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return null
+    return [x, y]
   }
   create(mapData) {
     mapData.features.forEach((feature) => {
@@ -80,7 +89,9 @@ export class ExtrudeMap {
             if (!polygon[i][0] || !polygon[i][1]) {
               return false
             }
-            const [x, y] = this.geoProjection(polygon[i])
+            const projected = this.geoProjection(polygon[i])
+            if (!projected) continue
+            const [x, y] = projected
             if (i === 0) {
               shape.moveTo(x, -y)
             }

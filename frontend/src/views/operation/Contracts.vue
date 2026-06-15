@@ -10,7 +10,7 @@ import {
 } from '../../api/operation'
 import { formatChinaDateTime } from '../../utils/datetime'
 import { contractDbStatusTagType, contractLifecycleTagType } from '../../utils/contractStatus'
-import { MAIN_ORDER_STATUS_OPTIONS, orderMainStatusTagType, orderStatusLabel } from '../../utils/orderStatus'
+import { MAIN_ORDER_STATUS_OPTIONS, orderStatusLabel, orderStatusTagColor } from '../../utils/orderStatus'
 
 const router = useRouter()
 const route = useRoute()
@@ -106,7 +106,8 @@ const loadOrders = async () => {
     if (orderNo.value?.trim()) params.order_no = orderNo.value.trim()
     if (orderDateRange.value?.[0]) params.expected_date_start = toDateStr(orderDateRange.value[0])
     if (orderDateRange.value?.[1]) params.expected_date_end = toDateStr(orderDateRange.value[1])
-    orderList.value = await listOperationContractOrdersApi(activeContractId.value, params)
+    const raw = await listOperationContractOrdersApi(activeContractId.value, params)
+    orderList.value = Array.isArray(raw) ? raw : []
   } catch (e) {
     ElMessage.error(e?.response?.data?.detail || '加载订单失败')
     orderList.value = []
@@ -116,7 +117,13 @@ const loadOrders = async () => {
 }
 
 const goOrderDetail = (row) => {
-  router.push(`/operation/orders/${row.id}`)
+  const id = row?.id ?? row?.order_id
+  const n = Number(id)
+  if (!Number.isFinite(n) || n <= 0) {
+    ElMessage.error('无法打开订单详情：缺少有效的订单 ID')
+    return
+  }
+  router.push(`/operation/orders/${n}`).catch(() => {})
 }
 
 const tryOpenFromQuery = async () => {
@@ -239,7 +246,7 @@ const pct = (r) => `${(Number(r || 0) * 100).toFixed(2)}%`
             <el-table-column prop="order_no" label="订单号" min-width="150" />
             <el-table-column prop="status" label="状态" width="120">
               <template #default="{ row }">
-                <el-tag :type="orderMainStatusTagType(row.status)">{{ orderStatusLabel(row.status) }}</el-tag>
+                <el-tag :color="orderStatusTagColor(row.status)" effect="dark">{{ orderStatusLabel(row.status) }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column prop="total_amount" label="金额" width="120">
@@ -255,7 +262,7 @@ const pct = (r) => `${(Number(r || 0) * 100).toFixed(2)}%`
             <el-table-column label="更新时间" min-width="170">
               <template #default="{ row }">{{ formatChinaDateTime(row.updated_at) }}</template>
             </el-table-column>
-            <el-table-column label="操作" width="100" align="center" @click.stop>
+            <el-table-column label="操作" width="100" align="center">
               <template #default="{ row }">
                 <el-button type="primary" link @click.stop="goOrderDetail(row)">订单详情</el-button>
               </template>

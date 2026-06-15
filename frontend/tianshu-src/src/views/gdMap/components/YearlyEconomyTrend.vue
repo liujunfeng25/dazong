@@ -52,6 +52,7 @@ import mPie from "@/components/mPie/index.vue"
 import mCountTo from "@/components/mCountTo/index.js"
 import {
   fetchJson,
+  isTianshuAuthMissingError,
   todayRangeQueryString,
   appendDistrictToQueryString,
   TIANSHU_CHART_QUERY_DISTRICT_KEY,
@@ -116,7 +117,7 @@ async function load(opts = {}) {
     state.pieData = nextPie
     pieKey.value += 1
   } catch (e) {
-    if (g === loadGen) console.warn("[tianshu] 客单价分布", e)
+    if (g === loadGen && !isTianshuAuthMissingError(e)) console.warn("[tianshu] 客单价分布", e)
   } finally {
     if (g === loadGen && !silent) chartRefreshing.value = false
   }

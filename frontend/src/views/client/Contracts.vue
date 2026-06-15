@@ -2,9 +2,11 @@
 import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { listContractsApi, tenderMetaApi } from '../../api/contracts'
+import { useIsMobile } from '../../composables/useIsMobile'
 
 const router = useRouter()
 const route = useRoute()
+const { isMobile } = useIsMobile()
 const list = ref([])
 const status = ref('')
 const loading = ref(false)
@@ -57,6 +59,52 @@ watch(() => route.fullPath, load)
 </script>
 
 <template>
+  <!-- ── Mobile ── -->
+  <div v-if="isMobile" class="m-page">
+    <div class="m-filter-bar">
+      <div class="m-status-tabs">
+        <button class="m-status-tab" :class="{ 'is-active': !status }" @click="status = ''; load()">全部</button>
+        <button class="m-status-tab" :class="{ 'is-active': status === '已中标' }" @click="status = '已中标'; load()">已中标</button>
+        <button class="m-status-tab" :class="{ 'is-active': status === '执行中' }" @click="status = '执行中'; load()">执行中</button>
+        <button class="m-status-tab" :class="{ 'is-active': status === '已过期' }" @click="status = '已过期'; load()">已过期</button>
+      </div>
+    </div>
+
+    <div v-if="loading" class="m-empty">加载中...</div>
+    <div v-else-if="!list.length" class="m-empty">暂无合约，请先发起招标</div>
+    <div v-else class="m-contract-list">
+      <div v-for="row in list" :key="row.id" class="m-contract-card">
+        <div class="m-contract-card__top">
+          <span class="m-contract-card__no">{{ row.contract_no }}</span>
+          <span class="m-contract-tag" :class="`m-contract-tag--${statusTagType(row)}`">{{ statusLabel(row) }}</span>
+        </div>
+        <div class="m-contract-card__delivery">
+          <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;margin-right:4px">local_shipping</span>
+          {{ deliveryNameMap[row.delivery_id] || `配送方#${row.delivery_id}` }}
+        </div>
+        <div class="m-contract-card__period">
+          <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;margin-right:4px">date_range</span>
+          {{ row.period_start || '—' }} ~ {{ row.period_end || '—' }}
+        </div>
+        <div class="m-contract-card__rate">
+          平均浮动率 <strong>{{ percent(row.price_float_rate) }}</strong>
+        </div>
+        <div v-if="categoryRateRows(row).length" class="m-category-chips">
+          <span v-for="item in categoryRateRows(row)" :key="item.category_id" class="m-cat-chip">
+            {{ item.category_name }}：{{ percent(item.float_rate) }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <button class="m-fab-btn" @click="router.push('/client/contracts/new')">
+      <span class="material-symbols-outlined">add</span>
+      发起招标
+    </button>
+  </div>
+
+  <!-- ── PC ── -->
+  <template v-else>
   <el-card class="mb-3">
     <el-form inline>
       <el-form-item>
@@ -116,6 +164,7 @@ watch(() => route.fullPath, load)
       <el-table-column prop="period_end" label="结束" min-width="130" />
     </el-table>
   </el-card>
+  </template>
 </template>
 
 <style scoped>
@@ -126,6 +175,12 @@ watch(() => route.fullPath, load)
   color: #334155;
   font-size: 13px;
   padding: 4px 8px;
+}
+
+@media (max-width: 768px) {
+  .contract-detail {
+    grid-template-columns: 1fr;
+  }
 }
 
 .detail-label {
@@ -178,5 +233,131 @@ watch(() => route.fullPath, load)
   margin-top: 8px;
   font-size: 12px;
   color: #64748b;
+}
+
+/* ── Mobile styles ── */
+.m-page {
+  font-family: var(--m-font-body);
+  padding-bottom: 80px;
+  position: relative;
+  min-height: 100%;
+}
+.m-filter-bar {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--m-outline-variant);
+  background: var(--m-surface-container-lowest);
+}
+.m-status-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.m-status-tabs::-webkit-scrollbar { display: none; }
+.m-status-tab {
+  flex: none;
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1.5px solid var(--m-outline-variant);
+  background: transparent;
+  color: var(--m-on-surface-variant);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s;
+}
+.m-status-tab.is-active {
+  background: var(--m-primary);
+  border-color: var(--m-primary);
+  color: var(--m-on-primary);
+}
+.m-contract-list {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.m-contract-card {
+  background: var(--m-surface-container-lowest);
+  border: 1px solid var(--m-outline-variant);
+  border-radius: 12px;
+  padding: 14px;
+}
+.m-contract-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.m-contract-card__no {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--m-on-surface);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.m-contract-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 8px;
+  flex: none;
+}
+.m-contract-tag--success { background: #dcfce7; color: #15803d; }
+.m-contract-tag--info { background: var(--m-surface-container-high); color: var(--m-on-surface-variant); }
+.m-contract-tag--warning { background: #fef9c3; color: #854d0e; }
+.m-contract-card__delivery,
+.m-contract-card__period {
+  font-size: 13px;
+  color: var(--m-on-surface-variant);
+  margin-bottom: 4px;
+}
+.m-contract-card__rate {
+  font-size: 13px;
+  color: var(--m-on-surface);
+  margin-top: 6px;
+}
+.m-category-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.m-cat-chip {
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--m-secondary-fixed);
+  color: var(--m-primary);
+  font-size: 12px;
+  font-weight: 500;
+}
+.m-fab-btn {
+  position: fixed;
+  bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 20px;
+  border-radius: 28px;
+  border: none;
+  background: var(--m-primary);
+  color: var(--m-on-primary);
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(0,50,134,0.32);
+  cursor: pointer;
+  font-family: var(--m-font-body);
+}
+.m-fab-btn .material-symbols-outlined { font-size: 20px; }
+.m-empty {
+  text-align: center;
+  color: var(--m-on-surface-variant);
+  padding: 48px 16px;
+  font-size: 14px;
 }
 </style>

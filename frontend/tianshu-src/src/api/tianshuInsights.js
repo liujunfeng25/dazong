@@ -16,10 +16,35 @@ const FETCH_CACHE_TTL_MS = 55_000
 const FETCH_CACHE_MAX = 64
 const fetchResponseCache = new Map()
 const fetchInflight = new Map()
+export const TIANSHU_NO_AUTH_DEMO_CODE = "TIANSHU_NO_AUTH_DEMO"
 
 function authHeaders() {
   const token = window.localStorage?.getItem("dz_token")
   return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
+export function hasTianshuAuthToken() {
+  return Boolean(window.localStorage?.getItem("dz_token"))
+}
+
+export function isTianshuNoAuthDemoMode() {
+  if (hasTianshuAuthToken()) return false
+  const mode = import.meta.env.VITE_DEMO_MODE
+  if (import.meta.env.DEV || mode === true || mode === "true" || mode === "1") return true
+  if (typeof window === "undefined") return false
+  const q = new URLSearchParams(window.location.search)
+  return q.get("demo") === "1" || q.get("demo") === "true"
+}
+
+export function createTianshuNoAuthDemoError() {
+  const err = new Error("天枢演示模式：未登录，跳过真实接口请求")
+  err.code = TIANSHU_NO_AUTH_DEMO_CODE
+  err.silent = true
+  return err
+}
+
+export function isTianshuAuthMissingError(err) {
+  return err?.code === TIANSHU_NO_AUTH_DEMO_CODE || err?.message === "Not authenticated"
 }
 
 /** 缓存命中时返回副本，避免多图表共享同一对象被就地改写 */
@@ -50,6 +75,10 @@ export async function fetchJson(url, opts = {}) {
   const cacheable =
     !bypass && typeof url === "string" && url.includes("/api/insights/business/")
   const now = Date.now()
+
+  if (typeof url === "string" && url.includes("/api/insights/business/") && isTianshuNoAuthDemoMode()) {
+    throw createTianshuNoAuthDemoError()
+  }
 
   if (cacheable) {
     const hit = fetchResponseCache.get(url)
@@ -170,7 +199,7 @@ export function prefetchTianshuInsightCaches() {
       ])
       await fetchJson(`${API_BASE}/cockpit-smart-side-insights?${todayQs}`)
     } catch (e) {
-      console.warn("[tianshu] prefetch insights", e)
+      if (!isTianshuAuthMissingError(e)) console.warn("[tianshu] prefetch insights", e)
     }
   })()
 }
@@ -187,7 +216,7 @@ export function debouncedDistrictReload(loadFn, ms = DISTRICT_CHART_DEBOUNCE_MS)
       timer = null
       const run = () => {
         void Promise.resolve(loadFn()).catch((err) => {
-          console.warn("[tianshu] chart load", err)
+          if (!isTianshuAuthMissingError(err)) console.warn("[tianshu] chart load", err)
         })
       }
       if (typeof requestIdleCallback !== "undefined") {

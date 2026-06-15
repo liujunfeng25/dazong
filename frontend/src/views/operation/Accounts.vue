@@ -12,11 +12,15 @@ import {
 } from '../../api/operation'
 import { useUserStore } from '../../stores/user'
 import { can } from '../../utils/permissions'
+import { formatGeoCoord, isUsableGeoCoord } from '../../utils/geoCoords'
 
 /** 演示环境统一默认密码；创建与「重置密码」均使用此值 */
 const DEFAULT_DEMO_PASSWORD = 'demo123'
 
 const role = ref('')
+const keyword = ref('')
+const statusFilter = ref('')
+const supplierDeliveryFilter = ref(null)
 const list = ref([])
 const deliveryOptions = ref([])
 const userStore = useUserStore()
@@ -40,9 +44,16 @@ const form = reactive({
   company_name: '',
   contact_phone: '',
   address: '',
+  lng: null,
+  lat: null,
   status: 'active',
+  return_review_required: false,
 })
 const lastTipItems = ref([])
+
+const accountMapWrapRef = ref(null)
+const accountMap = ref(null)
+const accountMarker = ref(null)
 
 const buildAccountPayload = (password = (form.password || '').trim() || DEFAULT_DEMO_PASSWORD) => ({
   username: form.username,
@@ -51,7 +62,87 @@ const buildAccountPayload = (password = (form.password || '').trim() || DEFAULT_
   company_name: form.company_name,
   contact_phone: form.contact_phone,
   address: form.address,
+  lng: Number.isFinite(Number(form.lng)) ? Number(form.lng) : null,
+  lat: Number.isFinite(Number(form.lat)) ? Number(form.lat) : null,
   status: form.status,
+  return_review_required: form.role === 'delivery' ? Boolean(form.return_review_required) : false,
+})
+
+const placeOrMoveAccountMarker = (lng, lat, recenter = false) => {
+  if (!accountMap.value) return
+  if (!accountMarker.value) {
+    accountMarker.value = new window.AMap.Marker({
+      position: [lng, lat],
+      draggable: true,
+      cursor: 'move',
+    })
+    accountMarker.value.setMap(accountMap.value)
+    accountMarker.value.on('dragend', (e) => {
+      const p = e.lnglat
+      if (!p) return
+      form.lng = Number(p.lng)
+      form.lat = Number(p.lat)
+    })
+  } else {
+    accountMarker.value.setPosition([lng, lat])
+  }
+  if (recenter) accountMap.value.setZoomAndCenter(15, [lng, lat])
+}
+
+const initAccountMap = async () => {
+  if (!accountMapWrapRef.value) return
+  const key = import.meta.env.VITE_AMAP_KEY
+  if (!key) {
+    ElMessage.warning('未配置高德 Key（VITE_AMAP_KEY），地图不可用')
+    return
+  }
+  try {
+    const securityJsCode = import.meta.env.VITE_AMAP_SECURITY_JS_CODE
+    if (typeof window !== 'undefined' && securityJsCode) {
+      window._AMapSecurityConfig = {
+        ...(window._AMapSecurityConfig || {}),
+        securityJsCode: String(securityJsCode),
+      }
+    }
+    await AMapLoader.load({ key, version: '2.0' })
+  } catch (err) {
+    ElMessage.error('高德地图加载失败，请关闭 VPN 或检查 Key/白名单')
+    return
+  }
+  if (accountMap.value) {
+    try { accountMap.value.destroy() } catch {}
+    accountMap.value = null
+    accountMarker.value = null
+  }
+  const initLng = Number.isFinite(Number(form.lng)) ? Number(form.lng) : 116.407387
+  const initLat = Number.isFinite(Number(form.lat)) ? Number(form.lat) : 39.904179
+  accountMap.value = new window.AMap.Map(accountMapWrapRef.value, {
+    zoom: Number.isFinite(Number(form.lng)) ? 15 : 11,
+    center: [initLng, initLat],
+  })
+  if (Number.isFinite(Number(form.lng)) && Number.isFinite(Number(form.lat))) {
+    placeOrMoveAccountMarker(Number(form.lng), Number(form.lat))
+  }
+  accountMap.value.on('click', (e) => {
+    const p = e.lnglat
+    if (!p) return
+    form.lng = Number(p.lng)
+    form.lat = Number(p.lat)
+    placeOrMoveAccountMarker(Number(p.lng), Number(p.lat))
+  })
+}
+
+watch(drawerVisible, async (visible) => {
+  if (!visible) {
+    if (accountMap.value) {
+      try { accountMap.value.destroy() } catch {}
+      accountMap.value = null
+      accountMarker.value = null
+    }
+    return
+  }
+  await nextTick()
+  await initAccountMap()
 })
 
 const roleLabelMap = {
@@ -109,11 +200,7 @@ const roleLocationMeta = {
   factory: { label: '生产方', color: '#14532D', icon: 'F' },
 }
 const overviewRows = computed(() =>
-  tableList.value.filter((row) => {
-    const lng = Number(row.lng)
-    const lat = Number(row.lat)
-    return locatableRoles.has(row.role) && Number.isFinite(lng) && Number.isFinite(lat)
-  }),
+  tableList.value.filter((row) => locatableRoles.has(row.role) && isUsableGeoCoord(row.lng, row.lat)),
 )
 const filteredOverviewRows = computed(() =>
   overviewRows.value.filter((row) => !overviewRoleFilter.value || row.role === overviewRoleFilter.value),
@@ -136,15 +223,35 @@ const validateForm = () => {
     ElMessage.warning('请输入企业名称')
     return false
   }
-  if (['delivery', 'client', 'factory'].includes(form.role) && !form.address) {
+  if (['delivery', 'client', 'factory'].includes(form.role)) {
     const roleName = form.role === 'client' ? '采购方' : form.role === 'factory' ? '生产方' : '配送方'
-    ElMessage.warning(`${roleName}请填写地址`)
-    return false
+    if (!form.address) {
+      ElMessage.warning(`${roleName}请填写地址`)
+      return false
+    }
+    if (!isUsableGeoCoord(form.lng, form.lat)) {
+      ElMessage.warning('请从地址联想中选择带坐标的条目，或点击地图扎针定位（不可仅填区县名）')
+      return false
+    }
   }
   return true
 }
 
-const load = async () => { list.value = await listAccountsApi({ role: role.value || undefined }) }
+const load = async () => {
+  list.value = await listAccountsApi({
+    role: role.value || undefined,
+    keyword: keyword.value?.trim() || undefined,
+    status: statusFilter.value || undefined,
+    supplier_delivery_id: supplierDeliveryFilter.value || undefined,
+  })
+}
+const resetFilters = () => {
+  keyword.value = ''
+  statusFilter.value = ''
+  supplierDeliveryFilter.value = null
+  role.value = ''
+  load()
+}
 const loadDeliveries = async () => {
   deliveryOptions.value = await listAccountsApi({ role: 'delivery' })
 }
@@ -174,13 +281,22 @@ const openCreate = () => {
     company_name: '',
     contact_phone: '',
     address: '',
+    lng: null,
+    lat: null,
     status: 'active',
+    return_review_required: false,
   })
   drawerVisible.value = true
 }
 const startEdit = (row) => {
   editingId.value = row.id
-  Object.assign(form, { ...row, password: DEFAULT_DEMO_PASSWORD })
+  Object.assign(form, {
+    ...row,
+    password: DEFAULT_DEMO_PASSWORD,
+    lng: Number.isFinite(Number(row?.lng)) ? Number(row.lng) : null,
+    lat: Number.isFinite(Number(row?.lat)) ? Number(row.lat) : null,
+    return_review_required: Boolean(row?.return_review_required),
+  })
   drawerVisible.value = true
 }
 const saveEdit = async () => {
@@ -233,16 +349,26 @@ const queryAddressTips = async (queryString, cb) => {
 
 const onAddressSelect = (item) => {
   const selected = lastTipItems.value.find((v) => (v.display || v.name || '') === item.value)
-  if (selected?.display) form.address = selected.display
+  if (!selected) return
+  if (selected.display) form.address = selected.display
+  const lng = Number(selected.lng)
+  const lat = Number(selected.lat)
+  if (isUsableGeoCoord(lng, lat)) {
+    form.lng = lng
+    form.lat = lat
+    placeOrMoveAccountMarker(lng, lat, true)
+    return
+  }
+  ElMessage.warning('该联想结果无精确坐标，请换一条或点击地图扎针')
 }
 
 const openMapLocation = (row) => {
-  const lng = Number(row?.lng)
-  const lat = Number(row?.lat)
-  if (!Number.isFinite(lng) || !Number.isFinite(lat)) {
-    ElMessage.warning('该账号暂无有效坐标')
+  if (!isUsableGeoCoord(row?.lng, row?.lat)) {
+    ElMessage.warning('该账号暂无有效坐标，请编辑后重新扎针定位')
     return
   }
+  const lng = Number(row.lng)
+  const lat = Number(row.lat)
   locationRow.value = row
   locationVisible.value = true
 }
@@ -411,6 +537,11 @@ onBeforeUnmount(() => {
     overviewAmap.value.destroy()
     overviewAmap.value = null
   }
+  if (accountMap.value) {
+    try { accountMap.value.destroy() } catch {}
+    accountMap.value = null
+    accountMarker.value = null
+  }
 })
 onMounted(async () => {
   await Promise.all([load(), loadDeliveries()])
@@ -420,20 +551,59 @@ onMounted(async () => {
 <template>
   <el-card class="mb-3">
     <div class="crud-toolbar">
-      <el-form inline class="crud-form">
-        <el-form-item label="角色筛选">
-          <el-select v-model="role" style="width: 180px" @change="load">
-            <el-option value="" label="全部" />
-            <el-option value="client" :label="roleLabel('client')" />
-            <el-option value="supplier" :label="roleLabel('supplier')" />
-            <el-option value="delivery" :label="roleLabel('delivery')" />
-            <el-option value="factory" :label="roleLabel('factory')" />
-            <el-option value="operation" :label="roleLabel('operation')" />
-            <el-option value="monitor" :label="roleLabel('monitor')" />
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <div class="role-quick-filters">
+      <div class="account-filter-section">
+        <el-form inline class="crud-form account-filter-form">
+          <el-form-item label="关键词">
+            <el-input
+              v-model="keyword"
+              clearable
+              placeholder="用户名 / 企业 / 地址"
+              style="width: 220px"
+              @keyup.enter="load"
+              @clear="load"
+            />
+          </el-form-item>
+          <el-form-item label="状态">
+            <el-select v-model="statusFilter" clearable placeholder="全部" style="width: 120px" @change="load">
+              <el-option value="" label="全部" />
+              <el-option value="active" label="启用" />
+              <el-option value="disabled" label="停用" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="所属配送方">
+            <el-select
+              v-model="supplierDeliveryFilter"
+              clearable
+              filterable
+              placeholder="全部"
+              style="width: 200px"
+              @change="load"
+            >
+              <el-option
+                v-for="item in deliveryOptions"
+                :key="item.id"
+                :label="item.company_name || item.username"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="角色">
+            <el-select v-model="role" clearable placeholder="全部" style="width: 140px" @change="load">
+              <el-option value="" label="全部" />
+              <el-option value="client" :label="roleLabel('client')" />
+              <el-option value="supplier" :label="roleLabel('supplier')" />
+              <el-option value="delivery" :label="roleLabel('delivery')" />
+              <el-option value="factory" :label="roleLabel('factory')" />
+              <el-option value="operation" :label="roleLabel('operation')" />
+              <el-option value="monitor" :label="roleLabel('monitor')" />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" plain @click="load">查询</el-button>
+            <el-button @click="resetFilters">重置</el-button>
+          </el-form-item>
+        </el-form>
+        <div class="role-quick-filters">
         <el-tag
           class="role-chip"
           :effect="!role ? 'dark' : 'plain'"
@@ -490,6 +660,7 @@ onMounted(async () => {
         >
           监管方
         </el-tag>
+        </div>
       </div>
       <div class="crud-actions">
         <el-button type="info" plain @click="openOverviewMap">位置总览</el-button>
@@ -520,21 +691,30 @@ onMounted(async () => {
       <el-table-column label="坐标" min-width="180">
         <template #default="{ row }">
           <el-button
-            v-if="locatableRoles.has(row.role) && row.lng != null && row.lat != null"
+            v-if="locatableRoles.has(row.role) && isUsableGeoCoord(row.lng, row.lat)"
             type="primary"
             link
             class="coord-link"
             @click="openMapLocation(row)"
           >
             <el-icon><Location /></el-icon>
-            {{ `${Number(row.lng).toFixed(6)}, ${Number(row.lat).toFixed(6)}` }}
+            {{ formatGeoCoord(row.lng, row.lat) }}
           </el-button>
+          <span v-else-if="locatableRoles.has(row.role)" class="coord-invalid">未定位</span>
           <span v-else>—</span>
         </template>
       </el-table-column>
       <el-table-column label="所属配送方" width="170">
         <template #default="{ row }">
           {{ row.role === 'supplier' ? (deliveryNameMap[row.supplier_delivery_id] || '未绑定') : '—' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="退货审核" width="120">
+        <template #default="{ row }">
+          <el-tag v-if="row.role === 'delivery'" :type="row.return_review_required ? 'warning' : 'info'" size="small">
+            {{ row.return_review_required ? '需审核' : '免审核' }}
+          </el-tag>
+          <span v-else>—</span>
         </template>
       </el-table-column>
       <el-table-column prop="status" label="状态">
@@ -615,11 +795,27 @@ onMounted(async () => {
           }}
         </div>
       </el-form-item>
+      <el-form-item v-if="['delivery', 'client', 'factory'].includes(form.role)" label="精确位置">
+        <div ref="accountMapWrapRef" class="account-map" />
+        <div class="account-coord-row">
+          <span>经度：<strong>{{ isUsableGeoCoord(form.lng, form.lat) ? Number(form.lng).toFixed(6) : '—' }}</strong></span>
+          <span>纬度：<strong>{{ isUsableGeoCoord(form.lng, form.lat) ? Number(form.lat).toFixed(6) : '—' }}</strong></span>
+          <span class="account-coord-tip">须从联想选点或地图扎针；仅填「朝阳」「海淀」等无法保存</span>
+        </div>
+      </el-form-item>
       <el-form-item label="状态">
         <el-select v-model="form.status" style="width: 130px">
           <el-option value="active" label="启用" />
           <el-option value="disabled" label="停用" />
         </el-select>
+      </el-form-item>
+      <el-form-item v-if="form.role === 'delivery'" label="退货审核">
+        <el-switch
+          v-model="form.return_review_required"
+          active-text="少收退货需配送商审核"
+          inactive-text="直接确认"
+        />
+        <div class="field-tip">开启后，智能秤少收退货单会先进入待审核，配送商通过后才扣减账单。</div>
       </el-form-item>
       <el-button v-if="!editingId" type="primary" class="submit-btn" @click="create">确认新增</el-button>
       <el-button v-else type="primary" class="submit-btn" @click="saveEdit">保存修改</el-button>
@@ -688,10 +884,19 @@ onMounted(async () => {
 <style scoped>
 .crud-toolbar {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+.account-filter-section {
+  flex: 1;
+  min-width: 0;
+}
+
+.account-filter-form {
+  margin-bottom: 4px;
 }
 
 .crud-form {
@@ -702,6 +907,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: none;
 }
 
 .role-quick-filters {
@@ -746,6 +952,33 @@ onMounted(async () => {
 
 .address-input {
   width: 100%;
+}
+
+.account-map {
+  width: 100%;
+  height: 320px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+.account-coord-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 8px;
+  font-size: 13px;
+  color: #475569;
+}
+
+.account-coord-row strong {
+  color: #0f172a;
+}
+
+.account-coord-tip {
+  color: #94a3b8;
+  font-size: 12px;
 }
 
 .coord-link {

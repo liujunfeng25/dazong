@@ -1,51 +1,166 @@
+# 大宗供应链 — Docker Compose（dev / prod 分 profile）
+#
+# 开发（默认，.env 中 COMPOSE_PROFILES=dev）:
+#   make dev-up          或  docker compose --profile dev up -d
+#
+# 生产构建:
+#   make prod-up         或  docker compose --profile prod up -d --build
+#
+# 访问:
+#   开发: http://127.0.0.1  （Vite + API 代理）
+#   生产: http://127.0.0.1  （Nginx 静态 + API 反代）
+#   API 文档: http://127.0.0.1:8000/docs
+
+name: dazong
+
+x-backend-env: &backend-env
+  MYSQL_HOST: mysql
+  MYSQL_PORT: 3306
+  MYSQL_USER: ${MYSQL_USER:-root}
+  MYSQL_PASSWORD: ${MYSQL_PASSWORD:-116165}
+  MYSQL_DB: ${MYSQL_DATABASE:-dazong}
+  JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dazong_demo_secret_2026}
+  DEMO_MODE: ${DEMO_MODE:-true}
+  AUTO_CREATE_SCHEMA: ${AUTO_CREATE_SCHEMA:-true}
+  SEED_ON_START: ${SEED_ON_START:-true}
+  SIMULATOR_ENABLED: ${SIMULATOR_ENABLED:-false}
+  MINIO_ENDPOINT: minio:9000
+  MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
+  MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin}
+  MINIO_PUBLIC_BASE_URL: ${MINIO_PUBLIC_BASE_URL:-http://127.0.0.1:9000/dazong-quality}
+
 services:
   mysql:
     image: mysql:8.0
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: 116165
-      MYSQL_DATABASE: dazong
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-116165}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-dazong}
     volumes:
       - ./mysql_data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "${MYSQL_PUBLISH_PORT:-3306}:3306"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 25s
 
-  backend:
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+  # ---------- 开发 ----------
+  backend-dev:
+    profiles: [dev]
     build: ./backend
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    restart: unless-stopped
+    # 挂载源码会覆盖镜像内 chmod；用 sh 执行 entrypoint
+    entrypoint: ["/bin/sh", "./docker-entrypoint.sh"]
+    # 容器内禁用 --reload：热重载 + IoT/扫描后台任务会导致进程卡在 shutdown，整站 API 不可用
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
     env_file:
       - ./backend/.env
     environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_USER: root
-      DB_PASSWORD: 116165
-      DB_NAME: dazong
-      JWT_SECRET: dazong_demo_secret_2026
-      DEMO_MODE: "true"
-      MYSQL_HOST: mysql
-      MYSQL_PORT: 3306
-      MYSQL_USER: root
-      MYSQL_PASSWORD: 116165
-      MYSQL_DB: dazong
-      JWT_SECRET_KEY: dazong_demo_secret_2026
+      <<: *backend-env
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
+      minio:
+        condition: service_started
     volumes:
       - ./backend:/app
     ports:
       - "8000:8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=3)",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 40s
 
-  frontend:
+  frontend-dev:
+    profiles: [dev]
     image: node:20-alpine
+    restart: unless-stopped
     working_dir: /app
-    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 80"
+    entrypoint: ["/bin/sh", "/app/docker/dev-entrypoint.sh"]
+    env_file:
+      - ./frontend/.env
     environment:
-      VITE_API_PROXY_TARGET: http://backend:8000
+      VITE_API_PROXY_TARGET: http://backend-dev:8000
     depends_on:
-      - backend
+      backend-dev:
+        condition: service_healthy
     volumes:
       - ./frontend:/app
-      - /app/node_modules
+      - frontend_node_modules:/app/node_modules
       - ./demo-console:/demo-console
     ports:
-      - "80:80"
+      - "${FRONTEND_PUBLISH_PORT:-80}:80"
+
+  # ---------- 生产（Nginx 静态 + 后端无挂载）----------
+  backend-prod:
+    profiles: [prod]
+    build: ./backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      <<: *backend-env
+      DEMO_MODE: ${DEMO_MODE:-false}
+      SEED_ON_START: ${SEED_ON_START:-false}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=3)",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 40s
+
+  frontend-prod:
+    profiles: [prod]
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      backend-prod:
+        condition: service_healthy
+    ports:
+      - "${FRONTEND_PUBLISH_PORT:-80}:80"
+
+volumes:
+  minio_data:
+  frontend_node_modules:

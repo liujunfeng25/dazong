@@ -13,6 +13,7 @@ import {
   updateDeliverySupplierApi,
 } from '../../api/delivery'
 import { formatChinaDateTime } from '../../utils/datetime'
+import { isUsableGeoCoord } from '../../utils/geoCoords'
 
 const list = ref([])
 const loading = ref(false)
@@ -41,8 +42,14 @@ const form = reactive({
   company_name: '',
   contact_phone: '',
   address: '',
+  lng: null,
+  lat: null,
   status: 'active',
 })
+
+const supplierMapWrapRef = ref(null)
+const supplierMap = ref(null)
+const supplierMarker = ref(null)
 
 const resetForm = () => {
   Object.assign(form, {
@@ -51,9 +58,88 @@ const resetForm = () => {
     company_name: '',
     contact_phone: '',
     address: '',
+    lng: null,
+    lat: null,
     status: 'active',
   })
 }
+
+const placeOrMoveSupplierMarker = (lng, lat, recenter = false) => {
+  if (!supplierMap.value) return
+  if (!supplierMarker.value) {
+    supplierMarker.value = new window.AMap.Marker({
+      position: [lng, lat],
+      draggable: true,
+      cursor: 'move',
+    })
+    supplierMarker.value.setMap(supplierMap.value)
+    supplierMarker.value.on('dragend', (e) => {
+      const p = e.lnglat
+      if (!p) return
+      form.lng = Number(p.lng)
+      form.lat = Number(p.lat)
+    })
+  } else {
+    supplierMarker.value.setPosition([lng, lat])
+  }
+  if (recenter) supplierMap.value.setZoomAndCenter(15, [lng, lat])
+}
+
+const initSupplierMap = async () => {
+  if (!supplierMapWrapRef.value) return
+  const key = import.meta.env.VITE_AMAP_KEY
+  if (!key) {
+    ElMessage.warning('未配置高德 Key（VITE_AMAP_KEY），地图不可用')
+    return
+  }
+  try {
+    const securityJsCode = import.meta.env.VITE_AMAP_SECURITY_JS_CODE
+    if (typeof window !== 'undefined' && securityJsCode) {
+      window._AMapSecurityConfig = {
+        ...(window._AMapSecurityConfig || {}),
+        securityJsCode: String(securityJsCode),
+      }
+    }
+    await AMapLoader.load({ key, version: '2.0' })
+  } catch (err) {
+    ElMessage.error('高德地图加载失败，请关闭 VPN 或检查 Key/白名单')
+    return
+  }
+  if (supplierMap.value) {
+    try { supplierMap.value.destroy() } catch {}
+    supplierMap.value = null
+    supplierMarker.value = null
+  }
+  const initLng = Number.isFinite(Number(form.lng)) ? Number(form.lng) : 116.407387
+  const initLat = Number.isFinite(Number(form.lat)) ? Number(form.lat) : 39.904179
+  supplierMap.value = new window.AMap.Map(supplierMapWrapRef.value, {
+    zoom: Number.isFinite(Number(form.lng)) ? 15 : 11,
+    center: [initLng, initLat],
+  })
+  if (Number.isFinite(Number(form.lng)) && Number.isFinite(Number(form.lat))) {
+    placeOrMoveSupplierMarker(Number(form.lng), Number(form.lat))
+  }
+  supplierMap.value.on('click', (e) => {
+    const p = e.lnglat
+    if (!p) return
+    form.lng = Number(p.lng)
+    form.lat = Number(p.lat)
+    placeOrMoveSupplierMarker(Number(p.lng), Number(p.lat))
+  })
+}
+
+watch(drawerVisible, async (visible) => {
+  if (!visible) {
+    if (supplierMap.value) {
+      try { supplierMap.value.destroy() } catch {}
+      supplierMap.value = null
+      supplierMarker.value = null
+    }
+    return
+  }
+  await nextTick()
+  await initSupplierMap()
+})
 
 const load = async () => {
   loading.value = true
@@ -72,7 +158,12 @@ const openCreate = () => {
 
 const startEdit = (row) => {
   editingId.value = row.id
-  Object.assign(form, { ...row, password: 'demo123' })
+  Object.assign(form, {
+    ...row,
+    password: 'demo123',
+    lng: Number.isFinite(Number(row?.lng)) ? Number(row.lng) : null,
+    lat: Number.isFinite(Number(row?.lat)) ? Number(row.lat) : null,
+  })
   drawerVisible.value = true
 }
 
@@ -85,7 +176,15 @@ const submit = async () => {
     ElMessage.warning('请输入用户地址')
     return
   }
-  const payload = { ...form }
+  if (!isUsableGeoCoord(form.lng, form.lat)) {
+    ElMessage.warning('请从地址联想选择带坐标的条目，或点击地图扎针定位')
+    return
+  }
+  const payload = {
+    ...form,
+    lng: Number(form.lng),
+    lat: Number(form.lat),
+  }
   if (editingId.value) await updateDeliverySupplierApi(editingId.value, payload)
   else await createDeliverySupplierApi(payload)
   drawerVisible.value = false
@@ -112,16 +211,24 @@ const queryAddressTips = async (queryString, cb) => {
 
 const onAddressSelect = (item) => {
   const selected = lastTipItems.value.find((v) => (v.display || v.name || '') === item.value)
-  if (selected?.display) {
-    form.address = selected.display
+  if (!selected) return
+  if (selected.display) form.address = selected.display
+  const lng = Number(selected.lng)
+  const lat = Number(selected.lat)
+  if (isUsableGeoCoord(lng, lat)) {
+    form.lng = lng
+    form.lat = lat
+    placeOrMoveSupplierMarker(lng, lat, true)
+    return
   }
+  ElMessage.warning('该联想结果无精确坐标，请换一条或点击地图扎针')
 }
 
 const openMapLocation = (row) => {
   const lng = Number(row?.lng)
   const lat = Number(row?.lat)
-  if (!Number.isFinite(lng) || !Number.isFinite(lat)) {
-    ElMessage.warning('该供货商暂无有效坐标')
+  if (!isUsableGeoCoord(lng, lat)) {
+    ElMessage.warning('该供货商暂无有效坐标，请编辑后重新扎针')
     return
   }
   locationRow.value = row
@@ -268,6 +375,11 @@ onBeforeUnmount(() => {
     amap.value = null
     marker.value = null
   }
+  if (supplierMap.value) {
+    try { supplierMap.value.destroy() } catch {}
+    supplierMap.value = null
+    supplierMarker.value = null
+  }
 })
 
 onMounted(load)
@@ -341,6 +453,14 @@ onMounted(load)
         />
         <div class="field-tip">建议从联想结果中选择，可提高定位成功率。</div>
         <div v-if="!amapEnabled" class="field-tip field-tip-warn">当前未启用高德 Key，地址联想不可用。</div>
+      </el-form-item>
+      <el-form-item label="精确位置">
+        <div ref="supplierMapWrapRef" class="supplier-map" />
+        <div class="supplier-coord-row">
+          <span>经度：<strong>{{ Number.isFinite(Number(form.lng)) ? Number(form.lng).toFixed(6) : '—' }}</strong></span>
+          <span>纬度：<strong>{{ Number.isFinite(Number(form.lat)) ? Number(form.lat).toFixed(6) : '—' }}</strong></span>
+          <span class="supplier-coord-tip">点击地图或拖动 marker 可微调点位</span>
+        </div>
       </el-form-item>
       <el-form-item label="状态">
         <el-select v-model="form.status" style="width: 130px">
@@ -521,6 +641,33 @@ onMounted(load)
 
 .submit-btn {
   min-width: 96px;
+}
+
+.supplier-map {
+  width: 100%;
+  height: 320px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+.supplier-coord-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 8px;
+  font-size: 13px;
+  color: #475569;
+}
+
+.supplier-coord-row strong {
+  color: #0f172a;
+}
+
+.supplier-coord-tip {
+  color: #94a3b8;
+  font-size: 12px;
 }
 
 .address-input {

@@ -4,10 +4,13 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { listClientCanteensApi } from '../../api/clientPortal'
 import { useUserStore } from '../../stores/user'
+import { useIsMobile } from '../../composables/useIsMobile'
 
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
+const { isMobile } = useIsMobile()
+const searchKeyword = ref('')
 const list = ref([])
 const loading = ref(false)
 const submittingId = ref(null)
@@ -27,8 +30,8 @@ const choose = async (row) => {
   try {
     await userStore.applyCanteenSession(row.id)
     ElMessage.success(`已进入「${row.name}」`)
-    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/client/contracts'
-    router.replace(redirect || '/client/contracts')
+    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/client/dashboard'
+    router.replace(redirect || '/client/dashboard')
   } finally {
     submittingId.value = null
   }
@@ -38,7 +41,56 @@ onMounted(load)
 </script>
 
 <template>
-  <div class="page-wrap">
+  <!-- ── Mobile ── -->
+  <div v-if="isMobile" class="m-select-page">
+    <div class="m-select-header">
+      <div class="m-select-header__title">选择食堂</div>
+      <div class="m-select-header__sub">请选择您要进入的履约食堂</div>
+    </div>
+
+    <div class="m-select-body">
+      <el-input
+        v-model="searchKeyword"
+        placeholder="搜索食堂名称..."
+        clearable
+        prefix-icon="Search"
+        class="m-search"
+      />
+
+      <el-skeleton v-if="loading" animated :rows="3" style="padding:16px" />
+      <div v-else-if="!list.length" class="m-empty">
+        暂无可用食堂，请联系运营方添加。
+      </div>
+      <div v-else class="m-canteen-list">
+        <div
+          v-for="row in list.filter(r => !searchKeyword || r.name?.includes(searchKeyword))"
+          :key="row.id"
+          class="m-canteen-card"
+          :class="{ disabled: row.status !== 'active' }"
+          @click="row.status === 'active' && choose(row)"
+        >
+          <div class="m-canteen-card__icon">
+            <span class="material-symbols-outlined">restaurant</span>
+          </div>
+          <div class="m-canteen-card__info">
+            <div class="m-canteen-card__name">{{ row.name }}</div>
+            <div class="m-canteen-card__addr">{{ row.address || '—' }}</div>
+            <div v-if="row.status !== 'active'" class="m-canteen-card__disabled">暂不可用</div>
+          </div>
+          <el-button
+            v-if="row.status === 'active'"
+            :loading="submittingId === row.id"
+            type="primary"
+            size="small"
+            @click.stop="choose(row)"
+          >进入</el-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PC ── -->
+  <div v-else class="page-wrap">
     <el-card class="hero">
       <h2 class="title">选择履约食堂</h2>
       <p class="hint">
@@ -122,5 +174,96 @@ onMounted(load)
 .empty {
   padding: 24px 0;
   color: #94a3b8;
+}
+
+/* ── Mobile styles ── */
+.m-select-page {
+  min-height: 100vh;
+  background: var(--m-surface);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--m-font-body);
+}
+.m-select-header {
+  background: linear-gradient(135deg, var(--m-primary) 0%, var(--m-primary-container) 100%);
+  color: var(--m-on-primary);
+  padding: 40px 20px 28px;
+}
+.m-select-header__title {
+  font-family: var(--m-font-display);
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.m-select-header__sub {
+  font-size: 14px;
+  opacity: 0.8;
+}
+.m-select-body {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.m-search {
+  width: 100%;
+}
+.m-canteen-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.m-canteen-card {
+  background: var(--m-surface-container-lowest);
+  border: 1.5px solid var(--m-outline-variant);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+.m-canteen-card:active { border-color: var(--m-primary); box-shadow: 0 2px 12px rgba(0,50,134,0.12); }
+.m-canteen-card.disabled { opacity: 0.55; cursor: not-allowed; }
+.m-canteen-card__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--m-secondary-fixed);
+  color: var(--m-primary);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.m-canteen-card__info {
+  flex: 1;
+  min-width: 0;
+}
+.m-canteen-card__name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--m-on-surface);
+  margin-bottom: 3px;
+}
+.m-canteen-card__addr {
+  font-size: 12px;
+  color: var(--m-on-surface-variant);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.m-canteen-card__disabled {
+  font-size: 11px;
+  color: var(--m-error);
+  margin-top: 2px;
+  font-weight: 600;
+}
+.m-empty {
+  text-align: center;
+  color: var(--m-on-surface-variant);
+  padding: 32px 0;
+  font-size: 14px;
 }
 </style>

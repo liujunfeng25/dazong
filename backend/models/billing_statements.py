@@ -13,14 +13,18 @@ class BillingStatement(Base, TimestampMixin):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     statement_no: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
     cycle_id: Mapped[int] = mapped_column(ForeignKey("billing_cycles.id"), nullable=False, index=True)
+    reconciliation_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, index=True)
     role: Mapped[str] = mapped_column(Enum("client", "delivery", "supplier", "factory"), nullable=False)
     owner_user_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
     counterparty_user_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    canteen_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("client_canteens.id"), nullable=True, index=True
+    )
     direction: Mapped[str] = mapped_column(Enum("应付", "应收"), nullable=False)
     status: Mapped[str] = mapped_column(
-        Enum("待出账", "待确认", "已确认", "部分结清", "已结清", "已作废"),
+        Enum("待确认", "已确认", "部分结清", "已结清"),
         nullable=False,
-        default="待出账",
+        default="待确认",
     )
     amount: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
     confirmed_amount: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False, default=0)

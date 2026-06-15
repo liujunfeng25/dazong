@@ -4,7 +4,7 @@ import BillingCenter from '../../components/BillingCenter.vue'
 
 <template>
   <BillingCenter
-    title="对配送商应收"
-    description="查看配送商待付给厂家的账单，按订单和商品明细核对金额。"
+    title="厂家应收账簿"
+    description="按配送商与账期核对厂家货款，跟踪确认、到账和逾期状态。"
   />
 </template>

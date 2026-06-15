@@ -23,6 +23,7 @@ from services.delivery_slot import parse_delivery_slot_hours
 from services.ticket_service import (
     DELIVERY_OVERDUE_PREFIX,
     ensure_delivery_overdue_ticket,
+    find_open_delivery_overdue_alert,
 )
 
 SCAN_INTERVAL_SECONDS = 300
@@ -73,26 +74,48 @@ async def _scan_once() -> None:
             return
         for order in hits:
             await ensure_delivery_overdue_ticket(db, order, actor_user_id=actor_id)
-            db.add(
-                Alert(
-                    level="medium",
-                    type="delivery_overdue",
-                    description=(
-                        f"订单 {order.order_no}：约定 "
-                        f"{order.expected_delivery_date} {order.expected_delivery_slot} 仍未送达"
-                    ),
-                    status="open",
-                    payload_json={
-                        "order_id": int(order.id),
-                        "order_no": order.order_no,
-                        "expected_delivery_date": order.expected_delivery_date.isoformat()
-                        if order.expected_delivery_date
-                        else None,
-                        "expected_delivery_slot": order.expected_delivery_slot,
-                        "status": order.status,
-                    },
-                )
+            now_iso = datetime.utcnow().isoformat()
+            description = (
+                f"订单 {order.order_no}：约定 "
+                f"{order.expected_delivery_date} {order.expected_delivery_slot} 仍未送达"
             )
+            existing_alert = await find_open_delivery_overdue_alert(db, int(order.id))
+            if existing_alert is not None:
+                # 同订单同 type 未关闭只保留一条；刷新描述与扫描元信息，不重复落库
+                existing_alert.description = description
+                payload = (
+                    dict(existing_alert.payload_json)
+                    if isinstance(existing_alert.payload_json, dict)
+                    else {}
+                )
+                payload["status"] = order.status
+                payload["last_seen_at"] = now_iso
+                try:
+                    payload["scan_count"] = int(payload.get("scan_count") or 0) + 1
+                except (TypeError, ValueError):
+                    payload["scan_count"] = 1
+                existing_alert.payload_json = payload
+            else:
+                db.add(
+                    Alert(
+                        level="medium",
+                        type="delivery_overdue",
+                        description=description,
+                        status="open",
+                        payload_json={
+                            "order_id": int(order.id),
+                            "order_no": order.order_no,
+                            "expected_delivery_date": order.expected_delivery_date.isoformat()
+                            if order.expected_delivery_date
+                            else None,
+                            "expected_delivery_slot": order.expected_delivery_slot,
+                            "status": order.status,
+                            "first_seen_at": now_iso,
+                            "last_seen_at": now_iso,
+                            "scan_count": 1,
+                        },
+                    )
+                )
             await write_audit_log(
                 db=db,
                 actor_user_id=actor_id,

@@ -1,0 +1,636 @@
+[
+  {
+    "role": "operation",
+    "route": "/operation/dashboard",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/operation?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/operation/dashboard",
+    "bodyLength": 1690
+  },
+  {
+    "role": "operation",
+    "route": "/operation/categories",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/operation?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/operation/categories",
+    "bodyLength": 530
+  },
+  {
+    "role": "operation",
+    "route": "/operation/products",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/operation?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/operation/products",
+    "bodyLength": 1699
+  },
+  {
+    "role": "operation",
+    "route": "/operation/smart-scale-recognition",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/operation?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/operation/smart-scale-recognition",
+    "bodyLength": 899
+  },
+  {
+    "role": "operation",
+    "route": "/operation/periodic-reports",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/operation?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/operation/periodic-reports",
+    "bodyLength": 467
+  },
+  {
+    "role": "operation",
+    "route": "/operation/accounts",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/operation?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/operation/accounts",
+    "bodyLength": 7251
+  },
+  {
+    "role": "operation",
+    "route": "/operation/client-canteens",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/operation?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/operation/client-canteens",
+    "bodyLength": 8968
+  },
+  {
+    "role": "operation",
+    "route": "/operation/contracts",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/operation?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/operation/contracts",
+    "bodyLength": 968
+  },
+  {
+    "role": "operation",
+    "route": "/operation/orders",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/operation?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/operation/orders",
+    "bodyLength": 231
+  },
+  {
+    "role": "operation",
+    "route": "/operation/receiving-differences",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/operation?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/operation/receiving-differences",
+    "bodyLength": 344
+  },
+  {
+    "role": "operation",
+    "route": "/operation/billing-overview",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/operation?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/operation/billing-overview",
+    "bodyLength": 4756
+  },
+  {
+    "role": "operation",
+    "route": "/operation/billing-cycles",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/operation?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/operation/billing-cycles",
+    "bodyLength": 2590
+  },
+  {
+    "role": "operation",
+    "route": "/operation/tickets",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/operation?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/operation/tickets",
+    "bodyLength": 27733
+  },
+  {
+    "role": "operation",
+    "route": "/operation/notifications",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/operation?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/operation/notifications",
+    "bodyLength": 1566
+  },
+  {
+    "role": "client",
+    "route": "/client/dashboard",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/client?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/client/dashboard",
+    "bodyLength": 283
+  },
+  {
+    "role": "client",
+    "route": "/client/contracts",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/client?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/client/contracts",
+    "bodyLength": 419
+  },
+  {
+    "role": "client",
+    "route": "/client/contracts/new",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/client?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/client/contracts/new",
+    "bodyLength": 319
+  },
+  {
+    "role": "client",
+    "route": "/client/tenders",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/client?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/client/tenders",
+    "bodyLength": 679
+  },
+  {
+    "role": "client",
+    "route": "/client/orders/new",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/client?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/client/orders/new",
+    "bodyLength": 2693
+  },
+  {
+    "role": "client",
+    "route": "/client/orders",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/client?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/client/orders",
+    "bodyLength": 186
+  },
+  {
+    "role": "client",
+    "route": "/client/bills",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/client?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/client/bills",
+    "bodyLength": 1133
+  },
+  {
+    "role": "client",
+    "route": "/client/notifications",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/client?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/client/notifications",
+    "bodyLength": 3102
+  },
+  {
+    "role": "delivery",
+    "route": "/delivery/workbench",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/delivery?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/delivery/workbench",
+    "bodyLength": 1625
+  },
+  {
+    "role": "delivery",
+    "route": "/delivery/tenders",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/delivery?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/delivery/tenders",
+    "bodyLength": 420
+  },
+  {
+    "role": "delivery",
+    "route": "/delivery/contracts",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/delivery?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/delivery/contracts",
+    "bodyLength": 1797
+  },
+  {
+    "role": "delivery",
+    "route": "/delivery/suppliers",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/delivery?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/delivery/suppliers",
+    "bodyLength": 1065
+  },
+  {
+    "role": "delivery",
+    "route": "/delivery/orders",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/delivery?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/delivery/orders",
+    "bodyLength": 258
+  },
+  {
+    "role": "delivery",
+    "route": "/delivery/receiving-differences",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/delivery?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/delivery/receiving-differences",
+    "bodyLength": 354
+  },
+  {
+    "role": "delivery",
+    "route": "/delivery/complaints",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/delivery?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/delivery/complaints",
+    "bodyLength": 346
+  },
+  {
+    "role": "delivery",
+    "route": "/delivery/vehicles",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/delivery?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/delivery/vehicles",
+    "bodyLength": 242
+  },
+  {
+    "role": "delivery",
+    "route": "/delivery/devices",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/delivery?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/delivery/devices",
+    "bodyLength": 985
+  },
+  {
+    "role": "delivery",
+    "route": "/delivery/warehouses",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/delivery?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/delivery/warehouses",
+    "bodyLength": 218
+  },
+  {
+    "role": "delivery",
+    "route": "/delivery/smart-split",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/delivery?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/delivery/smart-split",
+    "bodyLength": 828
+  },
+  {
+    "role": "delivery",
+    "route": "/delivery/smart-routing",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/delivery?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/delivery/smart-routing",
+    "bodyLength": 1194
+  },
+  {
+    "role": "delivery",
+    "route": "/delivery/dispatch-trips",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/delivery?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/delivery/dispatch-trips",
+    "bodyLength": 376
+  },
+  {
+    "role": "delivery",
+    "route": "/delivery/bills",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/delivery?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/delivery/bills",
+    "bodyLength": 1673
+  },
+  {
+    "role": "delivery",
+    "route": "/delivery/notifications",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/delivery?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/delivery/notifications",
+    "bodyLength": 8269
+  },
+  {
+    "role": "supplier",
+    "route": "/supplier/orders",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/supplier?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/supplier/orders",
+    "bodyLength": 320
+  },
+  {
+    "role": "supplier",
+    "route": "/supplier/quotes",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/supplier?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/supplier/quotes",
+    "bodyLength": 1618
+  },
+  {
+    "role": "supplier",
+    "route": "/supplier/periodic-reports",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/supplier?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/supplier/periodic-reports",
+    "bodyLength": 167
+  },
+  {
+    "role": "supplier",
+    "route": "/supplier/bills",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/supplier?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/supplier/bills",
+    "bodyLength": 598
+  },
+  {
+    "role": "supplier",
+    "route": "/supplier/notifications",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/supplier?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/supplier/notifications",
+    "bodyLength": 2173
+  },
+  {
+    "role": "factory",
+    "route": "/factory/orders",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/factory?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/factory/orders",
+    "bodyLength": 176
+  },
+  {
+    "role": "factory",
+    "route": "/factory/bills",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/factory?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/factory/bills",
+    "bodyLength": 470
+  },
+  {
+    "role": "factory",
+    "route": "/factory/reports",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/factory?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/factory/reports",
+    "bodyLength": 133
+  },
+  {
+    "role": "factory",
+    "route": "/factory/reports/upload",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/factory?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/factory/reports/upload",
+    "bodyLength": 118
+  },
+  {
+    "role": "factory",
+    "route": "/factory/periodic-reports",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/factory?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/factory/periodic-reports",
+    "bodyLength": 219
+  },
+  {
+    "role": "factory",
+    "route": "/factory/notifications",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/factory?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/factory/notifications",
+    "bodyLength": 135
+  },
+  {
+    "role": "monitor",
+    "route": "/monitor/dashboard",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/monitor?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available",
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/monitor?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available",
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/monitor?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/monitor/dashboard",
+    "bodyLength": 1230
+  },
+  {
+    "role": "monitor",
+    "route": "/monitor/tianshu",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [],
+    "finalUrl": "/monitor/tianshu",
+    "bodyLength": 0
+  },
+  {
+    "role": "monitor",
+    "route": "/monitor/price-cockpit",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/monitor?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available",
+      "[gdMap] 资源加载失败: TypeError: Failed to fetch\n    at hg.load (http://127.0.0.1/tianshu/assets/index-f6a0bb02-1781078515206.js:3764:122176)\n    at http://127.0.0.1/tianshu/assets/index-f6a0bb02-1781078515206.js:4135:4421\n    at new Promise (<anonymous>)\n    at $tt.loadItem (http://127.0.0.1/tianshu/assets/index-f6a0bb02-1781078515206.js:4135:4317)\n    at http://127.0.0.1/tianshu/assets/index-f6a0bb02-1781078515206.js:4135:4737\n    at Array.map (<anonymous>)\n    at http://127.0.0.1/tianshu/assets/index-f6a0bb02-1781078515206.js:4135:4718\n    at new Promise (<anonymous>)\n    at $tt.loadAll (http://127.0.0.1/tianshu/assets/index-f6a0bb02-1781078515206.js:4135:4642)\n    at uDt.startLoad (http://127.0.0.1/tianshu/assets/index-f6a0bb02-1781078515206.js:4557:42719)",
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/monitor?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/monitor/price-cockpit",
+    "bodyLength": 543
+  },
+  {
+    "role": "monitor",
+    "route": "/monitor/route-planning",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [],
+    "finalUrl": "/monitor/route-planning",
+    "bodyLength": 381
+  },
+  {
+    "role": "monitor",
+    "route": "/monitor/orders",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [],
+    "finalUrl": "/monitor/orders",
+    "bodyLength": 158
+  },
+  {
+    "role": "monitor",
+    "route": "/monitor/logistics",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [],
+    "finalUrl": "/monitor/logistics",
+    "bodyLength": 765
+  },
+  {
+    "role": "monitor",
+    "route": "/monitor/alerts",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/monitor?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/monitor/alerts",
+    "bodyLength": 5141
+  },
+  {
+    "role": "monitor",
+    "route": "/monitor/reports",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/monitor?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/monitor/reports",
+    "bodyLength": 140
+  },
+  {
+    "role": "monitor",
+    "route": "/monitor/home",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/monitor?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/monitor/home",
+    "bodyLength": 2686
+  },
+  {
+    "role": "monitor",
+    "route": "/monitor/notifications",
+    "api5xx": [],
+    "pageErrors": [],
+    "consoleErrors": [
+      "WebSocket connection to 'ws://127.0.0.1:18000/ws/notifications/monitor?token=<redacted>' failed: HTTP Authentication failed; no valid credentials available"
+    ],
+    "finalUrl": "/monitor/notifications",
+    "bodyLength": 146
+  }
+]

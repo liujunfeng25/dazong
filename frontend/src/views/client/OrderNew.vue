@@ -1,16 +1,28 @@
 <script setup>
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { Plus } from '@element-plus/icons-vue'
+import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import {
   createOrderApi,
   ocrEngineStatusApi,
-  orderProductsByIdsApi,
   orderMetaApi,
   parseOrderByOcrApi,
   parseOrderByVoiceApi,
   searchOrderProductsApi,
 } from '../../api/orders'
 import { useUserStore } from '../../stores/user'
+import { useIsMobile } from '../../composables/useIsMobile'
+import {
+  productStandardTypeCardClass,
+  productStandardTypeLabel,
+} from '../../utils/productStandardType'
+import { resolveCategoryImage } from '../../utils/categoryImage'
+
+const catImage = (cat) => resolveCategoryImage(cat?.name, cat?.image_url)
+
+const { isMobile } = useIsMobile()
+const cartDrawerSize = computed(() => (isMobile.value ? '92vw' : '440px'))
+const formLabelWidth = computed(() => (isMobile.value ? '72px' : '100px'))
 
 const form = reactive({
   delivery_id: null,
@@ -34,17 +46,72 @@ const submitting = ref(false)
 const scheduleDialogVisible = ref(false)
 const scheduleForm = reactive({
   delivery_date: '',
-  delivery_slot: '',
+  delivery_slot_start: '',
+  delivery_slot_end: '',
   delivery_address: '',
   delivery_lng: null,
   delivery_lat: null,
   service_duration_min: 30,
 })
-const slotOptions = Array.from({ length: 24 }, (_, h) => {
-  const hh = String(h).padStart(2, '0')
-  const nh = h === 23 ? '24' : String(h + 1).padStart(2, '0')
-  return { value: `${hh}:00-${nh}:00`, label: `${hh}:00 - ${nh}:00` }
+
+const hourOptions = Array.from({ length: 24 }, (_, h) => `${String(h).padStart(2, '0')}:00`)
+const endHourOptions = [...hourOptions.slice(1), '24:00']
+
+const isTodaySelected = computed(() => {
+  if (!scheduleForm.delivery_date) return false
+  const t = new Date()
+  const y = t.getFullYear()
+  const m = String(t.getMonth() + 1).padStart(2, '0')
+  const d = String(t.getDate()).padStart(2, '0')
+  return scheduleForm.delivery_date === `${y}-${m}-${d}`
 })
+
+/** 当日下单时最早可选的开始整点：向上取整(now + 2h)，例如 11:30 -> 14:00；23:30 -> 跨天则不可选 */
+const earliestStartHourToday = () => {
+  const now = new Date()
+  const cutoff = new Date(now.getTime() + 2 * 60 * 60 * 1000)
+  const h = cutoff.getHours()
+  const mm = cutoff.getMinutes()
+  const s = cutoff.getSeconds()
+  return mm === 0 && s === 0 ? h : h + 1 // 不到整点就向上取整
+}
+
+const isStartHourDisabled = (hStr) => {
+  if (!isTodaySelected.value) return false
+  const h = parseInt(hStr.slice(0, 2), 10)
+  return h < earliestStartHourToday()
+}
+
+const isEndHourDisabled = (hStr) => {
+  if (!scheduleForm.delivery_slot_start) return false
+  const start = parseInt(scheduleForm.delivery_slot_start.slice(0, 2), 10)
+  const end = hStr === '24:00' ? 24 : parseInt(hStr.slice(0, 2), 10)
+  return end <= start
+}
+
+const disabledOrderDate = (d) => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  return d.getTime() < today.getTime()
+}
+
+watch(
+  () => scheduleForm.delivery_date,
+  () => {
+    if (scheduleForm.delivery_slot_start && isStartHourDisabled(scheduleForm.delivery_slot_start)) {
+      scheduleForm.delivery_slot_start = ''
+      scheduleForm.delivery_slot_end = ''
+    }
+  },
+)
+watch(
+  () => scheduleForm.delivery_slot_start,
+  () => {
+    if (scheduleForm.delivery_slot_end && isEndHourDisabled(scheduleForm.delivery_slot_end)) {
+      scheduleForm.delivery_slot_end = ''
+    }
+  },
+)
 
 /** 商品陈列区 */
 const catalogKeyword = ref('')
@@ -53,21 +120,28 @@ const catalogPageSize = ref(24)
 const catalogTotal = ref(0)
 const catalogProducts = ref([])
 const catalogLoading = ref(false)
+const catalogLoadingMore = ref(false)
+const catalogCategoryId = ref(null)
+const catalogCategory2Id = ref(null)
+const contractCategories = ref([])
+const catalogGridRef = ref(null)
+const catalogLoadMoreRef = ref(null)
 let catalogSearchTimer = null
+let catalogLoadMoreObserver = null
+
+const catalogHasMore = computed(() => catalogProducts.value.length < catalogTotal.value)
+// 选中一级分类下的二级子分类（用于顶部二级 chip）
+const subCategories = computed(() => {
+  if (catalogCategoryId.value == null) return []
+  const cat = contractCategories.value.find((c) => c.id === catalogCategoryId.value)
+  return Array.isArray(cat?.children) ? cat.children : []
+})
 
 /** 卡片上「加入购物车」默认数量 */
 const addQtyMap = reactive({})
 
 /** 购物车抽屉 */
 const cartDrawerVisible = ref(false)
-const testSeedLoading = ref(false)
-const clearOrderLoading = ref(false)
-
-const TEST_FIXED_PRODUCT_IDS = [
-  1, 2, 4, 12, 16, 20, 23, // 肉（7）
-  311, 312, 318, 319, 320, 339, 490, // 油（7）
-  5, 235, 236, 237, 274, 275, // 奶（6）
-]
 
 const cartLineCount = computed(() => form.items.length)
 const matchedLineCount = computed(() => form.items.filter((i) => Number(i.product_id) > 0).length)
@@ -99,7 +173,10 @@ const normalizeForSubmit = () => ({
   delivery_lat:
     scheduleForm.delivery_lat === null || scheduleForm.delivery_lat === '' ? null : Number(scheduleForm.delivery_lat),
   expected_delivery_date: scheduleForm.delivery_date,
-  expected_delivery_slot: scheduleForm.delivery_slot,
+  expected_delivery_slot:
+    scheduleForm.delivery_slot_start && scheduleForm.delivery_slot_end
+      ? `${scheduleForm.delivery_slot_start}-${scheduleForm.delivery_slot_end}`
+      : '',
   service_duration_min: Number(scheduleForm.service_duration_min) || 30,
   items: form.items.map((i) => ({
     product_id: Number(i.product_id),
@@ -108,20 +185,66 @@ const normalizeForSubmit = () => ({
   })),
 })
 
-const loadCatalog = async () => {
-  catalogLoading.value = true
+const loadCatalog = async (append = false) => {
+  if (append) {
+    if (catalogLoadingMore.value || catalogLoading.value || !catalogHasMore.value) return
+    catalogLoadingMore.value = true
+  } else {
+    catalogLoading.value = true
+  }
   try {
     const res = await searchOrderProductsApi({
       keyword: catalogKeyword.value || undefined,
       page: catalogPage.value,
       page_size: catalogPageSize.value,
       delivery_id: form.delivery_id || undefined,
+      category1_id: catalogCategoryId.value || undefined,
+      category2_id: catalogCategory2Id.value || undefined,
     })
-    catalogProducts.value = res.items || []
+    const items = res.items || []
+    catalogProducts.value = append ? [...catalogProducts.value, ...items] : items
     catalogTotal.value = res.total ?? 0
   } finally {
     catalogLoading.value = false
+    catalogLoadingMore.value = false
+    if (isMobile.value) {
+      await nextTick()
+      setupCatalogLoadMoreObserver()
+    }
   }
+}
+
+const loadMoreCatalog = async () => {
+  if (!catalogHasMore.value || catalogLoading.value || catalogLoadingMore.value) return
+  catalogPage.value += 1
+  await loadCatalog(true)
+}
+
+const selectCatalogCategory = (categoryId) => {
+  catalogCategoryId.value = categoryId
+  catalogCategory2Id.value = null // 切一级时重置二级
+  catalogPage.value = 1
+  loadCatalog()
+}
+
+const selectCatalogCategory2 = (categoryId) => {
+  catalogCategory2Id.value = categoryId
+  catalogPage.value = 1
+  loadCatalog()
+}
+
+const setupCatalogLoadMoreObserver = () => {
+  if (!isMobile.value) return
+  catalogLoadMoreObserver?.disconnect()
+  catalogLoadMoreObserver = null
+  if (!catalogLoadMoreRef.value || !catalogGridRef.value) return
+  catalogLoadMoreObserver = new IntersectionObserver(
+    (entries) => {
+      if (entries[0]?.isIntersecting) loadMoreCatalog()
+    },
+    { root: catalogGridRef.value, rootMargin: '120px', threshold: 0 },
+  )
+  catalogLoadMoreObserver.observe(catalogLoadMoreRef.value)
 }
 
 const debouncedCatalogSearch = () => {
@@ -133,12 +256,17 @@ const debouncedCatalogSearch = () => {
 }
 
 watch(catalogPage, () => {
+  if (isMobile.value) return
   loadCatalog()
 })
 
 const onDeliveryChange = async () => {
   scheduleForm.delivery_date = ''
-  scheduleForm.delivery_slot = ''
+  scheduleForm.delivery_slot_start = ''
+  scheduleForm.delivery_slot_end = ''
+  catalogCategoryId.value = null
+  catalogCategory2Id.value = null
+  catalogPage.value = 1
   hydrateScheduleAddressFromUser(true)
   scheduleForm.service_duration_min = 30
   await refreshContractRates()
@@ -252,77 +380,6 @@ const addToCart = (p) => {
   upsertCartItem(p, getAddQty(p.id), false)
 }
 
-const addFixedTestCartItems = async () => {
-  if (!form.delivery_id) {
-    ElMessage.warning('请先选择已签约的配送单位')
-    return
-  }
-  testSeedLoading.value = true
-  try {
-    const res = await orderProductsByIdsApi({
-      ids: TEST_FIXED_PRODUCT_IDS.join(','),
-      delivery_id: form.delivery_id || undefined,
-    })
-    const finalRows = Array.isArray(res?.items) ? res.items : []
-    let added = 0
-    for (const p of finalRows) {
-      const randomQty = Math.floor(Math.random() * 20) + 1
-      if (upsertCartItem(p, randomQty, true)) added += 1
-    }
-    cartDrawerVisible.value = true
-    if (finalRows.length < TEST_FIXED_PRODUCT_IDS.length) {
-      const missingCount = TEST_FIXED_PRODUCT_IDS.length - finalRows.length
-      ElMessage.warning(
-        `测试加购完成：已加入 ${added} 条固定商品，缺失 ${missingCount} 条（商品可能被停用/删除，请联系运营核对）`,
-      )
-    } else {
-      ElMessage.success(`测试加购完成：已加入固定 ${added} 条商品（肉/油/奶）`)
-    }
-  } finally {
-    testSeedLoading.value = false
-  }
-}
-
-const resetOrderDraftAllData = () => {
-  form.items = []
-  cartDrawerVisible.value = false
-  scheduleDialogVisible.value = false
-  scheduleForm.delivery_date = ''
-  scheduleForm.delivery_slot = ''
-  ocrPreviewVisible.value = false
-  ocrPreviewData.value = null
-  ocrProgress.value = 0
-  ocrLoading.value = false
-  voiceText.value = ''
-  showVoiceInput.value = false
-  productOptions.value = []
-  Object.keys(addQtyMap).forEach((k) => delete addQtyMap[k])
-}
-
-const clearCurrentOrder = async () => {
-  if (clearOrderLoading.value) return
-  if (!form.items.length && !scheduleForm.delivery_date && !scheduleForm.delivery_slot && !voiceText.value) {
-    ElMessage.info('当前没有可清空的订单数据')
-    return
-  }
-  await ElMessageBox.confirm(
-    '将清空当前订单的全部草稿数据（购物车、配送时间、OCR识别结果、语音输入等）。是否继续？',
-    '确认清空订单',
-    {
-      type: 'warning',
-      confirmButtonText: '确认清空',
-      cancelButtonText: '取消',
-    },
-  )
-  clearOrderLoading.value = true
-  try {
-    resetOrderDraftAllData()
-    ElMessage.success('当前订单测试数据已全部清空')
-  } finally {
-    clearOrderLoading.value = false
-  }
-}
-
 const removeItem = (idx) => {
   form.items.splice(idx, 1)
 }
@@ -378,10 +435,12 @@ const loadOcrEngine = async () => {
 const refreshContractRates = async () => {
   if (!form.delivery_id) {
     contractRates.value = null
+    contractCategories.value = []
     return
   }
   const meta = await orderMetaApi({ delivery_id: form.delivery_id })
   contractRates.value = meta.contract_rates || null
+  contractCategories.value = meta.contract_categories || []
 }
 
 const loadMeta = async () => {
@@ -397,6 +456,7 @@ const loadMeta = async () => {
   if (!deliveryOptions.value.length) {
     form.delivery_id = null
     contractRates.value = null
+    contractCategories.value = []
   } else if (form.delivery_id == null || !deliveryOptions.value.some((d) => d.id === form.delivery_id)) {
     form.delivery_id = deliveryOptions.value[0].id
   }
@@ -476,43 +536,41 @@ const fillRecognizedItems = (recognizedItems = []) => {
 
 const ensureScheduleValid = () => {
   if (!scheduleForm.delivery_address?.trim()) {
-    ElMessage.warning('请填写配送地址')
+    ElMessage.warning('配送地址为空，请前往「我的资料」补充默认地址后再下单')
     return false
   }
   if (!scheduleForm.delivery_date) {
     ElMessage.warning('请选择配送日期')
     return false
   }
-  if (!scheduleForm.delivery_slot) {
-    ElMessage.warning('请选择配送时段')
+  if (!scheduleForm.delivery_slot_start || !scheduleForm.delivery_slot_end) {
+    ElMessage.warning('请选择配送时段（开始与结束）')
+    return false
+  }
+  const todayStr = (() => {
+    const t = new Date()
+    return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`
+  })()
+  if (scheduleForm.delivery_date < todayStr) {
+    ElMessage.error('配送日期不能早于今天')
+    return false
+  }
+  const startH = parseInt(scheduleForm.delivery_slot_start.slice(0, 2), 10)
+  const endH = scheduleForm.delivery_slot_end === '24:00' ? 24 : parseInt(scheduleForm.delivery_slot_end.slice(0, 2), 10)
+  if (endH <= startH) {
+    ElMessage.error('配送时段结束时刻必须晚于开始时刻')
+    return false
+  }
+  const [yy, mm, dd] = scheduleForm.delivery_date.split('-').map(Number)
+  const windowStart = new Date(yy, (mm || 1) - 1, dd || 1, startH, 0, 0, 0)
+  if (windowStart.getTime() < Date.now() + 2 * 60 * 60 * 1000) {
+    ElMessage.error('配送时段须距当前时间至少 2 小时，请重新选择')
     return false
   }
   const start = contractRates.value?.period_start
   const end = contractRates.value?.period_end
   if (start && end && (scheduleForm.delivery_date < start || scheduleForm.delivery_date > end)) {
     ElMessage.error(`配送日期需在合约有效期内：${start} ~ ${end}`)
-    return false
-  }
-  if (scheduleForm.delivery_lng !== null && scheduleForm.delivery_lng !== '' && Number.isNaN(Number(scheduleForm.delivery_lng))) {
-    ElMessage.warning('配送经度格式不正确')
-    return false
-  }
-  if (scheduleForm.delivery_lat !== null && scheduleForm.delivery_lat !== '' && Number.isNaN(Number(scheduleForm.delivery_lat))) {
-    ElMessage.warning('配送纬度格式不正确')
-    return false
-  }
-  const hasLng = scheduleForm.delivery_lng !== null && scheduleForm.delivery_lng !== ''
-  const hasLat = scheduleForm.delivery_lat !== null && scheduleForm.delivery_lat !== ''
-  if (hasLng !== hasLat) {
-    ElMessage.warning('经纬度请同时填写或同时留空')
-    return false
-  }
-  if (hasLng && (Number(scheduleForm.delivery_lng) < -180 || Number(scheduleForm.delivery_lng) > 180)) {
-    ElMessage.warning('经度范围应在 -180 到 180')
-    return false
-  }
-  if (hasLat && (Number(scheduleForm.delivery_lat) < -90 || Number(scheduleForm.delivery_lat) > 90)) {
-    ElMessage.warning('纬度范围应在 -90 到 90')
     return false
   }
   if ((Number(scheduleForm.service_duration_min) || 0) <= 0 || Number(scheduleForm.service_duration_min) > 240) {
@@ -538,11 +596,13 @@ const openScheduleDialog = () => {
     const localDate = new Date(tomorrow.getTime() - tomorrow.getTimezoneOffset() * 60000)
     scheduleForm.delivery_date = localDate.toISOString().slice(0, 10)
   }
-  if (!scheduleForm.delivery_slot) {
-    const h = new Date().getHours()
-    const hh = String(h).padStart(2, '0')
-    const nh = h === 23 ? '24' : String(h + 1).padStart(2, '0')
-    scheduleForm.delivery_slot = `${hh}:00-${nh}:00`
+  if (!scheduleForm.delivery_slot_start || !scheduleForm.delivery_slot_end) {
+    // 默认给到 now + 2h 整点起，再 +1h 作为结束（与 2h 缓冲保持一致）
+    const cutoff = new Date(Date.now() + 2 * 60 * 60 * 1000)
+    const h = cutoff.getMinutes() === 0 && cutoff.getSeconds() === 0 ? cutoff.getHours() : cutoff.getHours() + 1
+    const safeStart = Math.min(h, 23)
+    scheduleForm.delivery_slot_start = `${String(safeStart).padStart(2, '0')}:00`
+    scheduleForm.delivery_slot_end = safeStart >= 23 ? '24:00' : `${String(safeStart + 1).padStart(2, '0')}:00`
   }
   hydrateScheduleAddressFromUser()
   scheduleDialogVisible.value = true
@@ -649,6 +709,9 @@ const openCart = () => {
 const formatMoney = (n) => Number(n || 0).toFixed(2)
 
 onMounted(loadMeta)
+onUnmounted(() => {
+  catalogLoadMoreObserver?.disconnect()
+})
 
 const matchStatusLabel = (s) => {
   if (s === 'matched') return { type: 'success', text: '已匹配' }
@@ -665,7 +728,178 @@ const candidateLabel = (opt) => {
 </script>
 
 <template>
-  <div class="order-new-page">
+  <!-- ── Mobile ── -->
+  <div v-if="isMobile" class="m-order-page">
+    <!-- Delivery partner -->
+    <div class="m-section">
+      <div class="m-section__label">配送单位</div>
+      <el-select
+        v-model="form.delivery_id"
+        placeholder="请选择已签约配送单位"
+        style="width:100%"
+        :disabled="!deliveryOptions.length"
+        @change="onDeliveryChange"
+      >
+        <el-option v-for="item in deliveryOptions" :key="item.id" :label="item.name" :value="item.id" />
+      </el-select>
+      <el-alert
+        v-if="!deliveryOptions.length"
+        type="warning"
+        show-icon
+        :closable="false"
+        style="margin-top:8px"
+        title="暂无可选配送单位"
+        description="请先完成招标定标。"
+      />
+    </div>
+
+    <!-- OCR / Voice -->
+    <div class="m-section m-ocr-row">
+      <el-upload :show-file-list="false" :auto-upload="false" :on-change="(f) => onUploadOrderSheet(f.raw)" style="flex:1">
+        <el-button type="primary" plain :loading="ocrLoading" style="width:100%">上传采购单</el-button>
+      </el-upload>
+      <el-button style="flex:1" @click="showVoiceInput = !showVoiceInput">语音下单</el-button>
+    </div>
+    <div v-if="ocrLoading" class="m-section">
+      <el-progress :percentage="ocrProgress" />
+    </div>
+    <div v-if="showVoiceInput" class="m-section">
+      <el-input v-model="voiceText" placeholder="我要订100斤大白菜和50斤西红柿" />
+      <el-button class="mt-2" type="primary" style="width:100%" @click="parseVoice">解析语音</el-button>
+    </div>
+
+    <!-- Search bar -->
+    <div class="m-section m-search-section">
+      <el-input
+        v-model="catalogKeyword"
+        clearable
+        placeholder="搜索商品..."
+        @clear="debouncedCatalogSearch"
+        @input="debouncedCatalogSearch"
+      />
+    </div>
+
+    <!-- Product catalog -->
+    <div class="m-catalog-shell">
+      <nav class="m-category-rail">
+        <button
+          type="button"
+          class="m-category-item"
+          :class="{ 'is-active': catalogCategoryId === null }"
+          @click="selectCatalogCategory(null)"
+        >
+          <span class="m-cat-thumb m-cat-thumb--all">
+            <span class="material-symbols-outlined">apps</span>
+          </span>
+          <span class="m-cat-name">全部</span>
+        </button>
+        <button
+          v-for="cat in contractCategories"
+          :key="cat.id"
+          type="button"
+          class="m-category-item"
+          :class="{ 'is-active': catalogCategoryId === cat.id }"
+          @click="selectCatalogCategory(cat.id)"
+        >
+          <span
+            class="m-cat-thumb"
+            :style="catImage(cat).type === 'emoji' ? { background: catImage(cat).bg } : null"
+          >
+            <img v-if="catImage(cat).type === 'photo'" :src="catImage(cat).src" :alt="cat.name" loading="lazy" />
+            <span v-else class="m-cat-glyph">{{ catImage(cat).glyph }}</span>
+          </span>
+          <span class="m-cat-name">{{ cat.name }}</span>
+        </button>
+      </nav>
+
+      <div ref="catalogGridRef" class="m-product-grid-wrap">
+        <div v-if="subCategories.length" class="m-subcat-bar">
+          <button
+            type="button"
+            class="m-subcat-chip"
+            :class="{ 'is-active': catalogCategory2Id === null }"
+            @click="selectCatalogCategory2(null)"
+          >全部</button>
+          <button
+            v-for="sub in subCategories"
+            :key="sub.id"
+            type="button"
+            class="m-subcat-chip"
+            :class="{ 'is-active': catalogCategory2Id === sub.id }"
+            @click="selectCatalogCategory2(sub.id)"
+          >{{ sub.name }}</button>
+        </div>
+        <div v-if="catalogLoading && !catalogProducts.length" class="m-empty">加载商品...</div>
+        <div v-else-if="!catalogLoading && !catalogProducts.length" class="m-empty">暂无商品</div>
+        <div v-else class="m-product-grid">
+          <div
+            v-for="p in catalogProducts"
+            :key="p.id"
+            class="m-product-card"
+            data-testid="order-product-card"
+          >
+            <div class="m-product-thumb-wrap">
+              <img
+                v-if="p.thumb_url || p.logo"
+                :src="p.thumb_url || p.logo"
+                :alt="p.name"
+                class="m-product-thumb"
+                loading="lazy"
+              />
+              <div v-else class="m-product-thumb-placeholder">暂无图片</div>
+            </div>
+            <div class="m-product-card__body">
+              <div class="m-product-card__name" :title="p.name">{{ p.name }}</div>
+              <div class="m-product-card__meta">
+                <span v-if="p.spec" class="m-product-spec">{{ p.spec }}</span>
+                <span class="m-product-unit">{{ p.unit || '件' }}</span>
+              </div>
+              <div class="m-product-price-line">
+                <div class="m-product-price-group">
+                  <span class="m-product-price">¥{{ formatMoney(lineUnitPriceFromProduct(p)) }}</span>
+                  <span class="m-product-price-unit">/{{ p.unit || '件' }}</span>
+                </div>
+                <span
+                  v-if="productStandardTypeLabel(p.standard_type)"
+                  class="m-product-standard-tag"
+                  :class="productStandardTypeCardClass(p.standard_type)"
+                >{{ productStandardTypeLabel(p.standard_type) }}</span>
+              </div>
+              <div class="m-product-card__actions">
+                <el-input-number
+                  :model-value="getAddQty(p.id)"
+                  :min="1"
+                  size="small"
+                  controls-position="right"
+                  class="m-product-qty"
+                  @change="(v) => setAddQty(p.id, v)"
+                />
+                <el-button type="primary" size="small" class="m-product-add-btn" @click="addToCart(p)">
+                  <el-icon><Plus /></el-icon>
+                </el-button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-if="catalogLoadingMore" class="m-catalog-loading-more">加载中...</div>
+        <div v-else-if="catalogHasMore" ref="catalogLoadMoreRef" class="m-catalog-load-more-sentinel" />
+        <div v-else-if="catalogProducts.length" class="m-catalog-end">没有更多了</div>
+      </div>
+    </div>
+
+    <!-- Floating cart bar -->
+    <div v-if="cartLineCount > 0" class="m-cart-bar" @click="cartDrawerVisible = true">
+      <div class="m-cart-bar__left">
+        <span class="material-symbols-outlined">shopping_cart</span>
+        <span class="m-cart-bar__badge">{{ cartLineCount }}</span>
+        <span class="m-cart-bar__text">{{ matchedLineCount }} 种 · 预计 ¥{{ formatMoney(estimatedTotal) }}</span>
+      </div>
+      <button class="m-cart-bar__btn" @click.stop="openScheduleDialog">去下单</button>
+    </div>
+  </div>
+
+  <!-- ── PC ── -->
+  <div v-else class="order-new-page">
     <el-card class="toolbar-card">
       <el-alert
         v-if="ocrEngineInfo?.using_mock_data"
@@ -684,7 +918,7 @@ const candidateLabel = (opt) => {
         title="暂无可选配送单位"
         description="仅显示已在「我的合约」中签订（已中标）的配送单位；请先完成招标定标后再下单。"
       />
-      <el-form label-width="100px" class="toolbar-form">
+      <el-form :label-width="formLabelWidth" class="toolbar-form">
         <el-form-item label="配送单位">
           <el-select
             v-model="form.delivery_id"
@@ -701,12 +935,6 @@ const candidateLabel = (opt) => {
             <el-button type="primary" plain :loading="ocrLoading">上传采购单</el-button>
           </el-upload>
           <el-button class="ml-2" @click="showVoiceInput = !showVoiceInput">语音下单</el-button>
-          <el-button class="ml-2" type="success" plain :loading="testSeedLoading" @click="addFixedTestCartItems"
-            >测试：一键加购20条</el-button
-          >
-          <el-button class="ml-2" type="danger" plain :loading="clearOrderLoading" @click="clearCurrentOrder"
-            >测试：一键清空订单</el-button
-          >
         </el-form-item>
         <el-form-item v-if="ocrLoading" label="OCR进度">
           <el-progress :percentage="ocrProgress" style="max-width: 320px" />
@@ -768,8 +996,15 @@ const candidateLabel = (opt) => {
               <div class="product-name" :title="p.name">{{ p.name }}</div>
               <div v-if="p.spec" class="product-spec">{{ p.spec }}</div>
               <div class="product-meta">
-                <span class="product-price">¥{{ formatMoney(lineUnitPriceFromProduct(p)) }}</span>
-                <span class="product-unit">/{{ p.unit }}</span>
+                <div class="product-price-line">
+                  <span class="product-price">¥{{ formatMoney(lineUnitPriceFromProduct(p)) }}</span>
+                  <span class="product-unit">/{{ p.unit }}</span>
+                </div>
+                <span
+                  v-if="productStandardTypeLabel(p.standard_type)"
+                  class="product-standard-tag"
+                  :class="productStandardTypeCardClass(p.standard_type)"
+                >{{ productStandardTypeLabel(p.standard_type) }}</span>
               </div>
               <div v-if="!form.delivery_id" class="product-price-hint">主价：选择配送单位后显示按合约上浮的单价</div>
               <div v-else class="product-price-hint">主价：按合约一级分类上浮后的单价</div>
@@ -829,8 +1064,15 @@ const candidateLabel = (opt) => {
       </el-badge>
       <div v-if="cartLineCount" class="fab-hint">¥{{ formatMoney(estimatedTotal) }}</div>
     </div>
+  </div>
 
-    <el-drawer v-model="cartDrawerVisible" title="购物车" size="440px" direction="rtl" class="cart-drawer">
+  <!-- Shared drawers/dialogs (used by both mobile and PC) -->
+  <el-drawer
+    v-model="cartDrawerVisible"
+    title="购物车"
+    :size="isMobile ? '100%' : cartDrawerSize"
+    :direction="isMobile ? 'btt' : 'rtl'"
+    class="cart-drawer">
       <div class="drawer-inner">
         <div v-if="!form.items.length" class="drawer-empty">购物车还是空的，先去上面选购商品吧</div>
         <div v-else class="cart-lines">
@@ -945,57 +1187,54 @@ const candidateLabel = (opt) => {
       title="选择配送时间"
       width="min(92vw, 560px)"
       class="delivery-schedule-dialog"
+      :fullscreen="isMobile"
       destroy-on-close
     >
       <div class="schedule-tip">
-        请确认期望配送日期与时段：须为<strong>整点 1 小时</strong>（如 06:00-07:00、当日最后一档 23:00-24:00）。系统将校验是否在合约有效期内。
+        请选择配送日期与时段：须为<strong>整点起止区间</strong>（如 06:00-07:00 或 14:00-18:00），且开始时刻须距当前时间至少 2 小时。系统将校验是否在合约有效期内。
       </div>
       <div class="schedule-contract-range">
         合约有效期：{{ contractRates?.period_start || '—' }} ~ {{ contractRates?.period_end || '—' }}
       </div>
-      <el-form label-width="96px" class="schedule-form">
+      <el-form :label-width="formLabelWidth" class="schedule-form">
         <el-form-item label="配送日期" required>
           <el-date-picker
             v-model="scheduleForm.delivery_date"
             type="date"
             value-format="YYYY-MM-DD"
             placeholder="请选择配送日期"
+            :disabled-date="disabledOrderDate"
             style="width: 100%"
           />
         </el-form-item>
         <el-form-item label="配送地址" required>
-          <el-input v-model="scheduleForm.delivery_address" placeholder="请输入本次订单配送地址（可精确到门牌）" />
+          <el-input
+            v-model="scheduleForm.delivery_address"
+            disabled
+            placeholder="请前往「我的资料」修改默认配送地址"
+          />
         </el-form-item>
         <el-form-item label="配送时段" required>
-          <el-select v-model="scheduleForm.delivery_slot" placeholder="请选择时段" style="width: 100%">
-            <el-option
-              v-for="opt in slotOptions"
-              :key="opt.value"
-              :value="opt.value"
-              :label="opt.label"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="配送经纬度">
-          <div class="lng-lat-row">
-            <el-input-number
-              v-model="scheduleForm.delivery_lng"
-              :precision="6"
-              :step="0.000001"
-              :min="-180"
-              :max="180"
-              placeholder="经度"
-              style="width: 100%"
-            />
-            <el-input-number
-              v-model="scheduleForm.delivery_lat"
-              :precision="6"
-              :step="0.000001"
-              :min="-90"
-              :max="90"
-              placeholder="纬度"
-              style="width: 100%"
-            />
+          <div class="slot-range">
+            <el-select v-model="scheduleForm.delivery_slot_start" placeholder="开始" style="flex: 1">
+              <el-option
+                v-for="h in hourOptions"
+                :key="`start-${h}`"
+                :value="h"
+                :label="h"
+                :disabled="isStartHourDisabled(h)"
+              />
+            </el-select>
+            <span class="slot-sep">—</span>
+            <el-select v-model="scheduleForm.delivery_slot_end" placeholder="结束" style="flex: 1">
+              <el-option
+                v-for="h in endHourOptions"
+                :key="`end-${h}`"
+                :value="h"
+                :label="h"
+                :disabled="isEndHourDisabled(h)"
+              />
+            </el-select>
           </div>
         </el-form-item>
         <el-form-item label="预计耗时(分)" required>
@@ -1013,6 +1252,7 @@ const candidateLabel = (opt) => {
       title="采购单识别结果"
       width="min(92vw, 920px)"
       class="ocr-preview-dialog"
+      :fullscreen="isMobile"
       destroy-on-close
     >
       <div v-if="ocrPreviewData?.warnings?.length" class="ocr-warnings-block">
@@ -1093,7 +1333,6 @@ const candidateLabel = (opt) => {
         <el-button type="primary" @click="ocrPreviewVisible = false">已了解，去购物车核对</el-button>
       </template>
     </el-dialog>
-  </div>
 </template>
 
 <style scoped>
@@ -1226,6 +1465,17 @@ const candidateLabel = (opt) => {
   font-size: 12px;
 }
 
+.slot-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.slot-sep {
+  color: #94a3b8;
+}
+
 .cart-line-title-row {
   display: flex;
   align-items: center;
@@ -1340,6 +1590,25 @@ const candidateLabel = (opt) => {
   justify-content: center;
 }
 
+.product-standard-tag {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  border-radius: 4px;
+}
+
+.product-standard-tag.standard {
+  color: #15803d;
+  background: #dcfce7;
+}
+
+.product-standard-tag.non-standard {
+  color: #b45309;
+  background: #fef3c7;
+}
+
 .product-thumb {
   width: 100%;
   height: 100%;
@@ -1380,7 +1649,15 @@ const candidateLabel = (opt) => {
 }
 
 .product-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
   margin-top: auto;
+}
+
+.product-price-line {
+  min-width: 0;
 }
 
 .product-price {
@@ -1493,13 +1770,6 @@ const candidateLabel = (opt) => {
   width: 100%;
 }
 
-.lng-lat-row {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
 .fab-cart {
   position: fixed;
   right: 24px;
@@ -1606,5 +1876,348 @@ const candidateLabel = (opt) => {
   font-size: 20px;
   font-weight: 600;
   color: #dc2626;
+}
+
+/* ── Mobile styles ── */
+.m-order-page {
+  font-family: var(--m-font-body);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+}
+.m-section {
+  flex: none;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--m-outline-variant);
+  background: var(--m-surface-container-lowest);
+}
+.m-section__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--m-on-surface-variant);
+  margin-bottom: 8px;
+}
+.m-ocr-row {
+  display: flex;
+  gap: 8px;
+}
+.m-search-section {
+  flex: none;
+  background: var(--m-surface-container-lowest);
+  border-bottom: 1px solid var(--m-outline-variant);
+}
+.m-catalog-shell {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  background: var(--m-surface-container);
+}
+.m-category-rail {
+  flex: none;
+  width: 84px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--m-surface-container-lowest);
+  border-right: 1px solid var(--m-outline-variant);
+  padding: 6px 0;
+}
+.m-category-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  padding: 10px 6px;
+  border: none;
+  background: transparent;
+  color: var(--m-on-surface-variant);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.25;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.18s, background 0.18s;
+}
+.m-cat-thumb {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 25px;
+  overflow: hidden;
+  background: var(--m-surface-container);
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.m-cat-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.m-cat-thumb--all {
+  background: var(--m-secondary-fixed);
+  color: var(--m-primary);
+}
+.m-cat-thumb--all .material-symbols-outlined { font-size: 24px; }
+.m-cat-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.m-category-item.is-active {
+  color: var(--m-primary);
+  font-weight: 700;
+  background: var(--m-surface-container);
+}
+.m-category-item.is-active .m-cat-thumb {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(31, 122, 83, 0.28);
+  outline: 2px solid var(--m-primary);
+  outline-offset: 1px;
+}
+.m-category-item.is-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--m-primary);
+}
+.m-product-grid-wrap {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 8px calc(72px + env(safe-area-inset-bottom, 0px));
+}
+/* 二级分类筛选 chip 行（吸顶横滑） */
+.m-subcat-bar {
+  position: sticky;
+  top: -8px;
+  z-index: 5;
+  display: flex;
+  gap: 7px;
+  margin: -8px -8px 8px;
+  padding: 8px;
+  background: var(--m-surface);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--m-outline-variant);
+}
+.m-subcat-bar::-webkit-scrollbar { display: none; }
+.m-subcat-chip {
+  flex: none;
+  padding: 5px 14px;
+  border-radius: 16px;
+  border: 1.5px solid var(--m-outline-variant);
+  background: var(--m-surface-container-lowest);
+  color: var(--m-on-surface-variant);
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.16s;
+}
+.m-subcat-chip.is-active {
+  background: var(--m-secondary-fixed);
+  border-color: var(--m-primary);
+  color: var(--m-primary);
+  font-weight: 700;
+}
+.m-product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.m-product-card {
+  background: var(--m-surface-container-lowest);
+  border: 1px solid var(--m-outline-variant);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.m-product-thumb-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--m-surface-container-high);
+}
+.m-product-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.m-product-thumb-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--m-on-surface-variant);
+  background: var(--m-surface-container);
+}
+.m-product-standard-tag {
+  flex: none;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.m-product-standard-tag.standard {
+  color: #15803d;
+  background: #dcfce7;
+}
+.m-product-standard-tag.non-standard {
+  color: #b45309;
+  background: #fef3c7;
+}
+.m-product-card__body {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+.m-product-card__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--m-on-surface);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.7em;
+}
+.m-product-card__meta {
+  font-size: 11px;
+  color: var(--m-on-surface-variant);
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.m-product-spec {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.m-product-price-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 2px;
+}
+.m-product-price-group {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  min-width: 0;
+}
+.m-product-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--m-primary);
+}
+.m-product-price-unit {
+  font-size: 11px;
+  color: var(--m-on-surface-variant);
+}
+.m-product-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 4px;
+}
+.m-product-qty {
+  flex: 1;
+  min-width: 0;
+}
+.m-product-qty :deep(.el-input__wrapper) {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+.m-product-add-btn {
+  flex: none;
+  padding: 8px 10px;
+}
+.m-catalog-loading-more,
+.m-catalog-end {
+  text-align: center;
+  padding: 12px 0 4px;
+  font-size: 12px;
+  color: var(--m-on-surface-variant);
+}
+.m-catalog-load-more-sentinel {
+  height: 1px;
+}
+.m-cart-bar {
+  position: fixed;
+  bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  left: 0;
+  right: 0;
+  background: var(--m-primary);
+  color: var(--m-on-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  z-index: 50;
+  cursor: pointer;
+}
+.m-cart-bar__left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+.m-cart-bar__badge {
+  background: #ef4444;
+  color: #fff;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex: none;
+}
+.m-cart-bar__text {
+  font-size: 14px;
+  font-weight: 500;
+}
+.m-cart-bar__btn {
+  padding: 8px 20px;
+  border-radius: 20px;
+  border: 2px solid rgba(255,255,255,0.8);
+  background: transparent;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--m-font-body);
+}
+.m-empty {
+  text-align: center;
+  color: var(--m-on-surface-variant);
+  padding: 32px 16px;
+  font-size: 14px;
 }
 </style>

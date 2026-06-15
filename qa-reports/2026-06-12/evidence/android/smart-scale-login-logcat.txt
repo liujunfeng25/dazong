@@ -1,0 +1,195 @@
+--------- beginning of main
+06-12 17:38:23.522  1176  1176 D TaplEvents: TIS / TouchInteractionService.onInputEvent: MotionEvent { action=ACTION_DOWN, actionButton=0, id[0]=0, x[0]=1280.0, y[0]=1260.0, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, classification=NONE, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=267252, downTime=267252, deviceId=-1, source=0x1002, displayId=0, eventId=-151885130 }
+06-12 17:38:23.527  1176  1176 D TaplEvents: TIS / TouchInteractionService.onInputEvent: MotionEvent { action=ACTION_UP, actionButton=0, id[0]=0, x[0]=1280.0, y[0]=1260.0, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, classification=NONE, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=267252, downTime=267252, deviceId=-1, source=0x1002, displayId=0, eventId=-745282452 }
+06-12 17:38:23.601  6661  6708 D EGL_emulation: app_time_stats: avg=252.12ms min=14.40ms max=500.10ms count=4
+06-12 17:38:23.641  6661  6841 I okhttp.OkHttpClient: --> POST http://10.0.2.2:18000/api/auth/login (45-byte body)
+06-12 17:38:23.665  6661  6841 D TrafficStats: tagSocket(98) with statsTag=0xffffffff, statsUid=-1
+06-12 17:38:24.292  6661  6841 I okhttp.OkHttpClient: <-- 200 OK http://10.0.2.2:18000/api/auth/login (651ms, 210-byte body)
+06-12 17:38:24.463  6661  6841 I okhttp.OkHttpClient: --> GET http://10.0.2.2:18000/api/client/canteens
+06-12 17:38:24.522  6661  6841 I okhttp.OkHttpClient: <-- 200 OK http://10.0.2.2:18000/api/client/canteens (58ms, 399-byte body)
+06-12 17:38:24.614  6661  6708 D EGL_emulation: app_time_stats: avg=23.68ms min=3.21ms max=66.00ms count=27
+06-12 17:38:25.166  6661  6661 I ImeTracker: com.dazong.smartscale:b26130c4: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT_BY_INSETS_API
+06-12 17:38:25.166  6661  6661 I ImeTracker: com.dazong.smartscale:b26130c4: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+06-12 17:38:25.168  1604  1604 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1877 onStartInput(EditorInfo{inputType=0x0(NULL) imeOptions=0x0 privateImeOptions=null actionName=UNSPECIFIED actionLabel=null actionId=0 initialSelStart=-1 initialSelEnd=-1 initialCapsMode=0x0 hintText=null label=null packageName=com.dazong.smartscale fieldId=0 fieldName=null extras=null}, true)
+06-12 17:38:25.168  1604  1604 I GoogleInputMethodService: GoogleInputMethodService.shouldHideHeaderOnInitialState():4008 ShouldHideHeaderOnInitialState = false
+06-12 17:38:25.169  1604  1604 I GoogleInputMethodService: GoogleInputMethodService.updateDeviceLockedStatus():2087 repeatCheckTimes = 2, unlocked = true
+06-12 17:38:25.169  1604  1604 W SessionManager: SessionManager.beginSession():53 Try to begin an already begun session [INPUT_SESSION], end it first
+06-12 17:38:25.567   896   896 D StatusBarIconController: ignoring old pipeline callback because the new wifi icon is enabled
+06-12 17:38:27.345  6661  6661 E FrameTracker: force finish cuj, time out: J<IME_INSETS_ANIMATION::0@0@com.dazong.smartscale>
+06-12 17:38:28.573   896   896 D StatusBarIconController: ignoring old pipeline callback because the new wifi icon is enabled
+06-12 17:38:30.154   883   883 I wpa_supplicant: wlan0: CTRL-EVENT-BEACON-LOSS 
+06-12 17:38:30.221  1604  1722 I ProtoXDBBufferWrapper: ProtoXDBBufferWrapper.flushToStorage():153 Flushed 6 data item(s) to storage.
+06-12 17:38:30.813  6661  6661 E FrameTracker: force finish cuj, time out: J<IME_INSETS_ANIMATION::1@0@com.dazong.smartscale>
+--------- beginning of system
+06-12 17:38:31.519   540   967 D OomAdjuster: Not killing cached processes
+06-12 17:38:31.578   896   896 D StatusBarIconController: ignoring old pipeline callback because the new wifi icon is enabled
+06-12 17:38:31.653  6847  6847 W BpBinder: Linking to death on android.gui.ISurfaceComposer but there are no threads (yet?) listening to incoming transactions. See ProcessState::startThreadPool and ProcessState::setThreadPoolMaxThreadCount. Generally you should setup the binder threadpool before other initialization steps.
+06-12 17:38:31.653  6847  6847 W ProcessState: Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+--------- beginning of kernel
+06-12 17:38:31.672   151   151 I servicemanager: Could not find android.hardware.graphics.allocator.IAllocator/default in the VINTF manifest.
+06-12 17:38:31.669   152   152 I hwservicemanager: getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+06-12 17:38:31.669  6847  6848 I Gralloc4: mapper 4.x is not supported
+06-12 17:38:31.894  6849  6849 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+06-12 17:38:31.898  6849  6849 I AndroidRuntime: Using default boot image
+06-12 17:38:31.898  6849  6849 I AndroidRuntime: Leaving lock profiling enabled
+06-12 17:38:31.900  6849  6849 I app_process: Core platform API reporting enabled, enforcing=false
+06-12 17:38:31.900  6849  6849 I app_process: Using CollectorTypeCC GC.
+06-12 17:38:31.945  6849  6849 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+06-12 17:38:31.953  6849  6849 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+06-12 17:38:31.953  6849  6849 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt72l.dat
+06-12 17:38:31.959  6849  6849 W app_process: ClassLoaderContext shared library size mismatch. Expected=2, found=0 (PCL[]{PCL[/system/framework/android.test.base.jar*836642756]#PCL[/system/framework/android.test.mock.jar*3186112116]} | PCL[])
+06-12 17:38:31.960  6849  6849 W app_process: ClassLoaderContext classpath size mismatch. expected=0, found=1 (PCL[]{PCL[/system/framework/android.test.runner.jar*4168958247]{PCL[/system/framework/android.test.base.jar*836642756]#PCL[/system/framework/android.test.mock.jar*3186112116]}#PCL[/system/framework/android.test.base.jar*836642756]} | PCL[/system/framework/android.test.runner.jar*4168958247])
+06-12 17:38:31.978  6849  6849 W libc    : Access denied finding property "ro.product.name_for_attestation"
+06-12 17:38:31.978  6849  6849 W libc    : Access denied finding property "ro.product.brand_for_attestation"
+06-12 17:38:31.978  6849  6849 W libc    : Access denied finding property "ro.product.model_for_attestation"
+06-12 17:38:31.976  6849  6849 W main    : type=1400 audit(0.0:85): avc:  denied  { read } for  name="u:object_r:build_attestation_prop:s0" dev="tmpfs" ino=77 scontext=u:r:shell:s0 tcontext=u:object_r:build_attestation_prop:s0 tclass=file permissive=0
+06-12 17:38:31.976  6849  6849 W main    : type=1400 audit(0.0:86): avc:  denied  { read } for  name="u:object_r:build_attestation_prop:s0" dev="tmpfs" ino=77 scontext=u:r:shell:s0 tcontext=u:object_r:build_attestation_prop:s0 tclass=file permissive=0
+06-12 17:38:31.976  6849  6849 W main    : type=1400 audit(0.0:87): avc:  denied  { read } for  name="u:object_r:build_attestation_prop:s0" dev="tmpfs" ino=77 scontext=u:r:shell:s0 tcontext=u:object_r:build_attestation_prop:s0 tclass=file permissive=0
+06-12 17:38:31.979  6849  6849 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+06-12 17:38:31.983  6849  6849 D UiAutomationConnection: Created on user UserHandle{0}
+06-12 17:38:31.983  6849  6849 I UiAutomation: Initialized for user 0 on display 0
+06-12 17:38:31.983  6849  6849 W UiAutomation: Created with deprecatead constructor, assumes DEFAULT_DISPLAY
+06-12 17:38:31.984   540   614 D AccessibilityManagerService: changeCurrentUserForTestAutomationIfNeededLocked(0): ignoring because device doesn't support visible background users
+06-12 17:38:31.984   540   614 I UiAutomationManager: Registering UiTestAutomationService (id=com.android.server.accessibility/UiAutomation) when called by user 0
+06-12 17:38:31.987   540   614 W WindowMagnificationMgr: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+06-12 17:38:31.988  1688  4932 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+06-12 17:38:31.988  1688  2052 I AiAiEcho: Predicting[0]: 
+06-12 17:38:31.988  1688  2052 I AiAiEcho: EchoTargets: 
+06-12 17:38:31.988  1688  2052 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:38:31.988  1688  2052 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:38:31.988  1688  2052 I AiAiEcho: Predicting[0]: 
+06-12 17:38:31.988  1688  2052 I AiAiEcho: EchoTargets: 
+06-12 17:38:31.988  1688  2052 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:38:31.988  1688  2052 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:38:31.988  1688  2052 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+06-12 17:38:31.988   540   540 D BatterySaverPolicy: accessibility changed to true, updating policy.
+06-12 17:38:31.989  1721  2182 I A11yListener: (REDACTED) #onAccessibilityStateChanged enabled: %s
+06-12 17:38:31.989  1721  2285 I A11yListener: #onChange
+06-12 17:38:31.989  1688  2052 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+06-12 17:38:31.989  1721  2285 E TraceManager: Duplicate trace
+06-12 17:38:31.989  1721  2285 E TraceManager: com.google.apps.tiktok.tracing.w: Starting new trace A11yEventListener_onChange when already associated with a trace: . For more help, see http://go/tiktok-tracing#fixing-duplicate-trace-issues
+06-12 17:38:31.989  1721  2285 E TraceManager: 	at com.google.apps.tiktok.tracing.el.f(PG:6)
+06-12 17:38:31.989  1721  2285 E TraceManager: 	at com.google.apps.tiktok.tracing.el.g(PG:2)
+06-12 17:38:31.989  1721  2285 E TraceManager: 	at com.google.apps.tiktok.tracing.dv.d(PG:1)
+06-12 17:38:31.989  1721  2285 E TraceManager: 	at com.google.android.libraries.search.assistant.a.g.a(PG:7)
+06-12 17:38:31.989  1721  2285 E TraceManager: 	at com.google.android.libraries.search.assistant.a.b.b(PG:2)
+06-12 17:38:31.989  1721  2285 E TraceManager: 	at i.c.b.a.a.h(PG:4)
+06-12 17:38:31.989  1721  2285 E TraceManager: 	at kotlinx.coroutines.bk.run(PG:14)
+06-12 17:38:31.989  1721  2285 E TraceManager: 	at com.google.apps.tiktok.coroutines.g.run(PG:1)
+06-12 17:38:31.989  1721  2285 E TraceManager: 	at com.google.android.libraries.i.z.run(PG:1)
+06-12 17:38:31.989  1721  2285 E TraceManager: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+06-12 17:38:31.989  1721  2285 E TraceManager: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+06-12 17:38:31.989  1721  2285 E TraceManager: 	at com.google.android.libraries.i.h.run(PG:2)
+06-12 17:38:31.989  1721  2285 E TraceManager: 	at java.lang.Thread.run(Thread.java:1012)
+06-12 17:38:31.989  1721  2285 E TraceManager: 	at com.google.android.libraries.i.ai.run(PG:5)
+06-12 17:38:31.989  1721  2285 E TraceManager: 	Suppressed: com.google.apps.tiktok.tracing.fv: 
+06-12 17:38:31.989  1721  2285 E TraceManager: 		at tk_trace.(Unknown Source:0)
+06-12 17:38:31.989  1721  2285 E TraceManager: 		at tk_trace.Missing root trace(Unknown Source:0)
+06-12 17:38:31.989  1721  2285 E TraceManager: Caused by: com.google.apps.tiktok.tracing.aa
+06-12 17:38:31.990  1721  2285 I Ma-Fcf-A11yChangeNotifier: #FCF: onChange
+06-12 17:38:31.990  1721  2285 I A       : FCF A11y Checker - readyForTngMa
+06-12 17:38:31.990  1721  2306 I A       : (REDACTED) #FCF: Continued Conversation Mode Enabled: %s
+06-12 17:38:31.990  6849  6865 V UiAutomation: Init UiAutomation@2e22006[id=9, displayId=0, flags=0]
+06-12 17:38:31.991  1791  2314 I A       : NGA disabled due to not being eligible.
+06-12 17:38:31.992  1721  2306 I A       : (REDACTED) #FCF: Headset Connected Status: %s
+06-12 17:38:31.992  1721  2306 I A       : (REDACTED) #FCF: Assistant primary locale : %s
+06-12 17:38:31.992  1721  2306 I A       : (REDACTED) #FCF: Assistant Primary locale check status : %s
+06-12 17:38:31.992  1721  2306 W A       : Unable to check for productivity accounts. Assuming there are none.
+06-12 17:38:31.992  1721  2306 W A       : com.google.android.libraries.geller.portable.GellerException: Code: INVALID_ARGUMENT, Message: Account name is null.
+06-12 17:38:31.992  1721  2306 W A       : 	at com.google.android.libraries.search.h.k.a(PG:6)
+06-12 17:38:31.992  1721  2306 W A       : 	at com.google.apps.tiktok.tracing.es.a(PG:3)
+06-12 17:38:31.992  1721  2306 W A       : 	at com.google.common.w.a.bc.a(PG:1)
+06-12 17:38:31.992  1721  2306 W A       : 	at com.google.common.w.a.cw.run(PG:4)
+06-12 17:38:31.992  1721  2306 W A       : 	at com.google.android.libraries.i.z.run(PG:1)
+06-12 17:38:31.992  1721  2306 W A       : 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+06-12 17:38:31.992  1721  2306 W A       : 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+06-12 17:38:31.992  1721  2306 W A       : 	at com.google.android.libraries.i.h.run(PG:2)
+06-12 17:38:31.992  1721  2306 W A       : 	at java.lang.Thread.run(Thread.java:1012)
+06-12 17:38:31.992  1721  2306 W A       : 	at com.google.android.libraries.i.ai.run(PG:5)
+06-12 17:38:31.995  1721  2285 I A       : (REDACTED) #FCF evaluate: %s
+06-12 17:38:31.995  1721  2285 I A       : (REDACTED) TngMaStatusChecker#evaluateInternal completed in %s millis
+06-12 17:38:31.995  1721  2285 I Ma-Entry-Triggering: (REDACTED) TNG:MA status updated: %s
+06-12 17:38:31.995  1721  2285 I Ma-Entry-Triggering: TNG:MA became ineligible, client should disconnect
+06-12 17:38:31.996  1721  2285 I Ma-Entry-Triggering: #disconnectAndStop - preventing double stop
+06-12 17:38:31.996  1721  2285 I A       : #invalidationSource: adding headset checker
+06-12 17:38:31.996  1721  2285 I A       : #invalidationSource : adding a11y checker
+06-12 17:38:32.005   896   896 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+06-12 17:38:32.014   540  2406 W WindowMagnificationMgr: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+06-12 17:38:32.015  1688  1741 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+06-12 17:38:32.015  1688  2052 I AiAiEcho: Predicting[0]: 
+06-12 17:38:32.016  1688  2052 I AiAiEcho: EchoTargets: 
+06-12 17:38:32.016  1688  2052 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:38:32.016  1688  2052 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:38:32.016  1688  2052 I AiAiEcho: Predicting[0]: 
+06-12 17:38:32.016  1688  2052 I AiAiEcho: EchoTargets: 
+06-12 17:38:32.016  1688  2052 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:38:32.016  1688  2052 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:38:32.017  1688  2052 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+06-12 17:38:32.017  1688  2052 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+06-12 17:38:32.019   896   896 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+06-12 17:38:32.568   896   896 D StatusBarIconController: ignoring old pipeline callbacks, because the new mobile icons are enabled
+06-12 17:38:33.024  6849  6849 W AccessibilityNodeInfoDumper: Fetch time: 24ms
+06-12 17:38:33.026   540  2265 W WindowMagnificationMgr: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+06-12 17:38:33.026  1688  1741 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+06-12 17:38:33.026   540  2265 D AccessibilityManagerService: restoreCurrentUserForTestAutomationIfNeededLocked(): ignoring because device doesn't support visible background users
+06-12 17:38:33.027   540   540 D BatterySaverPolicy: accessibility changed to false, updating policy.
+06-12 17:38:33.027  1791  2310 I A       : NGA disabled due to not being eligible.
+06-12 17:38:33.027  1688  2052 I AiAiEcho: Predicting[0]: 
+06-12 17:38:33.027  1688  2052 I AiAiEcho: EchoTargets: 
+06-12 17:38:33.027  1688  2052 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:38:33.028  1721  2182 I A11yListener: (REDACTED) #onAccessibilityStateChanged enabled: %s
+06-12 17:38:33.028  1688  2052 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:38:33.028  1688  2052 I AiAiEcho: Predicting[0]: 
+06-12 17:38:33.028  1688  2052 I AiAiEcho: EchoTargets: 
+06-12 17:38:33.028  1688  2052 I AiAiEcho: Filtered by AiAi flag check: 
+06-12 17:38:33.029  1688  2052 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata: 
+06-12 17:38:33.029  1688  2052 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+06-12 17:38:33.029  1688  2052 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+06-12 17:38:33.029  1721  2285 I A11yListener: #onChange
+06-12 17:38:33.030  1721  2285 E TraceManager: Duplicate trace
+06-12 17:38:33.030  1721  2285 E TraceManager: com.google.apps.tiktok.tracing.w: Starting new trace A11yEventListener_onChange when already associated with a trace: . For more help, see http://go/tiktok-tracing#fixing-duplicate-trace-issues
+06-12 17:38:33.030  1721  2285 E TraceManager: 	at com.google.apps.tiktok.tracing.el.f(PG:6)
+06-12 17:38:33.030  1721  2285 E TraceManager: 	at com.google.apps.tiktok.tracing.el.g(PG:2)
+06-12 17:38:33.030  1721  2285 E TraceManager: 	at com.google.apps.tiktok.tracing.dv.d(PG:1)
+06-12 17:38:33.030  1721  2285 E TraceManager: 	at com.google.android.libraries.search.assistant.a.g.a(PG:7)
+06-12 17:38:33.030  1721  2285 E TraceManager: 	at com.google.android.libraries.search.assistant.a.b.b(PG:2)
+06-12 17:38:33.030  1721  2285 E TraceManager: 	at i.c.b.a.a.h(PG:4)
+06-12 17:38:33.030  1721  2285 E TraceManager: 	at kotlinx.coroutines.bk.run(PG:14)
+06-12 17:38:33.030  1721  2285 E TraceManager: 	at com.google.apps.tiktok.coroutines.g.run(PG:1)
+06-12 17:38:33.030  1721  2285 E TraceManager: 	at com.google.android.libraries.i.z.run(PG:1)
+06-12 17:38:33.030  1721  2285 E TraceManager: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+06-12 17:38:33.030  1721  2285 E TraceManager: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+06-12 17:38:33.030  1721  2285 E TraceManager: 	at com.google.android.libraries.i.h.run(PG:2)
+06-12 17:38:33.030  1721  2285 E TraceManager: 	at java.lang.Thread.run(Thread.java:1012)
+06-12 17:38:33.030  1721  2285 E TraceManager: 	at com.google.android.libraries.i.ai.run(PG:5)
+06-12 17:38:33.030  1721  2285 E TraceManager: 	Suppressed: com.google.apps.tiktok.tracing.fv: 
+06-12 17:38:33.030  1721  2285 E TraceManager: 		at tk_trace.(Unknown Source:0)
+06-12 17:38:33.030  1721  2285 E TraceManager: 		at tk_trace.Missing root trace(Unknown Source:0)
+06-12 17:38:33.030  1721  2285 E TraceManager: Caused by: com.google.apps.tiktok.tracing.aa
+06-12 17:38:33.030  1721  2285 I Ma-Fcf-A11yChangeNotifier: #FCF: onChange
+06-12 17:38:33.030  1721  2306 I A       : (REDACTED) #FCF: Assistant primary locale : %s
+06-12 17:38:33.030  1721  2306 I A       : (REDACTED) #FCF: Assistant Primary locale check status : %s
+06-12 17:38:33.033  1721  2306 I A       : FCF A11y Checker - readyForTngMa
+06-12 17:38:33.033  1721  2306 I A       : (REDACTED) #FCF: Continued Conversation Mode Enabled: %s
+06-12 17:38:33.034  1721  2285 I A       : (REDACTED) #FCF: Headset Connected Status: %s
+06-12 17:38:33.034  1721  2285 W A       : Unable to check for productivity accounts. Assuming there are none.
+06-12 17:38:33.034  1721  2285 W A       : com.google.android.libraries.geller.portable.GellerException: Code: INVALID_ARGUMENT, Message: Account name is null.
+06-12 17:38:33.034  1721  2285 W A       : 	at com.google.android.libraries.search.h.k.a(PG:6)
+06-12 17:38:33.034  1721  2285 W A       : 	at com.google.apps.tiktok.tracing.es.a(PG:3)
+06-12 17:38:33.034  1721  2285 W A       : 	at com.google.common.w.a.bc.a(PG:1)
+06-12 17:38:33.034  1721  2285 W A       : 	at com.google.common.w.a.cw.run(PG:4)
+06-12 17:38:33.034  1721  2285 W A       : 	at com.google.android.libraries.i.z.run(PG:1)
+06-12 17:38:33.034  1721  2285 W A       : 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+06-12 17:38:33.034  1721  2285 W A       : 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+06-12 17:38:33.034  1721  2285 W A       : 	at com.google.android.libraries.i.h.run(PG:2)
+06-12 17:38:33.034  1721  2285 W A       : 	at java.lang.Thread.run(Thread.java:1012)
+06-12 17:38:33.034  1721  2285 W A       : 	at com.google.android.libraries.i.ai.run(PG:5)
+06-12 17:38:33.035   896   896 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+06-12 17:38:33.037  1721  2306 I A       : (REDACTED) #FCF evaluate: %s
+06-12 17:38:33.037  1721  2306 I A       : (REDACTED) TngMaStatusChecker#evaluateInternal completed in %s millis
+06-12 17:38:33.037  1721  2306 I Ma-Entry-Triggering: (REDACTED) TNG:MA status updated: %s
+06-12 17:38:33.037  1721  2306 I Ma-Entry-Triggering: TNG:MA became ineligible, client should disconnect
+06-12 17:38:33.037  1721  2306 I Ma-Entry-Triggering: #disconnectAndStop - preventing double stop
+06-12 17:38:33.037  1721  2306 I A       : #invalidationSource: adding headset checker
+06-12 17:38:33.037  1721  2306 I A       : #invalidationSource : adding a11y checker
+06-12 17:38:33.039  6849  6849 D AndroidRuntime: Shutting down VM

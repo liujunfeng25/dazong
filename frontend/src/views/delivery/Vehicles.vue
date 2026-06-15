@@ -10,10 +10,20 @@ import {
   listDeliveryDevicesApi,
   listDeliveryVehiclesApi,
   listVehicleBindingsApi,
+  postVehicleBeidouHistoryTrackApi,
   updateDeliveryVehicleApi,
   deleteVehicleBindingApi,
 } from '../../api/delivery'
 import { vehicleLimitReason as vehicleLimitReasonUtil, vehicleLimitTag as vehicleLimitTagUtil } from '../../utils/beijingVehicleLimit'
+import { buildSortedHistoryPath } from '../../utils/amapPathPlayback'
+import { useBeidouHistoryPlayback } from '../../composables/useBeidouHistoryPlayback'
+import { useYs7CameraApis } from '../../composables/useYs7CameraApis'
+import Ys7CameraLiveDialog from '../../components/Ys7CameraLiveDialog.vue'
+import { ys7BatteryFromRow, ys7BatteryTagType, ys7SupportsPtz } from '../../utils/ys7DeviceMeta'
+
+const { liveUrlApi, ptzControl } = useYs7CameraApis('delivery', 'device')
+const cameraLiveVisible = ref(false)
+const cameraLiveRow = ref(null)
 
 const loading = ref(false)
 const list = ref([])
@@ -36,9 +46,22 @@ const selectedDeviceId = ref(null)
 
 const locationVisible = ref(false)
 const locationRow = ref(null)
+const locationTab = ref('live')
+const historyTrackPoints = ref([])
+const historyLoading = ref(false)
+const historyDemoOnly = ref(false)
+const historyRange = ref(null)
 const mapRef = ref(null)
 const amap = ref(null)
 const marker = ref(null)
+const trackPolyline = ref(null)
+const historyStartMarker = ref(null)
+const historyEndMarker = ref(null)
+
+const historyPb = useBeidouHistoryPlayback()
+const hpPlaying = computed(() => historyPb.isPlaying)
+const hpPaused = computed(() => historyPb.isPaused)
+const hpCanScrub = computed(() => historyPb.canScrub)
 const restrictionInfo = ref({
   source: 'seniverse',
   available: false,
@@ -173,42 +196,205 @@ const hasValidLocation = computed(() => {
   return Number.isFinite(lng) && Number.isFinite(lat)
 })
 
-const initLocationMap = async () => {
-  if (!hasValidLocation.value || !mapRef.value) return
+const isBeidouLocation = computed(() => locationRow.value?.source === 'beidou')
+
+const showMapFrame = computed(() => {
+  if (!locationRow.value) return false
+  if (locationRow.value.source !== 'beidou') {
+    return hasValidLocation.value
+  }
+  if (locationTab.value === 'live') {
+    return hasValidLocation.value
+  }
+  return true
+})
+
+const defaultHistoryRange = () => {
+  const end = new Date()
+  const start = new Date(end.getTime() - 6 * 3600 * 1000)
+  return [start, end]
+}
+
+const getHistoryMap = () => amap.value
+const getHistoryPoints = () => historyTrackPoints.value
+const getHistoryTitle = () =>
+  [locationRow.value?.vehicle_no, locationRow.value?.vehicle_model].filter(Boolean).join(' ') || '历史轨迹'
+
+const onHistoryPlay = () => {
+  if (!amap.value) {
+    ElMessage.warning('请先等待地图加载完成')
+    return
+  }
+  const r = historyPb.playOrContinue(getHistoryMap, getHistoryPoints, getHistoryTitle)
+  if (!r?.ok) {
+    ElMessage.warning(r?.reason === 'short_path' ? '轨迹点过少，无法播放' : '地图未就绪')
+  }
+}
+
+const onHistoryRestart = () => {
+  if (!amap.value) {
+    ElMessage.warning('请先等待地图加载完成')
+    return
+  }
+  const r = historyPb.restartFromBeginning(getHistoryMap, getHistoryPoints, getHistoryTitle)
+  if (!r?.ok) {
+    ElMessage.warning(r?.reason === 'short_path' ? '轨迹点过少，无法播放' : '地图未就绪')
+  }
+}
+
+const destroyLocationMap = () => {
+  historyPb.detachForMapDestroyed()
+  if (trackPolyline.value) {
+    trackPolyline.value.setMap(null)
+    trackPolyline.value = null
+  }
+  if (historyStartMarker.value) {
+    historyStartMarker.value.setMap(null)
+    historyStartMarker.value = null
+  }
+  if (historyEndMarker.value) {
+    historyEndMarker.value.setMap(null)
+    historyEndMarker.value = null
+  }
+  if (marker.value) {
+    marker.value.setMap(null)
+    marker.value = null
+  }
+  if (amap.value) {
+    amap.value.destroy()
+    amap.value = null
+  }
+}
+
+const renderLocationMap = async () => {
+  if (!locationVisible.value || !showMapFrame.value || !mapRef.value) return
   const key = import.meta.env.VITE_AMAP_KEY
   if (!key) {
     ElMessage.warning('未配置高德地图 Key（VITE_AMAP_KEY）')
     return
   }
 
+  destroyLocationMap()
   await AMapLoader.load({ key, version: '2.0' })
-  const lng = Number(locationRow.value?.lng)
-  const lat = Number(locationRow.value?.lat)
-  const title =
-    [locationRow.value?.vehicle_no, locationRow.value?.vehicle_model].filter(Boolean).join(' ') || '车辆位置'
 
-  if (amap.value) {
-    amap.value.destroy()
-    amap.value = null
-    marker.value = null
+  if (locationTab.value === 'live') {
+    const lng = Number(locationRow.value.lng)
+    const lat = Number(locationRow.value.lat)
+    const title =
+      [locationRow.value?.vehicle_no, locationRow.value?.vehicle_model].filter(Boolean).join(' ') || '车辆位置'
+    amap.value = new window.AMap.Map(mapRef.value, {
+      zoom: 15,
+      center: [lng, lat],
+    })
+    marker.value = new window.AMap.Marker({
+      position: [lng, lat],
+      title,
+    })
+    marker.value.setMap(amap.value)
+    amap.value.resize()
+    return
   }
-  amap.value = new window.AMap.Map(mapRef.value, {
-    zoom: 15,
-    center: [lng, lat],
-  })
 
-  marker.value = new window.AMap.Marker({
-    position: [lng, lat],
-    title,
+  const pts = historyTrackPoints.value || []
+  const fallbackLng = hasValidLocation.value ? Number(locationRow.value.lng) : 116.397428
+  const fallbackLat = hasValidLocation.value ? Number(locationRow.value.lat) : 39.90923
+
+  if (!pts.length) {
+    amap.value = new window.AMap.Map(mapRef.value, {
+      zoom: 12,
+      center: [fallbackLng, fallbackLat],
+    })
+    amap.value.resize()
+    return
+  }
+
+  const { path } = buildSortedHistoryPath(pts)
+
+  if (path.length === 0) {
+    amap.value = new window.AMap.Map(mapRef.value, {
+      zoom: 12,
+      center: [fallbackLng, fallbackLat],
+    })
+    amap.value.resize()
+    return
+  }
+
+  if (path.length === 1) {
+    const c = path[0]
+    amap.value = new window.AMap.Map(mapRef.value, {
+      zoom: 14,
+      center: c,
+    })
+    marker.value = new window.AMap.Marker({ position: c, title: '轨迹点' })
+    marker.value.setMap(amap.value)
+    amap.value.resize()
+    return
+  }
+
+  amap.value = new window.AMap.Map(mapRef.value, {})
+  trackPolyline.value = new window.AMap.Polyline({
+    path,
+    strokeColor: '#2563eb',
+    strokeWeight: 4,
+    lineJoin: 'round',
   })
-  marker.value.setMap(amap.value)
+  trackPolyline.value.setMap(amap.value)
+  historyStartMarker.value = new window.AMap.Marker({
+    position: path[0],
+    title: '起点',
+    anchor: 'bottom-center',
+  })
+  historyEndMarker.value = new window.AMap.Marker({
+    position: path[path.length - 1],
+    title: '终点',
+    anchor: 'bottom-center',
+  })
+  historyStartMarker.value.setMap(amap.value)
+  historyEndMarker.value.setMap(amap.value)
+  amap.value.setFitView([trackPolyline.value], false, [48, 48, 48, 48])
   amap.value.resize()
+}
+
+const loadHistoryTrack = async () => {
+  const vid = Number(locationRow.value?.vehicle_id)
+  if (!Number.isFinite(vid)) return
+  const r = historyRange.value
+  if (!Array.isArray(r) || r.length !== 2 || !r[0] || !r[1]) {
+    ElMessage.warning('请选择时间范围')
+    return
+  }
+  const st = Math.floor(new Date(r[0]).getTime() / 1000)
+  const et = Math.floor(new Date(r[1]).getTime() / 1000)
+  historyLoading.value = true
+  try {
+    const res = await postVehicleBeidouHistoryTrackApi(vid, {
+      start_time: st,
+      end_time: et,
+      force_demo: historyDemoOnly.value,
+    })
+    historyTrackPoints.value = Array.isArray(res.points) ? res.points : []
+    if (!historyTrackPoints.value.length) {
+      ElMessage.info('该时段无轨迹点')
+    } else {
+      ElMessage.success(`已加载 ${historyTrackPoints.value.length} 个轨迹点`)
+    }
+    if (res.may_have_more) {
+      ElMessage.warning('点位较多，平台可能尚有更多记录未一次返回')
+    }
+  } catch (err) {
+    const msg = err?.response?.data?.detail
+    const text = typeof msg === 'string' ? msg : err?.message || '查询失败'
+    ElMessage.error(text)
+    historyTrackPoints.value = []
+  } finally {
+    historyLoading.value = false
+  }
 }
 
 const openVehicleLocation = async (row) => {
   try {
     const res = await getVehicleLocationApi(row.id)
-    locationRow.value = res
+    locationRow.value = { ...res, vehicle_id: row.id }
     locationVisible.value = true
   } catch (err) {
     const msg = err?.response?.data?.detail || '暂无位置'
@@ -216,35 +402,62 @@ const openVehicleLocation = async (row) => {
   }
 }
 
+const openCameraLive = (camera) => {
+  cameraLiveRow.value = camera
+  cameraLiveVisible.value = true
+}
+
 watch(locationVisible, async (visible) => {
   if (!visible) {
-    if (amap.value) {
-      amap.value.destroy()
-      amap.value = null
-      marker.value = null
-    }
+    destroyLocationMap()
+    historyPb.destroy()
     locationRow.value = null
+    locationTab.value = 'live'
+    historyTrackPoints.value = []
+    historyRange.value = null
+    historyDemoOnly.value = false
     return
   }
+  historyTrackPoints.value = []
+  locationTab.value = 'live'
+  if (locationRow.value?.source === 'beidou') {
+    historyRange.value = defaultHistoryRange()
+  } else {
+    historyRange.value = null
+  }
   await nextTick()
-  await initLocationMap()
+  await renderLocationMap()
+})
+
+watch(locationTab, async () => {
+  if (!locationVisible.value) return
+  await nextTick()
+  await renderLocationMap()
 })
 
 watch(
   () => [locationRow.value?.lng, locationRow.value?.lat],
   async () => {
-    if (!locationVisible.value) return
+    if (!locationVisible.value || locationTab.value !== 'live') return
     await nextTick()
-    await initLocationMap()
+    await renderLocationMap()
   },
 )
 
+watch(
+  historyTrackPoints,
+  async (pts) => {
+    historyPb.syncTrackPoints(pts)
+    if (!locationVisible.value || locationTab.value !== 'history') return
+    await nextTick()
+    await renderLocationMap()
+  },
+  { deep: true },
+)
+
 onBeforeUnmount(() => {
-  if (amap.value) {
-    amap.value.destroy()
-    amap.value = null
-    marker.value = null
-  }
+  destroyLocationMap()
+  historyPb.destroy()
 })
 
 onMounted(load)
@@ -270,6 +483,32 @@ onMounted(load)
           <el-tooltip :content="vehicleLimitReason(row)" placement="top" effect="dark">
             <span :class="vehicleLimitTag(row) === '限行' ? 'limit-hit' : 'limit-ok'">{{ vehicleLimitTag(row) }}</span>
           </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column label="北斗状态" width="120" align="center">
+        <template #default="{ row }">
+          <el-tag v-if="row.beidou_vehicle_status === '在线'" type="success" size="small">在线</el-tag>
+          <el-tag v-else-if="row.beidou_vehicle_status === '离线'" type="info" size="small">离线</el-tag>
+          <el-tag v-else type="warning" size="small">未绑定北斗</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="萤石摄像头" min-width="220" show-overflow-tooltip>
+        <template #default="{ row }">
+          <div v-if="row.ys7_cameras?.length" class="camera-list-cell">
+            <el-tag
+              v-for="camera in row.ys7_cameras"
+              :key="camera.id"
+              size="small"
+              :type="ys7BatteryFromRow(camera) != null ? ys7BatteryTagType(ys7BatteryFromRow(camera)) : (ys7SupportsPtz(camera) ? 'success' : 'info')"
+              class="camera-tag-clickable"
+              @click="openCameraLive(camera)"
+            >
+              {{ camera.device_name || camera.device_code }}<template v-if="camera.channel_no"> · CH{{ camera.channel_no }}</template>
+              <template v-if="ys7BatteryFromRow(camera) != null"> · {{ ys7BatteryFromRow(camera) }}%</template>
+              · 直播
+            </el-tag>
+          </div>
+          <span v-else class="text-slate-400">未绑定</span>
         </template>
       </el-table-column>
       <el-table-column prop="status" label="状态" width="100">
@@ -347,23 +586,98 @@ onMounted(load)
 
   <el-dialog
     v-model="locationVisible"
-    width="780px"
+    width="860px"
     destroy-on-close
     :title="`车辆位置 - ${locationRow?.vehicle_no || ''}`"
   >
-    <div v-if="hasValidLocation" class="map-box">
-      <div class="map-meta">
-        <span>{{ locationRow?.vehicle_model ? `车型：${locationRow.vehicle_model}` : '' }}</span>
-        <span>坐标：{{ Number(locationRow?.lng).toFixed(6) }}, {{ Number(locationRow?.lat).toFixed(6) }}（高德/GCJ-02）</span>
-      </div>
-      <div class="map-meta sub">
-        <span>来源：{{ locationRow?.source === 'beidou' ? '北斗' : locationRow?.source === 'ys7' ? '萤石' : locationRow?.source || '-' }}</span>
-        <span v-if="locationRow?.device_label">设备：{{ locationRow.device_label }}</span>
-      </div>
+    <div v-if="isBeidouLocation" class="location-mode-bar">
+      <el-radio-group v-model="locationTab" size="small">
+        <el-radio-button label="live">实时位置</el-radio-button>
+        <el-radio-button label="history">历史轨迹</el-radio-button>
+      </el-radio-group>
+    </div>
+
+    <div v-if="isBeidouLocation && locationTab === 'history'" class="history-toolbar">
+      <el-date-picker
+        v-model="historyRange"
+        type="datetimerange"
+        range-separator="至"
+        start-placeholder="开始时间"
+        end-placeholder="结束时间"
+        style="width: 100%; max-width: 520px"
+      />
+      <el-checkbox v-model="historyDemoOnly">仅演示数据</el-checkbox>
+      <el-button type="primary" :loading="historyLoading" @click="loadHistoryTrack">查询轨迹</el-button>
+    </div>
+    <p v-if="isBeidouLocation && locationTab === 'history'" class="history-hint">
+      交互对齐 sxw：查询后可拖动进度条预览；支持播放/暂停/继续、停止、复位、从新播放、倍速、循环、地图跟随与渐进轨迹线（航向角来自 course 或两点推算）。
+    </p>
+
+    <div v-show="showMapFrame" class="map-box">
+      <template v-if="locationTab === 'live'">
+        <div class="map-meta">
+          <span>{{ locationRow?.vehicle_model ? `车型：${locationRow.vehicle_model}` : '' }}</span>
+          <span>坐标：{{ Number(locationRow?.lng).toFixed(6) }}, {{ Number(locationRow?.lat).toFixed(6) }}（高德/GCJ-02）</span>
+        </div>
+        <div class="map-meta sub">
+          <span>来源：{{ locationRow?.source === 'beidou' ? '北斗' : locationRow?.source === 'ys7' ? '萤石' : locationRow?.source || '-' }}</span>
+          <span v-if="locationRow?.device_label">设备：{{ locationRow.device_label }}</span>
+        </div>
+      </template>
+      <template v-else>
+        <div class="map-meta">
+          <span>历史轨迹（高德 GCJ-02）</span>
+          <span v-if="historyTrackPoints.length">共 {{ historyTrackPoints.length }} 点</span>
+          <span v-else>选择时间范围后点击「查询轨迹」</span>
+        </div>
+        <div v-if="historyTrackPoints.length >= 2" class="history-playback-bar">
+          <el-button size="small" type="primary" plain :disabled="hpPlaying" @click="onHistoryPlay">播放</el-button>
+          <el-button size="small" :disabled="!hpPlaying" @click="historyPb.pause">暂停</el-button>
+          <el-button size="small" :disabled="!hpPaused" @click="historyPb.resume">继续</el-button>
+          <el-button size="small" :disabled="hpPlaying" @click="onHistoryRestart">从新播放</el-button>
+          <el-button size="small" @click="historyPb.endPlayback">停止</el-button>
+          <el-button size="small" @click="historyPb.resetToStart(getHistoryMap)">复位</el-button>
+          <span class="playback-speed-label">倍速</span>
+          <el-select v-model="historyPb.playSpeed" size="small" class="playback-speed-select" :disabled="hpPlaying">
+            <el-option :value="0.5" label="0.5×" />
+            <el-option :value="1" label="1×" />
+            <el-option :value="2" label="2×" />
+            <el-option :value="4" label="4×" />
+            <el-option :value="8" label="8×" />
+          </el-select>
+          <el-checkbox v-model="historyPb.followMap">地图跟随</el-checkbox>
+          <el-checkbox v-model="historyPb.loopPlay">循环播放</el-checkbox>
+          <el-checkbox v-model="historyPb.progressiveTrail">渐进轨迹线</el-checkbox>
+        </div>
+        <div v-if="historyTrackPoints.length >= 2" class="history-progress-row">
+          <span class="playback-speed-label">进度</span>
+          <el-slider
+            class="history-progress-slider"
+            :model-value="historyPb.progressPercent"
+            :disabled="!hpCanScrub"
+            :min="0"
+            :max="100"
+            :step="0.1"
+            :format-tooltip="(v) => `${Number(v).toFixed(1)}%`"
+            @update:model-value="(v) => historyPb.seekPercent(v, getHistoryMap)"
+          />
+        </div>
+      </template>
       <div ref="mapRef" class="map-frame" />
     </div>
-    <el-empty v-else description="暂无坐标" />
+    <el-empty
+      v-if="(isBeidouLocation ? locationTab === 'live' : true) && !showMapFrame"
+      description="暂无坐标"
+    />
   </el-dialog>
+
+  <Ys7CameraLiveDialog
+    v-model="cameraLiveVisible"
+    :camera="cameraLiveRow"
+    :live-url-api="liveUrlApi"
+    :ptz-control="ptzControl"
+    player-key="delivery-vehicle-cam"
+  />
 </template>
 
 <style scoped>
@@ -446,5 +760,67 @@ onMounted(load)
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   overflow: hidden;
+}
+
+.location-mode-bar {
+  margin-bottom: 10px;
+}
+
+.history-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.history-hint {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+.history-playback-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.playback-speed-label {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.playback-speed-select {
+  width: 96px;
+}
+
+.camera-tag-clickable {
+  cursor: pointer;
+}
+
+.camera-tag-clickable:hover {
+  opacity: 0.88;
+}
+
+.camera-list-cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.history-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.history-progress-slider {
+  flex: 1;
+  min-width: 120px;
 }
 </style>

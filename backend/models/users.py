@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlalchemy import Enum, ForeignKey, Integer, Numeric, String
+from sqlalchemy import Boolean, Enum, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import Base, TimestampMixin
@@ -26,3 +26,5 @@ class User(Base, TimestampMixin):
     status: Mapped[str] = mapped_column(
         Enum("active", "disabled"), nullable=False, default="active"
     )
+    kuaimai_printer_sn: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    return_review_required: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)

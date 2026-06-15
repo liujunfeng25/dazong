@@ -1,5 +1,0 @@
-将「编译产物」放到本目录（云打包会合并目录内全部 .aar）：
-- dazong-serial-scale.aar — 业务插件（readKg）
-- serialport-lib-release.aar — licheedev 串口库（含 libserial_port.so）
-
-源码见上一级 android-library/；重新编译：bash ../../../../scripts/build-dazong-serial-aar.sh

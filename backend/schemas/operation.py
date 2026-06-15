@@ -2,7 +2,9 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
+
+from services.units import COUNT_UNITS, WEIGHT_UNITS
 
 
 class CategoryIn(BaseModel):
@@ -12,6 +14,8 @@ class CategoryIn(BaseModel):
     sort_order: int = 0
     # 仅一级分类有效；未传时后端默认 1.0（与历史投标页面上限一致）
     max_float_rate: Optional[float] = None
+    # 分类图片：图片 URL 或 "emoji:🥬" token；空则前端按名称自动映射
+    image_url: Optional[str] = None
 
 
 class CategoryOut(CategoryIn):
@@ -36,6 +40,7 @@ class ProductIn(BaseModel):
     volume_adjust_factor: Optional[Decimal] = None
     is_designated_factory: bool = False
     designated_factory_id: Optional[int] = None
+    quality_report_mode: str = "batch"
     status: str = "active"
     brand: Optional[str] = None
     expire_date: Optional[str] = None
@@ -62,6 +67,21 @@ class ProductIn(BaseModel):
     image_list_json: Optional[list[str]] = None
     external_url: Optional[str] = None
 
+    @model_validator(mode="after")
+    def _validate_unit_matches_type(self):
+        unit = (self.unit or "").strip()
+        if self.standard_type == "non_standard":
+            if unit not in WEIGHT_UNITS:
+                raise ValueError(
+                    f"非标品（按重量收货）的单位必须为计量单位 {WEIGHT_UNITS}，当前为「{unit}」"
+                )
+        else:  # standard
+            if unit not in COUNT_UNITS:
+                raise ValueError(
+                    f"标品（按件清点）的单位必须为计数单位（如 {COUNT_UNITS[:6]} 等），当前为「{unit}」"
+                )
+        return self
+
 
 class ProductOut(ProductIn):
     id: int
@@ -77,7 +97,11 @@ class AccountIn(BaseModel):
     company_name: str
     contact_phone: str = ""
     address: str = ""
+    # 前端通过地图扎针/拖动 marker 给出的精确坐标；若提供则优先使用，不再走 geocode 回退
+    lng: Optional[Decimal] = None
+    lat: Optional[Decimal] = None
     status: str = "active"
+    return_review_required: bool = False
 
 
 class AccountOut(BaseModel):
@@ -92,6 +116,7 @@ class AccountOut(BaseModel):
     lng: Optional[float] = None
     lat: Optional[float] = None
     supplier_delivery_id: Optional[int] = None
+    return_review_required: bool = False
     status: str
     created_at: datetime
 

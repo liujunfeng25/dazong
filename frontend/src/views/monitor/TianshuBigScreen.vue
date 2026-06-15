@@ -23,6 +23,7 @@ defineProps({
   },
 })
 
+const emit = defineEmits(['director-state'])
 const devUrl = import.meta.env.VITE_TIANSHU_URL
 const iframeRef = ref(null)
 
@@ -56,6 +57,34 @@ function notifyIframeFullscreenState() {
   }
 }
 
+function sendDirectorControl(action) {
+  const w = iframeRef.value?.contentWindow
+  if (!w) return
+  try {
+    w.postMessage({ type: 'tianshu-director-control', action }, '*')
+  } catch {
+    /* ignore */
+  }
+}
+
+function startDirector() {
+  sendDirectorControl('start')
+}
+
+function stopDirector() {
+  sendDirectorControl('stop')
+}
+
+function toggleDirector() {
+  sendDirectorControl('toggle')
+}
+
+defineExpose({
+  startDirector,
+  stopDirector,
+  toggleDirector,
+})
+
 function onIframeLoad() {
   notifyIframeFullscreenState()
 }
@@ -65,6 +94,14 @@ function onParentFullscreenChange() {
 }
 
 function onChildMessage(ev) {
+  if (ev.data?.type === 'tianshu-director-state') {
+    emit('director-state', {
+      running: Boolean(ev.data.running),
+      phase: ev.data.phase || '',
+      stepIndex: Number(ev.data.stepIndex ?? -1),
+    })
+    return
+  }
   if (ev.data?.type !== 'tianshu-toggle-fullscreen') return
   const el = iframeRef.value
   if (!el) return

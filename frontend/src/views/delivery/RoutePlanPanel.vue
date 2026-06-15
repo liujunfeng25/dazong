@@ -1,7 +1,7 @@
 <script setup>
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import AMapLoader from '@amap/amap-jsapi-loader'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   Cpu,
   FullScreen,
@@ -13,14 +13,17 @@ import {
   Van,
 } from '@element-plus/icons-vue'
 import {
+  commitRoutePlanApi,
   deliveryOrderPoolApi,
+  dispatchPlanningSummaryApi,
   listDeliveryGeofencesApi,
   listDeliveryVehiclesApi,
   routePlanApi,
 } from '../../api/delivery'
 import { limitStatusDisplay } from '../../utils/beijingVehicleLimit'
+import { createEmptyRoutePlan, hasGeneratedRoutePlan } from '../../utils/routePlanState'
 import { useUserStore } from '../../stores/user'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const chartRef = ref(null)
 const amapIns = ref(null)
@@ -32,10 +35,14 @@ let mapResizeDebounceTimer = null
 /** 禁行区域（电子围栏 Tab 维护），仅在路线规划地图展示；不参与分检/收货区 */
 const noGoFences = ref([])
 const loading = ref(false)
+const commitLoading = ref(false)
 const orderPool = ref([])
+const planningSummary = ref(null)
+const planWarnings = ref([])
 const selectedOrderIds = ref([])
 const userStore = useUserStore()
 const router = useRouter()
+const route = useRoute()
 const currentDeliveryId = computed(() => Number(userStore.userInfo?.id || 0))
 
 const planningDate = ref(
@@ -57,6 +64,11 @@ const deliveryVehicles = ref([])
 const serviceMinutesDefault = ref(30)
 const serviceByOrder = ref({})
 const selectedVehicleKey = ref('all')
+const manualDialogVisible = ref(false)
+const manualSubmitting = ref(false)
+const manualVehicleId = ref(null)
+const manualDepartureTime = ref('06:00')
+const manualOrderIds = ref([])
 /** 总览区「限行与车辆」下拉筛选，空字符串表示显示全部 */
 const limitPlateFilter = ref('')
 /** 用户手动「停用排线」的车牌：仅内存保留，在下次点击「生成智能路线」时随请求提交；排线成功后自动清空 */
@@ -68,29 +80,16 @@ const showServiceTable = ref(false)
 const stopsTableKeyword = ref('')
 
 /** 路线规划结果（须早于依赖 plan 的 computed / watch，避免 TDZ） */
-const plan = ref({
-  driver: '',
-  total_distance: '-',
-  estimated_time: '-',
-  stops: [],
-  optimization_compare: {},
-  capacity_usage: {},
-  data_quality: {},
-  capability_badges: [],
-  risk_alerts: [],
-  vehicle: {},
-  route_path: [],
-  vehicle_routes: [],
-  vehicle_count: 0,
-  vehicles_used_in_plan: 0,
-  vehicles_available_today: 0,
-  vehicles_active_total: 0,
-  vehicles_excluded_from_planning: [],
-  vehicle_limit_today: null,
-  planning_inputs_echo: null,
-  total_distance_km: undefined,
-  estimated_duration_minutes: undefined,
-})
+const plan = ref(createEmptyRoutePlan())
+
+const invalidateGeneratedPlan = () => {
+  if (!hasGeneratedRoutePlan(plan.value)) return
+  plan.value = createEmptyRoutePlan()
+  planWarnings.value = []
+  selectedVehicleKey.value = 'all'
+  limitPlateFilter.value = ''
+  nextTick(() => renderRoute())
+}
 
 /** 优化收益对比：动效展示用 */
 const animBaselineKm = ref(0)
@@ -301,6 +300,7 @@ const setVehicleUserDisabled = (vehicleNo, disabled) => {
   if (disabled) s.add(key)
   else s.delete(key)
   userDisabledVehicleNos.value = [...s]
+  invalidateGeneratedPlan()
 }
 
 const limitChipTooltip = (v) => {
@@ -377,6 +377,80 @@ const limitChipsFiltered = computed(() => {
   return rows
 })
 
+const selectedOrdersForPlan = computed(() =>
+  (orderPool.value || []).filter((row) => selectedOrderIds.value.includes(Number(row.id))),
+)
+
+const orderDispatchLabel = (row) => {
+  if (row?.dispatch_readiness) return row.dispatch_readiness
+  if (String(row?.status || '') === '下单' || Number(row?.allocation_total || 0) <= 0) return '未分单仅预估'
+  if (!row?.all_allocations_shipped) return '待供货商出库'
+  if (!row?.delivery_sort_all_done) return '待分检'
+  return '待取货'
+}
+
+const orderDispatchTagType = (row) => {
+  const label = orderDispatchLabel(row)
+  if (label === '未分单仅预估') return 'info'
+  if (label === '待取货') return 'success'
+  return 'warning'
+}
+
+const canOrderSaveDispatch = (row) => {
+  if (row?.dispatch_save_ready !== undefined) return Boolean(row.dispatch_save_ready)
+  return String(row?.status || '') === '配货' && Number(row?.allocation_total || 0) > 0
+}
+
+const dispatchSaveBlockers = computed(() => selectedOrdersForPlan.value.filter((row) => !canOrderSaveDispatch(row)))
+
+const plannedRouteOrderIds = computed(() => {
+  const ids = new Set()
+  const routes = Array.isArray(plan.value?.vehicle_routes) ? plan.value.vehicle_routes : []
+  for (const route of routes) {
+    for (const stop of route?.stops || []) {
+      if (stop?.order_id != null) ids.add(Number(stop.order_id))
+    }
+  }
+  if (!ids.size) {
+    for (const stop of plan.value?.stops || []) {
+      if (stop?.order_id != null) ids.add(Number(stop.order_id))
+    }
+  }
+  return ids
+})
+
+const plannedOrdersForSave = computed(() =>
+  (orderPool.value || []).filter((row) => plannedRouteOrderIds.value.has(Number(row.id))),
+)
+
+const planDispatchSaveBlockers = computed(() => plannedOrdersForSave.value.filter((row) => !canOrderSaveDispatch(row)))
+
+const canSaveGeneratedPlan = computed(() => {
+  const routes = Array.isArray(plan.value?.vehicle_routes) ? plan.value.vehicle_routes : []
+  return routes.length > 0 && planDispatchSaveBlockers.value.length === 0
+})
+
+const buildDispatchBlockerText = (rows) => {
+  if (!rows.length) return ''
+  const sample = rows
+    .slice(0, 3)
+    .map((row) => row.order_no || `#${row.id}`)
+    .join('、')
+  const more = rows.length > 3 ? ` 等 ${rows.length} 单` : ''
+  return `${sample}${more} 尚未完成智能分单，只能参与预排线，不能保存为发车计划。`
+}
+
+const dispatchSaveBlockerText = computed(() => buildDispatchBlockerText(dispatchSaveBlockers.value))
+const planDispatchSaveBlockerText = computed(() => buildDispatchBlockerText(planDispatchSaveBlockers.value))
+
+const manualDispatchableOrders = computed(() => (orderPool.value || []).filter(canOrderSaveDispatch))
+const manualDispatchableOrderMap = computed(
+  () => new Map(manualDispatchableOrders.value.map((row) => [Number(row.id), row])),
+)
+const manualSelectedOrders = computed(() =>
+  manualOrderIds.value.map((id) => manualDispatchableOrderMap.value.get(Number(id))).filter(Boolean),
+)
+
 const activeVehicleRoute = computed(() => {
   const routes = plan.value.vehicle_routes || []
   if (selectedVehicleKey.value === 'all') return null
@@ -386,6 +460,7 @@ const activeVehicleRoute = computed(() => {
 watch(
   selectedOrderIds,
   (ids) => {
+    invalidateGeneratedPlan()
     const next = { ...serviceByOrder.value }
     ids.forEach((id) => {
       if (next[id] === undefined) next[id] = Number(serviceMinutesDefault.value) || 30
@@ -399,17 +474,45 @@ watch(
 )
 
 watch(serviceMinutesDefault, (v) => {
+  invalidateGeneratedPlan()
   const n = Number(v) || 30
   selectedOrderIds.value.forEach((id) => {
     if (serviceByOrder.value[id] === undefined) serviceByOrder.value[id] = n
   })
 })
 
+watch(serviceByOrder, invalidateGeneratedPlan, { deep: true })
+watch([departureTime, geofencePolicy], invalidateGeneratedPlan)
+watch(deliveryVehicles, invalidateGeneratedPlan, { deep: true })
+
 const loadPool = async () => {
   orderPool.value = await deliveryOrderPoolApi(120, toYmd(planningDate.value), {
     statuses: ['下单', '配货'],
+    excludeActiveDispatch: true,
+    includeDispatchReadiness: true,
   })
 }
+
+const loadPlanningSummary = async () => {
+  try {
+    planningSummary.value = await dispatchPlanningSummaryApi(toYmd(planningDate.value))
+  } catch {
+    planningSummary.value = null
+  }
+}
+
+const unplannedOrderCount = computed(() => Number(planningSummary.value?.unplanned_order_count ?? 0))
+const availableVehicleCount = computed(() => Number(planningSummary.value?.vehicles_available_count ?? 0))
+const newUnplannedOrders = computed(() => (orderPool.value || []).filter((row) => row.is_new_unplanned))
+const noVehicleGuidanceText = computed(() => {
+  if (availableVehicleCount.value > 0) return ''
+  const occupied = Number(planningSummary.value?.vehicles_occupied_count ?? 0)
+  if (occupied <= 0) return ''
+  return (
+    `计划日 ${planningDate.value} 的 ${occupied} 辆车已被同日未完成车次占用。` +
+    '可到「发车计划」取消或完结旧车次释放车辆，或使用未占用的其他车辆手动建第二趟。'
+  )
+})
 
 const loadNoGoFences = async () => {
   try {
@@ -437,11 +540,16 @@ const setVehicleDepartureOverride = (vehicleNo, val) => {
   if (!val || String(val).trim() === g) delete next[no]
   else next[no] = String(val).trim()
   vehicleDepartureOverrides.value = next
+  invalidateGeneratedPlan()
 }
 
 watch(planningDate, async () => {
+  invalidateGeneratedPlan()
   selectedOrderIds.value = []
+  manualOrderIds.value = []
+  planWarnings.value = []
   await loadPool()
+  await loadPlanningSummary()
 })
 
 watch(
@@ -853,6 +961,83 @@ const clearOrders = () => {
   selectedOrderIds.value = []
 }
 
+const openManualDispatch = () => {
+  manualDepartureTime.value = departureTime.value || '06:00'
+  manualVehicleId.value = deliveryVehicles.value[0]?.id ?? null
+  const preselected = selectedOrdersForPlan.value.filter(canOrderSaveDispatch).map((row) => Number(row.id))
+  manualOrderIds.value = preselected.length ? preselected : []
+  manualDialogVisible.value = true
+}
+
+const moveManualOrder = (idx, dir) => {
+  const nextIdx = idx + dir
+  if (nextIdx < 0 || nextIdx >= manualOrderIds.value.length) return
+  const arr = [...manualOrderIds.value]
+  const current = arr[idx]
+  arr[idx] = arr[nextIdx]
+  arr[nextIdx] = current
+  manualOrderIds.value = arr
+}
+
+const submitManualDispatch = async () => {
+  const vehicle = (deliveryVehicles.value || []).find((v) => Number(v.id) === Number(manualVehicleId.value))
+  if (!vehicle) {
+    ElMessage.warning('请选择车辆')
+    return
+  }
+  const orders = manualSelectedOrders.value
+  if (!orders.length) {
+    ElMessage.warning('请选择至少一个可保存的配货订单')
+    return
+  }
+  manualSubmitting.value = true
+  try {
+    const stops = orders.map((order, idx) => ({
+      order_id: Number(order.id),
+      order_no: order.order_no,
+      sequence: idx + 1,
+      client_name: order.client_name || '',
+      address: order.delivery_address || '',
+      planned_arrive_time: '',
+      planned_leave_time: '',
+    }))
+    const res = await commitRoutePlanApi({
+      planning_date: toYmd(planningDate.value),
+      source: 'manual',
+      vehicle_routes: [
+        {
+          vehicle_id: Number(vehicle.id),
+          vehicle_no: vehicle.vehicle_no,
+          driver_name: vehicle.driver_name || '',
+          stops,
+          route_path: [],
+        },
+      ],
+      risk_alerts: ['手动调度车次：未经过智能排线优化，请调度员自行确认站点顺序、时窗与车辆占用。'],
+      planning_inputs_echo: {
+        planning_date: toYmd(planningDate.value),
+        departure_time_local: manualDepartureTime.value || departureTime.value || '06:00',
+        manual_dispatch: true,
+      },
+      note: 'manual_dispatch',
+    })
+    const trips = Array.isArray(res?.trips) ? res.trips : []
+    ElMessage.success(trips.length ? `已手动创建 ${trips.length} 个车次` : '已手动创建发车计划')
+    if (Array.isArray(res?.warnings) && res.warnings.length) {
+      ElMessage.warning(res.warnings.join(' '))
+    }
+    manualDialogVisible.value = false
+    await loadPool()
+    await loadPlanningSummary()
+    router.push({ path: '/delivery/smart-routing', query: { tab: 'dispatch', date: toYmd(planningDate.value) } })
+  } catch (e) {
+    const msg = e?.response?.data?.detail || e?.message || '手动建车次失败'
+    ElMessage.error(typeof msg === 'string' ? msg : '手动建车次失败')
+  } finally {
+    manualSubmitting.value = false
+  }
+}
+
 const runPlan = async () => {
   const orderIds = [...selectedOrderIds.value]
   if (!orderIds.length) {
@@ -891,6 +1076,10 @@ const runPlan = async () => {
       geofence_policy: geofencePolicy.value === 'strict' ? 'strict' : 'normal',
     })
     plan.value = res
+    planWarnings.value = Array.isArray(res?.warnings) ? res.warnings : []
+    if (planWarnings.value.length) {
+      ElMessage.warning(planWarnings.value[0])
+    }
     userDisabledVehicleNos.value = []
     selectedVehicleKey.value = 'all'
     limitPlateFilter.value = ''
@@ -905,6 +1094,64 @@ const runPlan = async () => {
 
 const goMonitorReport = () => {
   router.push('/monitor/route-planning')
+}
+
+const saveDispatchPlan = async () => {
+  const routes = Array.isArray(plan.value?.vehicle_routes) ? plan.value.vehicle_routes : []
+  if (!routes.length) {
+    ElMessage.warning('请先生成智能路线')
+    return
+  }
+  if (planDispatchSaveBlockers.value.length) {
+    ElMessage.warning(planDispatchSaveBlockerText.value || '存在不能保存为发车计划的订单')
+    return
+  }
+  const missingVehicleRoutes = routes.filter((r) => !String(r?.vehicle_no || '').trim())
+  if (missingVehicleRoutes.length) {
+    ElMessage.warning('当前路线存在未绑定车辆的车次，请先在车辆管理中维护车辆后重新生成路线')
+    return
+  }
+  commitLoading.value = true
+  try {
+    const res = await commitRoutePlanApi({
+      planning_date: toYmd(planningDate.value),
+      source: 'smart_route',
+      vehicle_routes: routes,
+      risk_alerts: Array.isArray(plan.value?.risk_alerts) ? plan.value.risk_alerts : [],
+      planning_inputs_echo: plan.value?.planning_inputs_echo || {},
+    })
+    const trips = Array.isArray(res?.trips) ? res.trips : []
+    ElMessage.success(trips.length ? `已保存 ${trips.length} 个发车车次` : '已保存发车计划')
+    if (Array.isArray(res?.warnings) && res.warnings.length) {
+      ElMessage.warning(res.warnings.join(' '))
+    }
+    await loadPool()
+    await loadPlanningSummary()
+    try {
+      await ElMessageBox.confirm(
+        '发车计划已生成。是否现在进入发车计划处理装车、发车和异常发车？',
+        '保存成功',
+        {
+          type: 'success',
+          confirmButtonText: '查看发车计划',
+          cancelButtonText: '继续看路线',
+          customClass: 'dispatch-confirm-dialog',
+          confirmButtonClass: 'dispatch-confirm-btn',
+          cancelButtonClass: 'dispatch-cancel-btn',
+        },
+      )
+      router.push({ path: '/delivery/smart-routing', query: { tab: 'dispatch', date: toYmd(planningDate.value) } })
+    } catch (err) {
+      if (err !== 'cancel' && err !== 'close') {
+        console.warn('open dispatch plan cancelled', err)
+      }
+    }
+  } catch (e) {
+    const msg = e?.response?.data?.detail || e?.message || '保存发车计划失败'
+    ElMessage.error(typeof msg === 'string' ? msg : '保存发车计划失败')
+  } finally {
+    commitLoading.value = false
+  }
 }
 
 /** 是否有已生成的停靠数据（用于打印配送单） */
@@ -1059,6 +1306,10 @@ const vehicleStatsLine = computed(() => {
 })
 
 onMounted(async () => {
+  const qDate = route.query.date || route.query.planning_date
+  if (/^\d{4}-\d{2}-\d{2}$/.test(String(qDate || ''))) {
+    planningDate.value = String(qDate)
+  }
   if (!userStore.userInfo) {
     try {
       await userStore.fetchMe()
@@ -1071,6 +1322,7 @@ onMounted(async () => {
   await loadNoGoFences()
   await loadDeliveryFleet()
   await loadPool()
+  await loadPlanningSummary()
   await renderRoute()
 })
 
@@ -1101,6 +1353,20 @@ onUnmounted(() => {
     <el-col :span="8">
       <el-alert
         :closable="false"
+        type="info"
+        class="mb-3 route-plan-occupancy-alert"
+        title="占用与释放规则"
+      >
+        <template #default>
+          <ul class="occupancy-help-list">
+            <li>占用按<strong>计划日期</strong>隔离：排明天不受今天旧车次影响；同一计划日同一车辆/订单不可重复排线。</li>
+            <li>释放条件：车次<strong>全部站点送达</strong>（已完成）或调度<strong>取消车次</strong>；无需等客户确认收货，也不跟踪车辆回场。</li>
+            <li>临时加单：订单池内为未排入车次订单；有空车可手动建第二趟，或在发车计划中对未发车车次「追加站点」。</li>
+          </ul>
+        </template>
+      </el-alert>
+      <el-alert
+        :closable="false"
         type="success"
         class="mb-3 route-plan-top-alert"
         title="智能路线引擎：按高德驾车路径计算路段距离与 ETA；默认发车时间可按车覆盖，与服务时长一并参与到达/离开推算。分配车辆时优先满足客户「配送日期 + 时段」截止时刻（仍超窗时会提示风险）。"
@@ -1111,6 +1377,26 @@ onUnmounted(() => {
           <el-form-item label="计划日期">
             <el-date-picker v-model="planningDate" type="date" value-format="YYYY-MM-DD" placeholder="选择日期" class="w-full" />
           </el-form-item>
+          <el-alert
+            v-if="noVehicleGuidanceText"
+            type="warning"
+            :closable="false"
+            show-icon
+            class="mb-2"
+            :title="noVehicleGuidanceText"
+          />
+          <el-alert
+            v-if="unplannedOrderCount > 0"
+            type="info"
+            :closable="false"
+            show-icon
+            class="mb-2"
+          >
+            <template #title>
+              计划日 {{ planningDate }} 尚有 {{ unplannedOrderCount }} 单未排入车次
+              <span v-if="newUnplannedOrders.length">（其中 {{ newUnplannedOrders.length }} 单为保存计划后新增）</span>
+            </template>
+          </el-alert>
           <el-form-item label="默认发车">
             <el-time-select
               v-model="departureTime"
@@ -1192,7 +1478,21 @@ onUnmounted(() => {
               class="w-full"
               filterable
             >
-              <el-option v-for="row in orderPool" :key="row.id" :label="row.order_no" :value="row.id" />
+              <el-option
+                v-for="row in orderPool"
+                :key="row.id"
+                :label="`${row.order_no} · ${orderDispatchLabel(row)}`"
+                :value="row.id"
+              >
+                <div class="order-option-row">
+                  <span>{{ row.order_no }}</span>
+                  <span class="order-option-tags">
+                    <el-tag v-if="row.is_new_unplanned" size="small" type="danger" effect="plain">新单</el-tag>
+                    <el-tag size="small" type="info" effect="plain">未排入车次</el-tag>
+                    <el-tag size="small" :type="orderDispatchTagType(row)" effect="plain">{{ orderDispatchLabel(row) }}</el-tag>
+                  </span>
+                </div>
+              </el-option>
             </el-select>
             <div class="quick-select-row">
               <el-button link type="primary" @click="selectAllOrders">全选</el-button>
@@ -1206,10 +1506,23 @@ onUnmounted(() => {
               仅展示归属当前配送商、主单为「待履约」或「配货中」、且<strong>客户配送日</strong>等于左侧「计划日期」的订单（配货中表示已完成智能分单，仍可纳入排线）。计划日期与发车时间为<strong>北京时间</strong>。
               若改计划日期，列表会切换为对应配送日的订单；选单后请再点「生成智能路线」。
             </p>
+            <el-alert
+              v-if="dispatchSaveBlockerText"
+              type="info"
+              :closable="false"
+              show-icon
+              class="mt-2"
+              :title="dispatchSaveBlockerText"
+            />
           </el-form-item>
           <el-form-item v-if="showServiceTable && selectedOrderIds.length" label="按单服务">
             <el-table :data="orderPool.filter((r) => selectedOrderIds.includes(r.id))" size="small" border max-height="220">
               <el-table-column prop="order_no" label="订单号" min-width="120" />
+              <el-table-column label="调度状态" width="130">
+                <template #default="{ row }">
+                  <el-tag size="small" :type="orderDispatchTagType(row)" effect="plain">{{ orderDispatchLabel(row) }}</el-tag>
+                </template>
+              </el-table-column>
               <el-table-column label="服务(分钟)" width="120">
                 <template #default="{ row }">
                   <el-input-number v-model="serviceByOrder[row.id]" :min="5" :max="240" size="small" />
@@ -1220,6 +1533,10 @@ onUnmounted(() => {
           <div class="action-row">
             <div class="action-row__btns">
               <el-button type="primary" :loading="loading" @click="runPlan">生成智能路线</el-button>
+              <el-button type="success" plain :loading="commitLoading" :disabled="!canSaveGeneratedPlan" @click="saveDispatchPlan">
+                保存为发车计划
+              </el-button>
+              <el-button plain @click="openManualDispatch">手动建车次</el-button>
               <el-button plain @click="goMonitorReport">打开监管路线汇报</el-button>
               <el-button plain :disabled="!hasPrintableStops" @click="printDeliverySlips">打印配送单</el-button>
             </div>
@@ -1261,10 +1578,20 @@ onUnmounted(() => {
         <div v-if="vehicleStatsLine" class="vehicle-stats-block">
           <p class="vehicle-stats-main">{{ vehicleStatsLine }}</p>
           <p class="vehicle-stats-sub text-xs text-slate-500">
-            发车在北京时间当日 20:00 及以前时：尾号限行、外地牌（默认限行）车辆不参与排线；晚于 20:00 发车则不因此而剔除。「可参与排线」不含上述剔除车辆；限行列表仍展示全队以便核对。您在下方手动「停用排线」的车辆亦<strong>绝不进入</strong>当次「生成智能路线」的后端计算（仅本次请求有效，不保存）。
+            占用仅看<strong>同一计划日</strong>的未完成车次；车次全部送达或取消后释放，不等客户确认收货。
+            发车在北京时间当日 20:00 及以前时：尾号限行、外地牌（默认限行）车辆不参与排线；晚于 20:00 发车则不因此而剔除。
+            您在下方手动「停用排线」的车辆亦<strong>绝不进入</strong>当次「生成智能路线」的后端计算（仅本次请求有效，不保存）。
           </p>
         </div>
-        <p v-else class="text-slate-500">生成路线后将显示本方案出车数与车队可用车辆数。</p>
+        <el-alert
+          v-for="(w, wi) in planWarnings"
+          :key="`pw-${wi}`"
+          class="mt-2"
+          type="warning"
+          :closable="false"
+          :title="w"
+        />
+        <p v-if="!vehicleStatsLine" class="text-slate-500">生成路线后将显示本方案出车数与车队可用车辆数。</p>
         <p>总距离：{{ plan.total_distance || '-' }}</p>
         <p>预计时长：{{ plan.estimated_time || '-' }}</p>
         <div class="on-time-rate-block">
@@ -1779,6 +2106,85 @@ onUnmounted(() => {
     </template>
   </el-dialog>
 
+  <el-dialog v-model="manualDialogVisible" title="手动建车次" width="760px" destroy-on-close class="manual-dispatch-dialog">
+    <el-alert
+      type="info"
+      :closable="false"
+      show-icon
+      class="mb-3"
+      title="手动调度用于兜底，不经过智能排线优化；保存后仍走装车、发车、异常发车和司机端流程。"
+    />
+    <el-form label-width="96px">
+      <el-form-item label="配送日期">
+        <el-date-picker v-model="planningDate" type="date" value-format="YYYY-MM-DD" class="w-full" />
+      </el-form-item>
+      <el-form-item label="车辆">
+        <el-select v-model="manualVehicleId" filterable class="w-full" placeholder="选择车辆">
+          <el-option
+            v-for="v in deliveryVehicles"
+            :key="v.id"
+            :label="`${v.vehicle_no} ${v.driver_name ? '· ' + v.driver_name : ''}`"
+            :value="v.id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="发车时间">
+        <el-time-select v-model="manualDepartureTime" start="04:00" step="00:15" end="23:45" class="w-full" />
+      </el-form-item>
+      <el-form-item label="订单">
+        <el-select
+          v-model="manualOrderIds"
+          multiple
+          filterable
+          collapse-tags
+          collapse-tags-tooltip
+          class="w-full"
+          placeholder="选择已分单订单"
+        >
+          <el-option
+            v-for="row in manualDispatchableOrders"
+            :key="row.id"
+            :label="`${row.order_no} · ${orderDispatchLabel(row)}`"
+            :value="row.id"
+          />
+        </el-select>
+        <p class="field-tip">这里只能选择已完成智能分单的订单；未分单订单可预排线，但不能手动建车次。</p>
+      </el-form-item>
+    </el-form>
+    <el-table :data="manualSelectedOrders" border size="small" max-height="260" empty-text="请选择订单">
+      <el-table-column label="顺序" width="92">
+        <template #default="{ $index }">
+          <div class="manual-seq-actions">
+            <span>{{ $index + 1 }}</span>
+            <el-button link size="small" :disabled="$index === 0" @click="moveManualOrder($index, -1)">上移</el-button>
+            <el-button
+              link
+              size="small"
+              :disabled="$index === manualSelectedOrders.length - 1"
+              @click="moveManualOrder($index, 1)"
+            >
+              下移
+            </el-button>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="order_no" label="订单号" min-width="150" />
+      <el-table-column prop="client_name" label="客户" min-width="150" show-overflow-tooltip />
+      <el-table-column label="窗口" min-width="150">
+        <template #default="{ row }">{{ row.expected_delivery_date || planningDate }} {{ row.expected_delivery_slot || '—' }}</template>
+      </el-table-column>
+      <el-table-column label="状态" width="130">
+        <template #default="{ row }">
+          <el-tag size="small" :type="orderDispatchTagType(row)" effect="plain">{{ orderDispatchLabel(row) }}</el-tag>
+        </template>
+      </el-table-column>
+    </el-table>
+    <template #footer>
+      <el-button @click="manualDialogVisible = false">取消</el-button>
+      <el-button type="primary" :loading="manualSubmitting" @click="submitManualDispatch">保存手动车次</el-button>
+    </template>
+  </el-dialog>
+
   <Teleport to="body">
     <div class="route-plan-print-export" aria-hidden="true">
       <div class="rpp-inner">
@@ -1871,6 +2277,36 @@ onUnmounted(() => {
   flex-wrap: wrap;
   gap: 8px;
   align-items: center;
+}
+.order-option-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.order-option-tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: flex-end;
+}
+.occupancy-help-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  line-height: 1.55;
+  font-size: 13px;
+}
+.occupancy-help-list li + li {
+  margin-top: 4px;
+}
+.manual-seq-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.manual-dispatch-dialog :deep(.el-dialog__body) {
+  padding-top: 10px;
 }
 .phase2-kb-btn {
   display: inline-flex;

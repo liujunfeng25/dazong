@@ -11,9 +11,12 @@ class Ticket(Base):
     __tablename__ = "tickets"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    order_id: Mapped[int] = mapped_column(ForeignKey("orders.id"), nullable=False)
+    order_id: Mapped[Optional[int]] = mapped_column(ForeignKey("orders.id"), nullable=True)
+    billing_statement_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("billing_statements.id"), nullable=True, index=True
+    )
     type: Mapped[str] = mapped_column(
-        Enum("异常订单", "售后投诉", "配送异常"), nullable=False
+        Enum("异常订单", "售后投诉", "配送异常", "账务异常"), nullable=False
     )
     description: Mapped[str] = mapped_column(Text, nullable=False)
     status: Mapped[str] = mapped_column(

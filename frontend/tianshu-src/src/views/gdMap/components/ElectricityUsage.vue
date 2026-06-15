@@ -12,6 +12,7 @@ import mCard from "@/components/mCard/index.vue"
 import TianshuNativeEchart from "./TianshuNativeEchart.vue"
 import {
   fetchJson,
+  isTianshuAuthMissingError,
   todayYesterdayIso,
   aggregateIntradayTo3hBins,
   HOUR3_LABELS,
@@ -224,7 +225,7 @@ async function load(opts = {}) {
       series: [series0, series1],
     }
   } catch (e) {
-    if (g === loadGen) console.warn("[tianshu] 今昨分时对比", e)
+    if (g === loadGen && !isTianshuAuthMissingError(e)) console.warn("[tianshu] 今昨分时对比", e)
   } finally {
     if (g === loadGen && !silent) chartRefreshing.value = false
   }

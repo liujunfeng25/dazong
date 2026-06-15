@@ -1,0 +1,31 @@
+{
+  "order_id": 2648,
+  "same_idempotency_key": true,
+  "before": {
+    "order_status": "收货",
+    "order_version": 1,
+    "bill_count": 0,
+    "status_log_count": 1,
+    "idempotency_key_count": 0,
+    "iot_scale_row_count": 0
+  },
+  "responses": [
+    {
+      "status": 200,
+      "body": "{\"message\":\"收货完成并已入账\"}"
+    },
+    {
+      "status": 500,
+      "body": "Internal Server Error"
+    }
+  ],
+  "after": {
+    "order_status": "收货确认",
+    "order_version": 2,
+    "bill_count": 8,
+    "status_log_count": 2,
+    "idempotency_key_count": 1,
+    "iot_scale_row_count": 1
+  },
+  "token_recorded": false
+}

@@ -16,7 +16,7 @@ from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models import Order, Ticket, User
+from models import Alert, Order, Ticket, User
 
 QUALITY_MISSING_PREFIX = "【质检缺失】"
 DELIVERY_OVERDUE_PREFIX = "【配送超时】"
@@ -123,6 +123,60 @@ async def close_delivery_overdue_ticket_if_delivered(
     existing.status = "已关闭"
     existing.updated_at = datetime.utcnow()
     return existing
+
+
+async def find_open_delivery_overdue_alert(
+    db: AsyncSession, order_id: int
+) -> Optional[Alert]:
+    """查未关闭的「配送超时」预警；同 type 下匹配 payload_json.order_id。
+
+    Alert.payload_json 是 JSON 字段；活跃 open alerts 量级有限，先按 type+status
+    粗筛再内存里按 order_id 精筛，避免依赖 MySQL JSON_EXTRACT 语法。
+    """
+    rows = await db.scalars(
+        select(Alert)
+        .where(Alert.type == "delivery_overdue", Alert.status == "open")
+        .order_by(Alert.id.desc())
+    )
+    for alert in rows.all():
+        payload = alert.payload_json if isinstance(alert.payload_json, dict) else {}
+        try:
+            if int(payload.get("order_id") or 0) == int(order_id):
+                return alert
+        except (TypeError, ValueError):
+            continue
+    return None
+
+
+async def close_delivery_overdue_alert_if_delivered(
+    db: AsyncSession, order: Order
+) -> Optional[Alert]:
+    """订单送达后关闭所有未关闭的 delivery_overdue 预警；返回最近一条以便日志。
+
+    历史上线前积累的同订单多条 open 重复 alert 也会一并关闭，避免遗留 open。
+    """
+    rows = await db.scalars(
+        select(Alert)
+        .where(Alert.type == "delivery_overdue", Alert.status == "open")
+        .order_by(Alert.id.desc())
+    )
+    closed_now: Optional[Alert] = None
+    now_iso = datetime.utcnow().isoformat()
+    target_id = int(order.id)
+    for alert in rows.all():
+        payload = alert.payload_json if isinstance(alert.payload_json, dict) else {}
+        try:
+            if int(payload.get("order_id") or 0) != target_id:
+                continue
+        except (TypeError, ValueError):
+            continue
+        alert.status = "closed"
+        new_payload = dict(payload)
+        new_payload["closed_at"] = now_iso
+        alert.payload_json = new_payload
+        if closed_now is None:
+            closed_now = alert
+    return closed_now
 
 
 async def find_open_complaint_ticket(

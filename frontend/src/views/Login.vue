@@ -123,7 +123,7 @@ const submit = async () => {
   try {
     const res = await userStore.login(form)
     if (res.role === 'client') {
-      router.replace({ path: '/client/select-canteen', query: { redirect: '/client/contracts' } })
+      router.replace({ path: '/client/select-canteen', query: { redirect: '/client/dashboard' } })
       return
     }
     router.replace(`/${res.role}`)
@@ -295,26 +295,115 @@ const submit = async () => {
 
             <!-- ───── 平台概览 ───── -->
             <template v-if="activePanel === 'overview'">
-              <p class="ip-lead">FoodLink Express 是面向学校食堂的 B2B2B2C 供应链全链路平台，覆盖采购招标、分单配货、物流配送、现场称重收货、账务清结全流程，形成多端协同闭环。</p>
+              <p class="ip-lead">FoodLink Express（食迅易联）是面向学校食堂的大宗食材供应链全链路平台。以<strong>配送商为枢纽</strong>，串联客户（食堂）、供货商、厂家、运营、监管，并叠加<strong>分拣、司机、智能秤</strong>三个硬件终端——共 <strong>9 端协同</strong>，覆盖招标定价 → 智能分单 → 分拣排线 → 北斗配送 → 称重收货 → 多方清结的完整闭环，并内置价格预测、AI 对话、图像识别的数据智能内核。</p>
 
               <div class="ov-stats">
-                <div class="ov-stat"><span class="osn">6</span><span class="osl">协同角色</span></div>
+                <div class="ov-stat"><span class="osn">9</span><span class="osl">协同终端</span></div>
                 <div class="ov-stat"><span class="osn">7</span><span class="osl">订单流转状态</span></div>
-                <div class="ov-stat"><span class="osn">37</span><span class="osl">核心数据模型</span></div>
-                <div class="ov-stat"><span class="osn">50+</span><span class="osl">REST 接口</span></div>
+                <div class="ov-stat"><span class="osn">50</span><span class="osl">核心数据模型</span></div>
+                <div class="ov-stat"><span class="osn">371</span><span class="osl">REST 接口</span></div>
                 <div class="ov-stat"><span class="osn">3</span><span class="osl">账务清结层级</span></div>
+              </div>
+
+              <h3 class="ip-sec">运营智能引擎</h3>
+              <div class="ai-grid">
+                <div class="ai-card" v-for="e in [
+                  {
+                    tag:'SPLIT-AI', color:'#00e5ff',
+                    title:'智能分单算法',
+                    desc:'配送商分单时为每个订单行评分择优——5 因子加权 × 3 种策略（经济 eco / 均衡 normal / 多源 sport），并按报价回填成本价、尊重指定厂家。',
+                    formula:'score = Σ w·[ 报价 · 配额 · 距离 · 评分 · 稳定性 ]\neco 0.55/0.10/0.20/0.10/0.05 · normal · sport'
+                  },
+                  {
+                    tag:'OCR', color:'#51e7cb',
+                    title:'采购单 OCR',
+                    desc:'集成百度手写 OCR，食堂拍照上传纸质采购单，自动提取品名 / 数量 / 规格并结构化入单，秒级成单。',
+                    formula:'采购单图 → 百度OCR → 行解析 → items_json[]'
+                  },
+                  {
+                    tag:'VOICE', color:'#a3f7e0',
+                    title:'语音转单',
+                    desc:'微信语音 / 录音转文字后，正则管线 + 模糊匹配从自然语言抽取商品与数量，支持别名映射与单位归一。',
+                    formula:'语音 → 文本 → 规则管线 → { product_id, qty, unit }'
+                  },
+                  {
+                    tag:'ROUTE', color:'#51e7cb',
+                    title:'路线规划引擎',
+                    desc:'高德多途经点路线规划，叠加北斗实时定位、电子围栏校验与北京限行时段检测，保障配送合规。',
+                    formula:'stops[] → 高德 → 途经点 → 限行/围栏校验'
+                  },
+                  {
+                    tag:'ALERT', color:'#00e5ff',
+                    title:'异常自动检测',
+                    desc:'规则引擎扫描订单，逾期未发货、收货短少、已出库缺质检等异常自动建告警与工单，WebSocket 实时推送监管端。',
+                    formula:'规则引擎(order) → Alert{level,type} → ws 广播'
+                  },
+                  {
+                    tag:'PRICE', color:'#c3f5ff',
+                    title:'合约定价引擎',
+                    desc:'以参考价为基，叠加商品分类上浮率与配送商投标上浮率，合约期内锁价、到期自动重算。',
+                    formula:'price = 参考价 × (1 + 分类上浮) × (1 + 投标上浮)'
+                  },
+                ]" :key="e.tag">
+                  <div class="ai-card-tag" :style="{ color: e.color, borderColor: e.color + '40' }">{{ e.tag }}</div>
+                  <div class="ai-card-title">{{ e.title }}</div>
+                  <div class="ai-card-desc">{{ e.desc }}</div>
+                  <div class="ai-card-formula">{{ e.formula }}</div>
+                </div>
+              </div>
+
+              <h3 class="ip-sec">数据智能内核</h3>
+              <div class="ai-grid data-core">
+                <div class="ai-card" v-for="e in [
+                  {
+                    tag:'FORECAST', color:'#a78bfa',
+                    title:'价格预测',
+                    desc:'LSTM（torch）+ XGBoost 多模型集成，输出未来走势、置信区间与可靠度评级，驱动价格驾驶舱与决策看板。',
+                    formula:'多模型集成 → ŷ ± 置信区间 + 可靠度'
+                  },
+                  {
+                    tag:'LLM', color:'#818cf8',
+                    title:'AI 对话助手',
+                    desc:'意图分类 + 分层领域路由的流式对话（qwen），可问行情 / 订单 / 预测；LLM 不可达时降级启发式兜底。',
+                    formula:'问题 → 意图分类 → 领域路由 → 流式回答'
+                  },
+                  {
+                    tag:'MARKET', color:'#51e7cb',
+                    title:'行情数据源',
+                    desc:'对接新发地批发行情与中国农产品价格监管网，抓取清洗入库，支撑价格指数、预测与经营决策。',
+                    formula:'新发地 + 中农网 → 清洗 → 价格指数'
+                  },
+                  {
+                    tag:'VISION', color:'#a78bfa',
+                    title:'智能秤图像识别',
+                    desc:'智能秤摄像头拍照，torch CNN 图像分类识别商品类别，辅助称重、防错配，识别模型支持运营端在线训练。',
+                    formula:'图像 → CNN(torch) → 类别 + 置信度'
+                  },
+                  {
+                    tag:'BIGSCREEN', color:'#818cf8',
+                    title:'天枢全域大屏',
+                    desc:'实时事件流聚合渲染的指挥大屏，价格指数 / 履约态势 / 供应网络 / 北京全域车辆一屏统览。',
+                    formula:'事件流 → 实时聚合 → 大屏渲染'
+                  },
+                ]" :key="e.tag">
+                  <div class="ai-card-tag" :style="{ color: e.color, borderColor: e.color + '40' }">{{ e.tag }}</div>
+                  <div class="ai-card-title">{{ e.title }}</div>
+                  <div class="ai-card-desc">{{ e.desc }}</div>
+                  <div class="ai-card-formula">{{ e.formula }}</div>
+                </div>
               </div>
 
               <h3 class="ip-sec">全链路业务流</h3>
               <div class="flow-track">
                 <div class="flow-node" v-for="(s, i) in [
-                  { idx:'①', title:'合约招标', desc:'客户发起招标，配送商投标上浮率，系统自动中标、锁定定价', entity:'Contract · TenderBid', color:'#00e5ff' },
-                  { idx:'②', title:'智能下单', desc:'OCR 图像识别、语音转文字或手动选品，快照冻结商品价格', entity:'Order · items_snapshot_json', color:'#51e7cb' },
-                  { idx:'③', title:'分单配货', desc:'配送商智能分单（成本/均衡/多源三种模式）分派供货商，逐行追踪', entity:'OrderItemAllocation', color:'#a3f7e0' },
-                  { idx:'④', title:'路线配送', desc:'高德地图路线规划，北斗实时定位，电子围栏与北京限行校验', entity:'Delivery · DeliveryGeofence', color:'#51e7cb' },
-                  { idx:'⑤', title:'称重收货', desc:'智能秤 Pad 逐行扫码称重，少收填报原因，双方手写签名确认', entity:'OrderReceivingLine · Signatures', color:'#00e5ff' },
-                  { idx:'⑥', title:'账务结算', desc:'自动生成三层账单（客户↔配送↔供货商），周期对账，状态追踪至结清', entity:'Bill · BillingStatement', color:'#9af7c8' },
-                  { idx:'⑦', title:'全局监管', desc:'WebSocket 实时推送，告警预警，审计日志，物流地图大屏', entity:'Alert · AuditLog · Monitor', color:'#c3f5ff' },
+                  { idx:'①', title:'合约招标', desc:'客户发起招标，配送商投标上浮率，系统自动中标、锁定合约期定价', entity:'Contract · TenderBid', color:'#00e5ff' },
+                  { idx:'②', title:'智能下单', desc:'OCR 拍照 / 语音转单 / 手动选品，下单瞬间快照冻结商品与价格', entity:'Order · items_snapshot_json', color:'#51e7cb' },
+                  { idx:'③', title:'智能分单', desc:'配送商按 5 因子 × 3 策略分派供货商 / 指定厂家，逐行追踪', entity:'OrderItemAllocation', color:'#a3f7e0' },
+                  { idx:'④', title:'分拣排线', desc:'分拣 PDA 扫码收货分拣、组合打包出库；智能排线生成发车计划', entity:'SortScanRecord · DispatchTrip', color:'#51e7cb' },
+                  { idx:'⑤', title:'北斗配送', desc:'司机端取货送达，高德路线 + 北斗实时定位 + 电子围栏 / 限行校验', entity:'Delivery · 北斗 · Geofence', color:'#9af7c8' },
+                  { idx:'⑥', title:'称重收货', desc:'智能秤逐行称重 + 摄像头识别，短少填因，收货 / 送货双方手写签名', entity:'OrderReceivingLine · 双签', color:'#00e5ff' },
+                  { idx:'⑦', title:'多方清结', desc:'收货自动生成三层账单（客户↔配送↔供货 / 厂家），账期对账至结清', entity:'Bill · BillingStatement', color:'#a78bfa' },
+                  { idx:'⑧', title:'实时监管', desc:'WebSocket 事件流驱动驾驶舱 / 天枢大屏 / 价格驾驶舱，告警 + 审计闭环', entity:'Alert · AuditLog · Monitor', color:'#818cf8' },
                 ]" :key="i">
                   <div class="fn-card" :style="{ borderColor: s.color + '30' }">
                     <div class="fn-idx" :style="{ color: s.color }">{{ s.idx }}</div>
@@ -322,23 +411,27 @@ const submit = async () => {
                     <div class="fn-desc">{{ s.desc }}</div>
                     <div class="fn-entity">{{ s.entity }}</div>
                   </div>
-                  <div v-if="i < 6" class="fn-arrow">›</div>
+                  <div v-if="i < 7" class="fn-arrow">›</div>
                 </div>
               </div>
 
-              <h3 class="ip-sec">平台角色</h3>
+              <h3 class="ip-sec">9 端协同矩阵</h3>
               <div class="role-grid">
                 <div class="role-card" v-for="r in [
-                  { code:'client', name:'客户端（食堂）', desc:'学校采购方，多食堂管理，支持 OCR/语音下单', feats:['多食堂选择 & JWT 会话绑定','OCR 图片 / 语音 / 手动三种下单方式','智能秤 Pad 扫码称重收货','双签名签收 & 账单确认'] },
-                  { code:'delivery', name:'配送商', desc:'统筹物流，投标合约，智能分单，路线规划', feats:['合约招标投标 & 价格报价','智能分单三种模式（成本/均衡/多源）','高德地图路线规划 & 北斗实时追踪','车队 & 设备 & 电子围栏管理'] },
-                  { code:'supplier', name:'供货商', desc:'分包配货，打印标签，出库发货，上传质检', feats:['查看分配给自己的订单行','分拣位置分配 & 条码标签打印','逐行备货确认 & 出库发货','质检报告上传（PDF/图片）'] },
-                  { code:'factory', name:'厂家', desc:'指定工厂出具质检报告，关联合规审计', feats:['查看指定商品的订单','上传质检报告 & 合格证','报告状态追踪（待审核/已通过）','与 supplier 质检报告互补'] },
-                  { code:'operation', name:'运营端', desc:'平台管理，商品维护，工单处理，账期配置', feats:['商品分类 & 价格基准维护','账号管理 & 角色权限分配','工单审核（异常/售后/配送异常）','结算周期 & 对账单配置'] },
-                  { code:'monitor', name:'监管驾驶舱', desc:'全链路实时监控，告警预警，审计报表', feats:['WebSocket 实时 KPI 仪表板','物流地图车辆位置 & 路线动画','告警中心（逾期/缺货/质量异常）','审计日志 & 数据报表导出'] },
+                  { code:'client', name:'客户端 · 食堂', tag:'WEB', desc:'学校采购方，多食堂隔离，三种下单方式', feats:['多食堂选择 & JWT 会话绑定 canteen_id','OCR 拍照 / 语音 / 手动 下单','智能秤称重收货 + 双签确认','合约 / 订单 / 账单 / 售后'] },
+                  { code:'delivery', name:'配送商 · 枢纽', tag:'WEB', desc:'平台核心，投标、分单、排线、配送统筹', feats:['合约招投标 & 上浮率报价','智能分单（eco / normal / sport）','智能排线发车 + 北斗车队','车辆 / 设备 / 电子围栏管理'] },
+                  { code:'supplier', name:'供货商', tag:'WEB', desc:'承接分单，备货、打标、出库、质检', feats:['查看分给本户的订单行','行级条码标签云打印','逐行备货确认 & 出库发货','质检报告上传（PDF / 图片）'] },
+                  { code:'factory', name:'厂家', tag:'WEB', desc:'指定商品由对应厂家出质检与结算', feats:['查看指定商品订单','上传质检报告 & 合格证','对配送商应收账单','与供货商质检互补'] },
+                  { code:'operation', name:'运营端', tag:'WEB', desc:'平台运营：商品、账号、合约、工单、训练', feats:['商品分类 & 价格基准','账号 / 角色 / 客户食堂建档','工单审核 & 账期对账','智能秤识别模型在线训练'] },
+                  { code:'monitor', name:'监管端', tag:'WEB', desc:'只读全链路实时监管与可视化', feats:['实时监管驾驶舱（WebSocket）','天枢大屏 / 价格驾驶舱','告警中心 + 审计链','北京全域车辆地图'] },
+                  { code:'sorter', name:'分拣端 · PDA', tag:'安卓', desc:'仓内硬件终端：扫码分拣打包', feats:['按分单扫码收货分拣','按订单组合装袋打包出库','分拣异常（缺货 / 破损）','驱动取货前的分检门禁'] },
+                  { code:'driver', name:'司机端 · App', tag:'安卓', desc:'配送执行终端，北斗定位', feats:['今日各自提点配送清单','按车次取货 / 送达回执','北斗 / GPS 实时上报','分拣异常现场登记'] },
+                  { code:'scale', name:'智能秤 · Pad', tag:'安卓', desc:'收货硬件终端：称重 + 视觉识别', feats:['逐行扫码称重 confirmed_kg','摄像头拍照 + CNN 商品识别','UVC 留痕 / BLE 蓝牙秤配对','收货 / 送货双方手写签名'] },
                 ]" :key="r.code">
                   <div class="rc-head">
                     <code class="rc-code">{{ r.code }}</code>
                     <span class="rc-name">{{ r.name }}</span>
+                    <span class="rc-plat" :class="{ hw: r.tag === '安卓' }">{{ r.tag }}</span>
                   </div>
                   <p class="rc-desc">{{ r.desc }}</p>
                   <ul class="rc-feats">
@@ -350,11 +443,12 @@ const submit = async () => {
               <h3 class="ip-sec">核心数据流转</h3>
               <div class="data-flow">
                 <div class="df-row" v-for="r in [
-                  { label:'合约定价',  val:'order.total_amount = Σ qty × reference_price × (1 + category_float_rate)' },
-                  { label:'快照冻结',  val:'items_snapshot_json 下单瞬间固化商品名称、价格、规格，历史订单不受变更影响' },
-                  { label:'分单账务',  val:'配送商对供货商账单 = Σ allocation.quantity × allocation.unit_price（独立于客户账单）' },
-                  { label:'少收退差',  val:'收货 confirmed_kg < ordered_kg → 自动生成 OrderReturn & OrderReturnLine，关联工单' },
-                  { label:'账单层级',  val:'客户 → 配送商（订单总额）; 配送商 → 供货商（分单金额）; 三层独立周期对账' },
+                  { label:'合约定价',  val:'order.total_amount = Σ qty × 参考价 × (1 + 分类上浮率)，按已中标合约口径计价' },
+                  { label:'快照冻结',  val:'items_snapshot_json 下单瞬间固化商品名称、价格、规格，历史订单不受后续改价影响' },
+                  { label:'分单账务',  val:'配送商对供货商账单 = Σ allocation.quantity × allocation.unit_price（成本价，独立于客户账单）' },
+                  { label:'短少退差',  val:'收货 confirmed_kg < 下单量 → 自动生成 OrderReturn / OrderReturnLine 并挂工单' },
+                  { label:'账单层级',  val:'客户 → 配送商（订单总额）; 配送商 → 供货商 / 厂家（分单金额）; 三层独立账期对账' },
+                  { label:'质检合规',  val:'已出库分单缺质检 → 整单标异常 + quality_missing 预警 + 工单，质检补齐自动消除' },
                 ]" :key="r.label">
                   <span class="df-label">{{ r.label }}</span>
                   <span class="df-val">{{ r.val }}</span>
@@ -373,10 +467,10 @@ const submit = async () => {
                     color:'#00e5ff',
                     items:[
                       'JWT Token 签名（HS256），服务端校验，无状态会话',
-                      '6 角色 RBAC：client / delivery / supplier / factory / operation / monitor',
+                      '6 Web 角色 RBAC：client / delivery / supplier / factory / operation / monitor',
+                      '硬件三端（分拣 / 司机 / 智能秤）独立设备 / 司机鉴权，不复用 Web 角色',
                       'dependencies.py 统一鉴权依赖，路由级角色断言',
                       'client 端二级会话：选食堂后 JWT 追加 canteen_id，跨食堂请求被拦截',
-                      '登录失败不透露账号是否存在（统一 401 响应）',
                     ]
                   },
                   {
@@ -498,15 +592,19 @@ const submit = async () => {
               <div class="tech-cols">
                 <div class="tech-col">
                   <div class="tc-head">后端</div>
-                  <div class="tc-item" v-for="t in ['Python 3.11 + FastAPI（异步 ASGI）','SQLAlchemy 2 + Alembic 迁移','MySQL 8.0 + Docker 容器','WebSocket 实时推送','JWT HS256 + RBAC 鉴权']" :key="t">{{ t }}</div>
+                  <div class="tc-item" v-for="t in ['Python 3.11 + FastAPI（异步 ASGI）','SQLAlchemy 2 + MySQL 8.0','WebSocket 实时推送 + Outbox 事件','JWT HS256 + RBAC 鉴权','Docker Compose 容器编排']" :key="t">{{ t }}</div>
+                </div>
+                <div class="tech-col data-col">
+                  <div class="tc-head">数据智能 / 算法</div>
+                  <div class="tc-item" v-for="t in ['PyTorch CNN 商品图像识别 + 在线训练','XGBoost + LSTM 价格集成预测','qwen LLM 流式对话（意图路由）','百度手写 OCR 采购单识别','新发地 / 中农网 行情抓取清洗']" :key="t">{{ t }}</div>
                 </div>
                 <div class="tech-col">
-                  <div class="tc-head">前端（PC Web）</div>
-                  <div class="tc-item" v-for="t in ['Vue 3 + Vite + Element Plus','Pinia 状态管理','vue-router 多端路由隔离','ECharts 可视化图表','高德地图 JS API']" :key="t">{{ t }}</div>
+                  <div class="tc-head">前端（PC Web · 9 端）</div>
+                  <div class="tc-item" v-for="t in ['Vue 3 + Vite + Element Plus','Pinia + vue-router 多端路由隔离','ECharts 驾驶舱 / 天枢大屏','高德地图 JS API + 北斗轨迹','按端主色统一的门户皮肤']" :key="t">{{ t }}</div>
                 </div>
                 <div class="tech-col">
-                  <div class="tc-head">移动端（智能秤）</div>
-                  <div class="tc-item" v-for="t in ['Uni-app Vue 3 + TypeScript','Android 原生 AAR 串口插件','UVC 摄像头（USB 留痕）','BLE 蓝牙秤配对','HBuilderX 云打包 APK/WGT']" :key="t">{{ t }}</div>
+                  <div class="tc-head">硬件移动端（分拣 / 司机 / 秤）</div>
+                  <div class="tc-item" v-for="t in ['Uni-app Vue 3 + TypeScript','Android 原生 AAR 串口插件','UVC 摄像头（USB 留痕）','BLE 蓝牙秤 + 北斗模组','HBuilderX 云打包 APK / WGT']" :key="t">{{ t }}</div>
                 </div>
               </div>
             </template>
@@ -521,7 +619,7 @@ const submit = async () => {
       <div class="links">
         <a href="#">隐私政策</a>
         <a href="#">服务条款</a>
-        <a href="#">接口文档 (API)</a>
+        <a href="/docs" target="_blank" rel="noopener">接口文档 (API)</a>
       </div>
     </footer>
   </div>
@@ -906,12 +1004,19 @@ const submit = async () => {
 .ae-footer .links a:hover { color: #c3f5ff; }
 
 /* ── Info Panel Overlay ─────────────────────────────────── */
+/* Color guide:
+   --txt-hi : #e4eef0   primary body text
+   --txt-md : #b8d0d5   secondary / descriptive text
+   --txt-lo : #7fa0a8   muted labels / captions
+   --card   : rgba(22,30,52,0.9)   card background
+   --card-b : rgba(0,229,255,0.14) card border
+*/
 .ip-overlay {
   position: fixed;
   inset: 0;
   z-index: 200;
-  background: rgba(5, 8, 18, 0.72);
-  backdrop-filter: blur(6px);
+  background: rgba(4, 7, 16, 0.78);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -920,12 +1025,12 @@ const submit = async () => {
 }
 .ip-modal {
   width: 100%;
-  max-width: 1040px;
-  max-height: 88vh;
-  background: rgba(12, 16, 28, 0.96);
-  border: 1px solid rgba(0, 229, 255, 0.16);
+  max-width: 1060px;
+  max-height: 90vh;
+  background: rgba(16, 22, 42, 0.98);
+  border: 1px solid rgba(0, 229, 255, 0.2);
   border-radius: 14px;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(0,229,255,0.06);
+  box-shadow: 0 32px 96px rgba(0, 0, 0, 0.95), 0 0 60px rgba(0, 229, 255, 0.04) inset;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -935,8 +1040,8 @@ const submit = async () => {
   align-items: center;
   justify-content: space-between;
   padding: 22px 32px;
-  border-bottom: 1px solid rgba(0, 229, 255, 0.1);
-  background: rgba(0, 229, 255, 0.04);
+  border-bottom: 1px solid rgba(0, 229, 255, 0.12);
+  background: linear-gradient(90deg, rgba(0,229,255,0.06) 0%, rgba(0,0,0,0) 60%);
   flex-shrink: 0;
 }
 .ip-head-left { display: flex; align-items: center; gap: 16px; }
@@ -945,8 +1050,8 @@ const submit = async () => {
   font-size: 10px;
   letter-spacing: 0.2em;
   color: #00e5ff;
-  background: rgba(0, 229, 255, 0.1);
-  border: 1px solid rgba(0, 229, 255, 0.25);
+  background: rgba(0, 229, 255, 0.12);
+  border: 1px solid rgba(0, 229, 255, 0.3);
   padding: 3px 10px;
   border-radius: 4px;
   text-transform: uppercase;
@@ -956,13 +1061,13 @@ const submit = async () => {
   font-size: 22px;
   font-weight: 700;
   letter-spacing: 0.06em;
-  color: #c3f5ff;
+  color: #e4eef0;
   margin: 0;
 }
 .ip-close {
   background: none;
-  border: 1px solid rgba(0, 229, 255, 0.18);
-  color: #bac9cc;
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  color: #b8d0d5;
   width: 36px;
   height: 36px;
   border-radius: 6px;
@@ -974,41 +1079,53 @@ const submit = async () => {
   justify-content: center;
   transition: all .2s;
 }
-.ip-close:hover { background: rgba(0, 229, 255, 0.1); color: #c3f5ff; }
+.ip-close:hover { background: rgba(0, 229, 255, 0.12); color: #e4eef0; }
 
 .ip-body {
   overflow-y: auto;
   flex: 1;
   padding: 32px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(0,229,255,0.2) transparent;
+  scrollbar-color: rgba(0,229,255,0.25) transparent;
 }
 .ip-lead {
   font-size: 15px;
-  line-height: 1.75;
-  color: #bac9cc;
-  max-width: 800px;
+  line-height: 1.8;
+  color: #daeef2;
+  max-width: 820px;
   margin: 0 0 28px;
 }
 .ip-sec {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: #00e5ff;
-  margin: 32px 0 16px;
+  margin: 36px 0 16px;
   padding-bottom: 10px;
-  border-bottom: 1px solid rgba(0, 229, 255, 0.12);
+  border-bottom: 1px solid rgba(0, 229, 255, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ip-sec::before {
+  content: '';
+  display: block;
+  width: 3px;
+  height: 14px;
+  background: #00e5ff;
+  border-radius: 2px;
+  opacity: 0.7;
 }
 .ip-note {
   font-size: 13px;
-  color: #bac9cc;
+  color: #cce0e5;
   margin: 0 0 14px;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 .hl-code {
-  color: #c3f5ff;
-  background: rgba(0, 229, 255, 0.1);
+  color: #7df0db;
+  background: rgba(81, 231, 203, 0.12);
   padding: 1px 7px;
   border-radius: 3px;
   font-family: 'JetBrains Mono', monospace;
@@ -1018,34 +1135,129 @@ const submit = async () => {
 /* Stats bar */
 .ov-stats {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 .ov-stat {
   flex: 1;
-  min-width: 120px;
-  background: rgba(0, 229, 255, 0.05);
-  border: 1px solid rgba(0, 229, 255, 0.12);
+  min-width: 110px;
+  background: rgba(0, 229, 255, 0.06);
+  border: 1px solid rgba(0, 229, 255, 0.16);
   border-radius: 8px;
-  padding: 16px 20px;
+  padding: 14px 18px;
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 .osn {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 700;
   color: #c3f5ff;
   line-height: 1;
 }
 .osl {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  color: #849396;
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  color: #a4c4cc;
   text-transform: uppercase;
+}
+
+/* AI engine grid */
+.ai-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.ai-card {
+  background: rgba(30, 42, 70, 0.92);
+  border-radius: 10px;
+  padding: 18px 16px 16px;
+  border: 1px solid rgba(0, 229, 255, 0.18);
+  position: relative;
+  overflow: hidden;
+}
+.ai-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  border-radius: 10px 10px 0 0;
+}
+.ai-card-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 3px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+.ai-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #e4eef0;
+  margin-bottom: 7px;
+  letter-spacing: 0.02em;
+}
+.ai-card-desc {
+  font-size: 12px;
+  line-height: 1.65;
+  color: #cce0e5;
+  margin-bottom: 12px;
+}
+.ai-card-formula {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  line-height: 1.55;
+  color: #7df0db;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 8px 10px;
+  border-radius: 5px;
+  border-left: 2px solid rgba(0, 229, 255, 0.35);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.ip-lead strong { color: #aef6ff; font-weight: 700; }
+/* 卡片微交互:轻抬升 */
+.ai-card, .role-card { transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+.ai-card:hover, .role-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 229, 255, 0.4);
+  box-shadow: 0 12px 28px -12px rgba(0, 229, 255, 0.3);
+}
+/* 数据智能内核:紫/靛色调,区别于青色运营层 */
+.ai-grid.data-core .ai-card {
+  background: linear-gradient(160deg, rgba(45, 38, 78, 0.92), rgba(28, 30, 60, 0.92));
+  border-color: rgba(129, 140, 248, 0.28);
+}
+.ai-grid.data-core .ai-card:hover {
+  border-color: rgba(167, 139, 250, 0.5);
+  box-shadow: 0 12px 28px -12px rgba(129, 140, 248, 0.35);
+}
+.ai-grid.data-core .ai-card-formula {
+  color: #c4b5fd;
+  border-left-color: rgba(129, 140, 248, 0.45);
+}
+/* 角色卡平台徽标 */
+.rc-plat {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: #00e5ff;
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  border-radius: 3px;
+  padding: 1px 6px;
+  flex-shrink: 0;
+}
+.rc-plat.hw {
+  color: #c4b5fd;
+  border-color: rgba(167, 139, 250, 0.45);
+  background: rgba(129, 140, 248, 0.1);
 }
 
 /* Flow track */
@@ -1054,9 +1266,9 @@ const submit = async () => {
   align-items: flex-start;
   gap: 0;
   overflow-x: auto;
-  padding-bottom: 8px;
+  padding-bottom: 10px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(0,229,255,0.15) transparent;
+  scrollbar-color: rgba(0,229,255,0.18) transparent;
 }
 .flow-node {
   display: flex;
@@ -1064,11 +1276,11 @@ const submit = async () => {
   flex-shrink: 0;
 }
 .fn-card {
-  width: 146px;
-  background: rgba(15, 19, 31, 0.8);
-  border: 1px solid rgba(0, 229, 255, 0.15);
+  width: 148px;
+  background: rgba(30, 42, 70, 0.92);
+  border: 1px solid rgba(0, 229, 255, 0.2);
   border-radius: 8px;
-  padding: 14px 14px 12px;
+  padding: 14px 13px 12px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -1082,27 +1294,27 @@ const submit = async () => {
 .fn-title {
   font-size: 13px;
   font-weight: 700;
-  color: #c3f5ff;
+  color: #e4eef0;
   letter-spacing: 0.04em;
 }
 .fn-desc {
   font-size: 11px;
-  line-height: 1.55;
-  color: #849396;
+  line-height: 1.6;
+  color: #bcd4da;
 }
 .fn-entity {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  color: rgba(0, 229, 255, 0.5);
-  letter-spacing: 0.04em;
+  color: rgba(0, 229, 255, 0.8);
+  letter-spacing: 0.03em;
   margin-top: 2px;
 }
 .fn-arrow {
   font-size: 20px;
-  color: rgba(0, 229, 255, 0.3);
-  padding: 0 6px;
+  color: rgba(0, 229, 255, 0.35);
+  padding: 0 5px;
   flex-shrink: 0;
-  margin-top: -24px;
+  margin-top: -26px;
 }
 
 /* Role grid */
@@ -1112,8 +1324,8 @@ const submit = async () => {
   gap: 12px;
 }
 .role-card {
-  background: rgba(15, 19, 31, 0.8);
-  border: 1px solid rgba(0, 229, 255, 0.1);
+  background: rgba(30, 42, 70, 0.92);
+  border: 1px solid rgba(0, 229, 255, 0.18);
   border-radius: 8px;
   padding: 16px;
 }
@@ -1128,7 +1340,7 @@ const submit = async () => {
   font-size: 10px;
   letter-spacing: 0.08em;
   color: #00e5ff;
-  background: rgba(0, 229, 255, 0.1);
+  background: rgba(0, 229, 255, 0.11);
   padding: 2px 7px;
   border-radius: 3px;
   flex-shrink: 0;
@@ -1136,44 +1348,45 @@ const submit = async () => {
 .rc-name {
   font-size: 13px;
   font-weight: 700;
-  color: #c3f5ff;
+  color: #e4eef0;
 }
 .rc-desc {
   font-size: 12px;
-  color: #849396;
+  color: #bcd4da;
   margin: 0 0 10px;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 .rc-feats {
   margin: 0;
-  padding-left: 16px;
+  padding-left: 14px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
 }
 .rc-feats li {
-  font-size: 11px;
-  color: #bac9cc;
-  line-height: 1.45;
+  font-size: 11.5px;
+  color: #d8ecf0;
+  line-height: 1.5;
 }
 
 /* Data flow */
 .data-flow {
   display: flex;
   flex-direction: column;
-  gap: 1px;
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid rgba(0, 229, 255, 0.1);
+  border: 1px solid rgba(0, 229, 255, 0.12);
 }
 .df-row {
   display: flex;
   align-items: baseline;
   gap: 16px;
   padding: 12px 16px;
-  background: rgba(15, 19, 31, 0.7);
+  background: rgba(24, 34, 58, 0.9);
+  border-bottom: 1px solid rgba(0, 229, 255, 0.08);
 }
-.df-row:nth-child(even) { background: rgba(0, 229, 255, 0.03); }
+.df-row:last-child { border-bottom: none; }
+.df-row:nth-child(odd) { background: rgba(30, 42, 70, 0.9); }
 .df-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
@@ -1183,9 +1396,9 @@ const submit = async () => {
   flex-shrink: 0;
 }
 .df-val {
-  font-size: 12px;
-  color: #bac9cc;
-  line-height: 1.5;
+  font-size: 12.5px;
+  color: #d8ecf0;
+  line-height: 1.55;
 }
 
 /* Security pillars */
@@ -1195,10 +1408,10 @@ const submit = async () => {
   gap: 14px;
 }
 .sec-pillar {
-  background: rgba(15, 19, 31, 0.8);
+  background: rgba(30, 42, 70, 0.92);
   border-radius: 8px;
   padding: 18px;
-  border: 1px solid rgba(0, 229, 255, 0.08);
+  border: 1px solid rgba(0, 229, 255, 0.18);
 }
 .sp-head {
   display: flex;
@@ -1212,7 +1425,7 @@ const submit = async () => {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
   letter-spacing: 0.14em;
-  background: rgba(0,229,255,0.06);
+  background: rgba(0,229,255,0.08);
   padding: 3px 9px;
   border-radius: 3px;
   flex-shrink: 0;
@@ -1220,19 +1433,19 @@ const submit = async () => {
 .sp-title {
   font-size: 13px;
   font-weight: 700;
-  color: #c3f5ff;
+  color: #e4eef0;
 }
 .sp-list {
   margin: 0;
   padding-left: 16px;
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
 }
 .sp-list li {
-  font-size: 12px;
-  color: #bac9cc;
-  line-height: 1.5;
+  font-size: 12.5px;
+  color: #d8ecf0;
+  line-height: 1.55;
 }
 
 /* Table */
@@ -1246,24 +1459,25 @@ const submit = async () => {
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #849396;
-  padding: 8px 12px;
+  color: #a4c4cc;
+  padding: 9px 12px;
   text-align: left;
-  border-bottom: 1px solid rgba(0, 229, 255, 0.12);
+  border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+  background: rgba(0, 0, 0, 0.25);
 }
 .ip-table td {
   padding: 10px 12px;
-  color: #bac9cc;
-  border-bottom: 1px solid rgba(0, 229, 255, 0.05);
+  color: #d8ecf0;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.08);
   vertical-align: top;
-  line-height: 1.5;
+  line-height: 1.55;
 }
-.ip-table tr:hover td { background: rgba(0, 229, 255, 0.03); }
+.ip-table tr:hover td { background: rgba(0, 229, 255, 0.04); }
 .ip-table code {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  color: #51e7cb;
-  background: rgba(81, 231, 203, 0.08);
+  color: #7df0db;
+  background: rgba(81, 231, 203, 0.1);
   padding: 1px 6px;
   border-radius: 3px;
 }
@@ -1272,25 +1486,26 @@ const submit = async () => {
 .qs-steps {
   display: flex;
   flex-direction: column;
-  gap: 1px;
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid rgba(0, 229, 255, 0.1);
+  border: 1px solid rgba(0, 229, 255, 0.12);
 }
 .qs-step {
   display: flex;
   align-items: flex-start;
   gap: 18px;
-  padding: 12px 16px;
-  background: rgba(15, 19, 31, 0.7);
+  padding: 13px 16px;
+  background: rgba(24, 34, 58, 0.9);
+  border-bottom: 1px solid rgba(0, 229, 255, 0.08);
 }
-.qs-step:nth-child(even) { background: rgba(0, 229, 255, 0.03); }
+.qs-step:last-child { border-bottom: none; }
+.qs-step:nth-child(odd) { background: rgba(30, 42, 70, 0.9); }
 .qs-n {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   letter-spacing: 0.06em;
   color: #00e5ff;
-  opacity: 0.6;
+  opacity: 0.65;
   min-width: 24px;
   flex-shrink: 0;
   padding-top: 2px;
@@ -1298,15 +1513,15 @@ const submit = async () => {
 .qs-title {
   font-size: 13px;
   font-weight: 700;
-  color: #c3f5ff;
+  color: #e4eef0;
   margin-bottom: 3px;
 }
-.qs-desc { font-size: 12px; color: #849396; line-height: 1.5; }
+.qs-desc { font-size: 12px; color: #bcd4da; line-height: 1.55; }
 
 /* Reset box */
 .reset-box {
-  background: rgba(0, 229, 255, 0.04);
-  border: 1px solid rgba(0, 229, 255, 0.14);
+  background: rgba(0, 229, 255, 0.05);
+  border: 1px solid rgba(0, 229, 255, 0.16);
   border-radius: 8px;
   padding: 18px 20px;
 }
@@ -1314,24 +1529,29 @@ const submit = async () => {
   display: block;
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
-  color: #c3f5ff;
+  color: #7df0db;
   background: rgba(0, 229, 255, 0.1);
-  padding: 6px 12px;
-  border-radius: 4px;
+  padding: 7px 14px;
+  border-radius: 5px;
   margin-bottom: 12px;
   width: fit-content;
 }
-.reset-note { font-size: 13px; color: #849396; line-height: 1.6; }
+.reset-note { font-size: 13px; color: #bcd4da; line-height: 1.7; }
 
 /* Tech cols */
 .tech-cols {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 14px;
 }
+.tech-col.data-col {
+  border-color: rgba(129, 140, 248, 0.3);
+  background: linear-gradient(160deg, rgba(45, 38, 78, 0.92), rgba(28, 30, 60, 0.92));
+}
+.tech-col.data-col .tc-head { color: #c4b5fd; border-bottom-color: rgba(129, 140, 248, 0.2); }
 .tech-col {
-  background: rgba(15, 19, 31, 0.8);
-  border: 1px solid rgba(0, 229, 255, 0.1);
+  background: rgba(30, 42, 70, 0.92);
+  border: 1px solid rgba(0, 229, 255, 0.18);
   border-radius: 8px;
   padding: 16px;
 }
@@ -1343,14 +1563,14 @@ const submit = async () => {
   color: #00e5ff;
   margin-bottom: 14px;
   padding-bottom: 10px;
-  border-bottom: 1px solid rgba(0, 229, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 229, 255, 0.12);
 }
 .tc-item {
-  font-size: 12px;
-  color: #bac9cc;
-  padding: 5px 0;
-  border-bottom: 1px solid rgba(0, 229, 255, 0.04);
-  line-height: 1.4;
+  font-size: 12.5px;
+  color: #d8ecf0;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.08);
+  line-height: 1.45;
 }
 .tc-item:last-child { border-bottom: none; }
 

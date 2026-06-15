@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# 本地环境（含高德 Key）；Docker compose 通过 env_file 读取，勿提交真实密钥
+.env
+!.env.example
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

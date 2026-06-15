@@ -1,11 +1,15 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import ComplaintProgress from '../../components/ComplaintProgress.vue'
+import OrderLogisticsMapCard from '../../components/OrderLogisticsMapCard.vue'
+import QualityReportReadonly from '../../components/QualityReportReadonly.vue'
+import TraceImagePreview from '../../components/TraceImagePreview.vue'
 import { operationOrderDetailApi } from '../../api/operation'
 import { formatChinaDateTime } from '../../utils/datetime'
-import { orderMainStatusTagType, orderStatusLabel } from '../../utils/orderStatus'
+import { orderStatusLabel, orderStatusTagColor } from '../../utils/orderStatus'
+import { buildFulfillmentActual, dash } from '../../utils/fulfillmentMeta'
 
 const route = useRoute()
 const router = useRouter()
@@ -15,9 +19,20 @@ const detail = ref(null)
 const FLOW = ['下单', '配货', '发货', '收货', '收货确认', '已结算']
 
 const load = async () => {
+  const rawId = route.params.id
+  if (rawId == null || rawId === '') {
+    detail.value = null
+    return
+  }
+  const id = Number(rawId)
+  if (!Number.isFinite(id) || id <= 0) {
+    ElMessage.error('无效的订单 ID')
+    detail.value = null
+    return
+  }
   loading.value = true
   try {
-    detail.value = await operationOrderDetailApi(route.params.id)
+    detail.value = await operationOrderDetailApi(id)
   } catch (e) {
     ElMessage.error(e?.response?.data?.detail || '加载失败')
     detail.value = null
@@ -36,6 +51,7 @@ const stepIndex = computed(() => {
 const isCancelled = computed(() => detail.value?.status === '取消')
 
 const pctRate = (r) => `${(Number(r || 0) * 100).toFixed(2)}%`
+const fulfillmentActual = computed(() => buildFulfillmentActual(detail.value || {}))
 
 const bannerText = computed(() => {
   const f = detail.value?.abnormal_flags
@@ -56,10 +72,61 @@ const complaintAttachments = computed(() => detail.value?.complaint_attachments 
 /** 分单涉及的供货商（去重）；无分单时为空 */
 const allocationSuppliers = computed(() => detail.value?.allocation_suppliers || [])
 const complaintTickets = computed(() => detail.value?.complaint_tickets || [])
+const timelineEvents = computed(() => {
+  const full = detail.value?.process_timeline || []
+  if (full.length) return full
+  return detail.value?.status_timeline || []
+})
+
+const timelineTypeLabel = (type) => {
+  const map = {
+    order_status: '订单',
+    allocation_status: '分单',
+    supplier_action: '供货',
+    audit: '留痕',
+  }
+  return map[type] || '流程'
+}
+
+const timelineTypeTag = (type) => {
+  const map = {
+    order_status: 'primary',
+    allocation_status: 'success',
+    supplier_action: 'warning',
+    audit: 'info',
+  }
+  return map[type] || 'info'
+}
+
+const timelineTitle = (ev) => {
+  if (ev.action_title) return ev.action_title
+  if (ev.from_status) return `${ev.from_status} → ${ev.to_status}`
+  return ev.to_status || '流程记录'
+}
+
+const timelineActor = (ev) => {
+  const name = ev.actor_name || (ev.actor_user_id != null ? `用户 #${ev.actor_user_id}` : '—')
+  const role = ev.actor_role_label ? `（${ev.actor_role_label}）` : ''
+  return `${name}${role}`
+}
+
+const receivingStatusLabel = (status) =>
+  ({ confirmed: '已确认', pending: '待称重', draft: '草稿' })[status] || status || '—'
+const shortageReasonLabel = (code) =>
+  ({ lack: '缺货', quality: '质量问题', other: '其他' })[code] || code || '—'
+const kgText = (value) => (value === null || value === undefined || value === '' ? '—' : `${Number(value).toFixed(2).replace(/\.?0+$/, '')} kg`)
+const receiveQtyText = (row, key, fallback) => row?.[`${key}_text`] || kgText(row?.[key] ?? row?.[fallback])
+const receivingDiffClass = (row) => ({
+  shortage: 'receive-diff-shortage',
+  overage: 'receive-diff-overage',
+})[row?.diff_type] || 'receive-diff-normal'
+const receivingDiffText = (row) => row?.diff_label || kgText(row?.diff_kg_signed || 0)
+const returnStatusLabel = (status) =>
+  ({ pending_delivery_review: '待配送商审核', confirmed: '已确认', rejected: '已驳回', draft: '草稿', cancelled: '已取消' })[status] || status || '—'
 
 const goBack = () => router.push('/operation/orders')
 
-onMounted(load)
+watch(() => route.params.id, load, { immediate: true })
 </script>
 
 <template>
@@ -76,7 +143,7 @@ onMounted(load)
         <div class="head-row">
           <el-button text type="primary" @click="goBack">返回订单列表</el-button>
           <div class="head-tags">
-            <el-tag :type="orderMainStatusTagType(detail.status)" size="large">
+            <el-tag :color="orderStatusTagColor(detail.status)" effect="dark" size="large">
               {{ orderStatusLabel(detail.status) }}
             </el-tag>
             <el-tag v-if="detail.has_abnormal" type="danger" effect="dark" class="pulse-tag">异常</el-tag>
@@ -117,7 +184,7 @@ onMounted(load)
                   {{ detail.contract.period_start }} ~ {{ detail.contract.period_end }}
                 </el-descriptions-item>
                 <el-descriptions-item label="整单上浮率">{{ pctRate(detail.contract.price_float_rate) }}</el-descriptions-item>
-                <el-descriptions-item label="该单上浮率（合约加权）">
+                <el-descriptions-item label="本单综合上浮率">
                   {{
                     detail.contract.order_float_rate == null
                       ? '—'
@@ -157,6 +224,12 @@ onMounted(load)
               <div class="muted">{{ detail.client?.contact_phone || '' }}</div>
               <div class="muted small">{{ detail.client?.address || '' }}</div>
             </div>
+            <div class="party-sub-block">
+              <div class="party-title">履约食堂</div>
+              <div>{{ detail.canteen?.name || detail.canteen_name || '—' }}</div>
+              <div class="muted">{{ detail.canteen?.contact_phone || '' }}</div>
+              <div class="muted small">{{ detail.canteen?.address || detail.delivery_address || '' }}</div>
+            </div>
             <el-divider />
             <div class="party-block">
               <div class="party-title">配送商</div>
@@ -191,6 +264,13 @@ onMounted(load)
             <el-descriptions :column="1" border size="small">
               <el-descriptions-item label="约定送达日">{{ detail.expected_delivery_date || '—' }}</el-descriptions-item>
               <el-descriptions-item label="配送时段">{{ detail.expected_delivery_slot || '—' }}</el-descriptions-item>
+              <el-descriptions-item label="发车车次">{{ dash(fulfillmentActual.routeNo) }}</el-descriptions-item>
+              <el-descriptions-item label="配送车辆">{{ dash(fulfillmentActual.vehicleNo) }}</el-descriptions-item>
+              <el-descriptions-item label="司机">{{ dash(fulfillmentActual.driverName) }}</el-descriptions-item>
+              <el-descriptions-item label="计划发车">{{ dash(fulfillmentActual.plannedDeparture) }}</el-descriptions-item>
+              <el-descriptions-item label="实际发车">{{ formatChinaDateTime(fulfillmentActual.departedAt) }}</el-descriptions-item>
+              <el-descriptions-item label="真正送达时间">{{ formatChinaDateTime(fulfillmentActual.arrivedAt) }}</el-descriptions-item>
+              <el-descriptions-item label="配送状态">{{ dash(fulfillmentActual.deliveryStatus) }}</el-descriptions-item>
               <el-descriptions-item label="服务时长">{{ detail.service_duration_min }} 分钟</el-descriptions-item>
               <el-descriptions-item label="订单总额">¥{{ Number(detail.total_amount || 0).toLocaleString() }}</el-descriptions-item>
               <el-descriptions-item label="总重/总体积">
@@ -203,22 +283,22 @@ onMounted(load)
             <div v-if="detail.receive_signatures_json" class="sig-block mt-2">
               <div class="small font-semibold mb-1">双签</div>
               <div class="sig-grid">
-                <div v-if="detail.receive_signatures_json.warehouse_signature">
+                <div v-if="detail.receive_signatures_json.warehouse_signature_url || detail.receive_signatures_json.warehouse_signature">
                   <div class="muted small">收货方</div>
-                  <el-image
-                    :src="detail.receive_signatures_json.warehouse_signature"
+                  <TraceImagePreview
+                    :src="detail.receive_signatures_json.warehouse_signature_url || detail.receive_signatures_json.warehouse_signature"
                     fit="contain"
                     class="sig-img"
-                    :preview-src-list="[detail.receive_signatures_json.warehouse_signature]"
+                    :preview-list="[detail.receive_signatures_json.warehouse_signature_url || detail.receive_signatures_json.warehouse_signature]"
                   />
                 </div>
-                <div v-if="detail.receive_signatures_json.carrier_signature">
+                <div v-if="detail.receive_signatures_json.carrier_signature_url || detail.receive_signatures_json.carrier_signature">
                   <div class="muted small">送货方</div>
-                  <el-image
-                    :src="detail.receive_signatures_json.carrier_signature"
+                  <TraceImagePreview
+                    :src="detail.receive_signatures_json.carrier_signature_url || detail.receive_signatures_json.carrier_signature"
                     fit="contain"
                     class="sig-img"
-                    :preview-src-list="[detail.receive_signatures_json.carrier_signature]"
+                    :preview-list="[detail.receive_signatures_json.carrier_signature_url || detail.receive_signatures_json.carrier_signature]"
                   />
                 </div>
               </div>
@@ -279,34 +359,15 @@ onMounted(load)
                   <template #default="{ row }">¥{{ Number(row.amount || 0).toLocaleString() }}</template>
                 </el-table-column>
                 <el-table-column prop="status" label="分单状态" width="110" />
-                <el-table-column label="质检" min-width="200">
+                <el-table-column label="质检" min-width="260">
                   <template #default="{ row }">
-                    <template v-if="row.quality_report">
-                      <el-tag :type="row.quality_report.status === '已通过' ? 'success' : 'info'" size="small">
-                        {{ row.quality_report.status }}
-                      </el-tag>
-                      <span class="small ml-1">{{ row.quality_report.report_no }}</span>
-                      <el-button
-                        v-if="row.quality_report.file_url"
-                        link
-                        type="primary"
-                        size="small"
-                        tag="a"
-                        :href="row.quality_report.file_url"
-                        target="_blank"
-                        rel="noopener"
-                      >打开</el-button>
-                    </template>
-                    <template v-else>
-                      <el-tag type="danger" size="small">缺质检</el-tag>
-                      <el-tag
-                        v-if="row.missing_quality_shipped"
-                        type="danger"
-                        effect="plain"
-                        size="small"
-                        class="ml-1"
-                      >异常</el-tag>
-                    </template>
+                    <QualityReportReadonly
+                      :quality-report="row.quality_report"
+                      :periodic-quality-report="row.periodic_quality_report"
+                      :quality-report-mode="row.quality_report_mode"
+                      :quality-covered-by="row.quality_covered_by"
+                      :missing-quality-shipped="row.missing_quality_shipped"
+                    />
                   </template>
                 </el-table-column>
               </el-table>
@@ -315,30 +376,44 @@ onMounted(load)
           </el-card>
         </el-col>
         <el-col :span="10">
-          <el-card shadow="never" class="mb-3">
-            <template #header><span class="font-semibold">在途物流</span></template>
-            <el-descriptions v-if="detail.delivery_record" :column="1" border size="small">
-              <el-descriptions-item label="司机">{{ detail.delivery_record.driver_name }}</el-descriptions-item>
-              <el-descriptions-item label="车牌">{{ detail.delivery_record.vehicle_no }}</el-descriptions-item>
-              <el-descriptions-item label="状态">{{ detail.delivery_record.status }}</el-descriptions-item>
-              <el-descriptions-item label="发车">{{ detail.delivery_record.departed_at || '—' }}</el-descriptions-item>
-              <el-descriptions-item label="到达">{{ detail.delivery_record.arrived_at || '—' }}</el-descriptions-item>
-            </el-descriptions>
-            <el-empty v-else description="暂无配送执行记录" :image-size="60" />
-          </el-card>
+          <OrderLogisticsMapCard
+            class="mb-3"
+            :order-id="detail.id"
+            :tracking="detail.logistics_tracking"
+            title="在途物流"
+          />
 
           <el-card shadow="never" class="mb-3">
-            <template #header><span class="font-semibold">状态时间线</span></template>
-            <el-timeline>
+            <template #header>
+              <div class="timeline-card-head">
+                <span class="font-semibold">流程时间线</span>
+                <span class="muted small">按发生时间记录订单流转、分单、称重与结算留痕</span>
+              </div>
+            </template>
+            <el-timeline v-if="timelineEvents.length" class="process-timeline">
               <el-timeline-item
-                v-for="(ev, i) in detail.status_timeline || []"
+                v-for="(ev, i) in timelineEvents"
                 :key="i"
                 :timestamp="ev.created_at ? formatChinaDateTime(ev.created_at) : ''"
               >
-                <span v-if="ev.from_status">{{ ev.from_status }} → </span>{{ ev.to_status }}
-                <span class="muted small">（操作人 #{{ ev.actor_user_id }}）</span>
+                <div class="timeline-event">
+                  <div class="timeline-event-head">
+                    <span class="timeline-title">{{ timelineTitle(ev) }}</span>
+                    <el-tag size="small" :type="timelineTypeTag(ev.event_type)">
+                      {{ timelineTypeLabel(ev.event_type) }}
+                    </el-tag>
+                  </div>
+                  <div v-if="ev.from_status || ev.to_status" class="timeline-flow">
+                    <span v-if="ev.from_status">{{ ev.from_status }}</span>
+                    <span v-if="ev.from_status && ev.to_status" class="flow-arrow">→</span>
+                    <span v-if="ev.to_status">{{ ev.to_status }}</span>
+                  </div>
+                  <div class="timeline-actor">操作方：{{ timelineActor(ev) }}</div>
+                  <div v-if="ev.description" class="timeline-desc">{{ ev.description }}</div>
+                </div>
               </el-timeline-item>
             </el-timeline>
+            <el-empty v-else description="暂无流程记录" :image-size="60" />
           </el-card>
 
           <el-card v-if="complaintAttachments.length" shadow="never" class="mb-3 complaint-proof-card">
@@ -384,13 +459,44 @@ onMounted(load)
           </el-card>
 
           <el-card v-if="detail.order_return" shadow="never">
-            <template #header><span class="font-semibold">缺收退货单</span></template>
-            <div class="small mb-2">{{ detail.order_return.return_no }} · {{ detail.order_return.status }}</div>
+            <template #header><span class="font-semibold">收货少收退货单</span></template>
+            <div class="small mb-2">{{ detail.order_return.return_no }} · {{ detail.order_return.status_label || returnStatusLabel(detail.order_return.status) }}</div>
+            <div v-if="detail.order_return.review_note || detail.order_return.reviewed_at" class="small muted mb-2">
+              审核：{{ detail.order_return.review_note || '—' }} · {{ detail.order_return.reviewed_at || '未审核' }}
+            </div>
             <el-table :data="detail.order_return.lines || []" border size="small">
               <el-table-column prop="line_index" label="行" width="50" />
               <el-table-column prop="product_name" label="商品" min-width="120" />
-              <el-table-column prop="delta_kg" label="差额(kg)" width="100" />
-              <el-table-column prop="reason_code" label="原因码" width="90" />
+              <el-table-column label="下单量" width="110">
+                <template #default="{ row }">{{ receiveQtyText(row, 'ordered', 'ordered_kg') }}</template>
+              </el-table-column>
+              <el-table-column label="实收量" width="110">
+                <template #default="{ row }">{{ receiveQtyText(row, 'received', 'received_kg') }}</template>
+              </el-table-column>
+              <el-table-column label="差异" width="110">
+                <template #default="{ row }"><span class="receive-diff-shortage">{{ row.diff_label || `-${kgText(row.delta_kg)}` }}</span></template>
+              </el-table-column>
+              <el-table-column label="扣减金额" width="100">
+                <template #default="{ row }">¥{{ row.deduction_amount ?? '—' }}</template>
+              </el-table-column>
+              <el-table-column label="原因" width="90">
+                <template #default="{ row }">{{ row.reason_label || shortageReasonLabel(row.reason_code) }}</template>
+              </el-table-column>
+              <el-table-column prop="reason_detail" label="说明" min-width="140" show-overflow-tooltip />
+              <el-table-column label="证据照片" min-width="150">
+                <template #default="{ row }">
+                  <TraceImagePreview
+                    v-for="(url, i) in (row.photo_urls || [])"
+                    :key="url"
+                    :src="url"
+                    fit="cover"
+                    class="trace-thumb mr-1"
+                    :preview-list="row.photo_urls || []"
+                    :initial-index="i"
+                  />
+                  <span v-if="!(row.photo_urls || []).length" class="muted">—</span>
+                </template>
+              </el-table-column>
             </el-table>
           </el-card>
         </el-col>
@@ -400,16 +506,58 @@ onMounted(load)
         <template #header><span class="font-semibold">收货称重明细</span></template>
         <el-table :data="detail.receiving_lines || []" border size="small">
           <el-table-column prop="line_index" label="行" width="60" />
-          <el-table-column prop="status" label="状态" width="100" />
-          <el-table-column prop="draft_kg" label="草稿(kg)" width="100" />
-          <el-table-column prop="confirmed_kg" label="确认(kg)" width="100" />
-          <el-table-column prop="shortage_delta_kg" label="差额(kg)" width="100" />
-          <el-table-column prop="shortage_reason_code" label="原因码" width="100" />
+          <el-table-column prop="product_name" label="商品" min-width="140" show-overflow-tooltip />
+          <el-table-column label="规格/单位" width="110">
+            <template #default="{ row }">{{ [row.spec, row.unit].filter(Boolean).join(' / ') || '—' }}</template>
+          </el-table-column>
+          <el-table-column label="状态" width="100">
+            <template #default="{ row }">{{ receivingStatusLabel(row.status) }}</template>
+          </el-table-column>
+          <el-table-column label="下单量" width="110">
+            <template #default="{ row }">{{ receiveQtyText(row, 'ordered', 'ordered_kg') }}</template>
+          </el-table-column>
+          <el-table-column label="锁定重量" width="110">
+            <template #default="{ row }">{{ kgText(row.draft_kg) }}</template>
+          </el-table-column>
+          <el-table-column label="实收量" width="110">
+            <template #default="{ row }">{{ receiveQtyText(row, 'received', 'received_kg') }}</template>
+          </el-table-column>
+          <el-table-column label="差异" width="100">
+            <template #default="{ row }">
+              <span :class="receivingDiffClass(row)">{{ receivingDiffText(row) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="少收原因" width="100">
+            <template #default="{ row }">{{ row.reason_label || shortageReasonLabel(row.shortage_reason_code) }}</template>
+          </el-table-column>
           <el-table-column prop="shortage_reason_detail" label="说明" min-width="160" show-overflow-tooltip />
+          <el-table-column label="锁定照片" min-width="120">
+            <template #default="{ row }">
+              <TraceImagePreview v-if="row.lock_photo_url" :src="row.lock_photo_url" fit="cover" class="trace-thumb" :preview-list="[row.lock_photo_url]" />
+              <span v-else class="muted">—</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="退货照片" min-width="150">
+            <template #default="{ row }">
+              <TraceImagePreview
+                v-for="(url, i) in (row.return_photo_urls || [])"
+                :key="url"
+                :src="url"
+                fit="cover"
+                class="trace-thumb mr-1"
+                :preview-list="row.return_photo_urls || []"
+                :initial-index="i"
+              />
+              <span v-if="!(row.return_photo_urls || []).length" class="muted">—</span>
+            </template>
+          </el-table-column>
           <el-table-column label="确认时间" min-width="160">
             <template #default="{ row }">{{ row.confirmed_at ? formatChinaDateTime(row.confirmed_at) : '—' }}</template>
           </el-table-column>
         </el-table>
+        <div v-if="detail.receiving_billing" class="billing-hint">
+          原订单金额 ¥{{ detail.receiving_billing.ordered_amount ?? '—' }} · 实收计费 ¥{{ detail.receiving_billing.received_amount ?? '—' }} · 扣减 ¥{{ detail.receiving_billing.deduction_amount ?? '—' }}
+        </div>
       </el-card>
     </template>
     <el-empty v-else-if="!loading" description="暂无数据" />
@@ -574,6 +722,15 @@ onMounted(load)
   font-size: 14px;
 }
 
+.party-sub-block {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
 .party-title {
   font-size: 12px;
   color: #64748b;
@@ -620,6 +777,86 @@ onMounted(load)
   height: 100%;
 }
 
+.timeline-card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.process-timeline {
+  padding-top: 4px;
+}
+
+.timeline-event {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  line-height: 1.45;
+}
+
+.timeline-event-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.timeline-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.timeline-flow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.flow-arrow {
+  color: #94a3b8;
+}
+
+.timeline-actor {
+  color: #475569;
+  font-size: 13px;
+}
+
+.timeline-desc {
+  color: #64748b;
+  font-size: 12px;
+  word-break: break-word;
+}
+
+.billing-hint {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 13px;
+}
+
+.receive-diff-shortage {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.receive-diff-overage {
+  color: #059669;
+  font-weight: 700;
+}
+
+.receive-diff-normal {
+  color: #334155;
+  font-weight: 600;
+}
+
 .complaint-block + .complaint-block {
   margin-top: 16px;
   padding-top: 16px;
@@ -649,6 +886,15 @@ onMounted(load)
   border: 1px solid #e2e8f0;
   cursor: zoom-in;
   background: #f8fafc;
+}
+
+.trace-thumb {
+  width: 72px;
+  height: 48px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  cursor: zoom-in;
 }
 
 .complaint-flow-block + .complaint-flow-block {

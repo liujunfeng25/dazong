@@ -1,1 +1,5 @@
 .env
+# 智能秤识别训练运行产物（数据集快照 / 模型 / 训练状态文件），靠 ./backend:/app 卷持久化到宿主
+data/smart_scale_recognition/
+__pycache__/
+*.pyc

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Request
+from datetime import datetime
 from pydantic import BaseModel
 from sqlalchemy import or_, select, true
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -69,6 +70,7 @@ async def mark_read(
         ).all()
     for row in rows:
         row.is_read = True
+        row.read_at = row.read_at or datetime.utcnow()
     await db.commit()
     return {"updated": len(rows)}
 
@@ -90,5 +92,6 @@ async def mark_read_one(
     )
     if row:
         row.is_read = True
+        row.read_at = row.read_at or datetime.utcnow()
         await db.commit()
     return {"ok": True}

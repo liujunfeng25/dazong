@@ -1,0 +1,6 @@
+{
+  "url": "ws://127.0.0.1:18000/ws/notifications/operation?token=<redacted>",
+  "token_recorded": false,
+  "connected": true,
+  "first_message": "{\"type\":\"connected\",\"role\":\"operation\"}"
+}

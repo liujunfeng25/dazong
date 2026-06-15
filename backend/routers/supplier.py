@@ -1,5 +1,6 @@
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
+from zoneinfo import ZoneInfo
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -8,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_db
 from dependencies import require_role
-from models import Category, Contract, Order, OrderItemAllocation, Product, SupplierProductQuote, User
+from models import BillingStatement, Category, Contract, Order, OrderItemAllocation, Product, SupplierProductQuote, User
 from services.notification_service import push_notification
 
 router = APIRouter(prefix="/supplier", tags=["supplier"])
@@ -80,8 +81,48 @@ def _product_thumb_url(row: Product) -> Optional[str]:
 
 
 @router.get("/home")
-async def supplier_home(_=Depends(require_role("supplier"))):
-    return {"message": "ok", "module": "supplier"}
+async def supplier_home(
+    user=Depends(require_role("supplier")),
+    db: AsyncSession = Depends(get_db),
+):
+    """供货商落地页「今日待办」汇总:全部真实查询,无 mock。
+    - pending_ship_orders:今日配送、有未出库分单、且订单仍在「下单/配货」的订单数
+      （业务规则:当日分的单当日发货,故只看「今日配送」的待发货单）
+    - in_progress_orders:分给我的、未结算未取消的订单数(=未走完的单,全量)
+    - receivable_unsettled:我「应收」方向、未结清的账期账单未结金额(对配送商应收,全量)
+    """
+    sid = int(user.id)
+    today = datetime.now(ZoneInfo("Asia/Shanghai")).date()
+    base = (
+        select(func.count(func.distinct(OrderItemAllocation.order_id)))
+        .select_from(OrderItemAllocation)
+        .join(Order, Order.id == OrderItemAllocation.order_id)
+        .where(OrderItemAllocation.supplier_id == sid)
+    )
+    pending_ship = await db.scalar(
+        base.where(
+            OrderItemAllocation.status != "已出库",
+            Order.status.in_(["下单", "配货"]),
+            Order.expected_delivery_date == today,
+        )
+    )
+    in_progress = await db.scalar(base.where(Order.status.notin_(["已结算", "取消"])))
+    receivable = await db.scalar(
+        select(func.coalesce(func.sum(BillingStatement.amount - BillingStatement.settled_amount), 0)).where(
+            BillingStatement.owner_user_id == sid,
+            BillingStatement.direction == "应收",
+            BillingStatement.status != "已结清",
+        )
+    )
+    return {
+        "message": "ok",
+        "module": "supplier",
+        "todo": {
+            "pending_ship_orders": int(pending_ship or 0),
+            "in_progress_orders": int(in_progress or 0),
+            "receivable_unsettled": float(receivable or 0),
+        },
+    }
 
 
 @router.get("/orders")
@@ -90,6 +131,8 @@ async def supplier_orders(
     order_no: Optional[str] = None,
     created_date_start: Optional[str] = None,
     created_date_end: Optional[str] = None,
+    expected_delivery_date_start: Optional[str] = None,
+    expected_delivery_date_end: Optional[str] = None,
     user=Depends(require_role("supplier")),
     db: AsyncSession = Depends(get_db),
 ):
@@ -105,22 +148,33 @@ async def supplier_orders(
     )
 
     today = datetime.utcnow().date()
+    use_delivery_filter = bool(expected_delivery_date_start or expected_delivery_date_end)
     try:
-        start_date = date.fromisoformat(created_date_start) if created_date_start else today
-        end_date = date.fromisoformat(created_date_end) if created_date_end else today
+        if use_delivery_filter:
+            ed_start = date.fromisoformat(expected_delivery_date_start) if expected_delivery_date_start else today
+            ed_end = date.fromisoformat(expected_delivery_date_end) if expected_delivery_date_end else ed_start
+        else:
+            start_date = date.fromisoformat(created_date_start) if created_date_start else today
+            end_date = date.fromisoformat(created_date_end) if created_date_end else today
     except ValueError:
         raise HTTPException(400, "时间筛选格式错误，需为 YYYY-MM-DD")
-    if end_date < start_date:
-        raise HTTPException(400, "结束日期不能早于开始日期")
-    start_dt = datetime.combine(start_date, time.min)
-    end_dt = datetime.combine(end_date + timedelta(days=1), time.min)
+    if use_delivery_filter:
+        if ed_end < ed_start:
+            raise HTTPException(400, "结束日期不能早于开始日期")
+    else:
+        if end_date < start_date:
+            raise HTTPException(400, "结束日期不能早于开始日期")
+        start_dt = datetime.combine(start_date, time.min)
+        end_dt = datetime.combine(end_date + timedelta(days=1), time.min)
 
-    stmt = (
-        select(Order)
-        .where(allocated_to_me)
-        .where(Order.created_at >= start_dt, Order.created_at < end_dt)
-        .order_by(Order.id.desc())
-    )
+    stmt = select(Order).where(allocated_to_me).order_by(Order.id.desc())
+    if use_delivery_filter:
+        stmt = stmt.where(
+            Order.expected_delivery_date >= ed_start,
+            Order.expected_delivery_date <= ed_end,
+        )
+    else:
+        stmt = stmt.where(Order.created_at >= start_dt, Order.created_at < end_dt)
     if order_no and order_no.strip():
         stmt = stmt.where(Order.order_no.like(f"%{order_no.strip()}%"))
     orders = (await db.scalars(stmt)).all()
@@ -438,3 +492,50 @@ async def save_supplier_product_quotes(
             )
     await db.commit()
     return {"message": "保存成功", "created": created, "updated": updated}
+
+
+@router.delete("/product-quotes/{product_id}")
+async def withdraw_supplier_product_quote(
+    product_id: int,
+    user=Depends(require_role("supplier")),
+    db: AsyncSession = Depends(get_db),
+):
+    quote = await db.scalar(
+        select(SupplierProductQuote).where(
+            SupplierProductQuote.supplier_id == user.id,
+            SupplierProductQuote.product_id == product_id,
+        )
+    )
+    if not quote:
+        raise HTTPException(404, "未找到该商品的报价")
+
+    product_name = await db.scalar(
+        select(Product.product_name).where(Product.id == product_id)
+    ) or f"商品#{product_id}"
+
+    await db.delete(quote)
+
+    if user.supplier_delivery_id:
+        delivery_user = await db.scalar(
+            select(User).where(
+                User.id == int(user.supplier_delivery_id),
+                User.role == "delivery",
+                User.status == "active",
+            )
+        )
+        if delivery_user:
+            supplier_name = user.company_name or user.username or f"供货商#{user.id}"
+            await push_notification(
+                db=db,
+                role="delivery",
+                event_type="supplier_quote_withdrawn",
+                title="供货商撤回报价",
+                content=f"{supplier_name} 撤回了 {product_name} 的报价，未来分包将不再考虑该商品。",
+                route="/delivery/suppliers",
+                object_type="supplier",
+                object_id=user.id,
+                target_user_ids=[delivery_user.id],
+            )
+
+    await db.commit()
+    return {"message": "撤回成功"}

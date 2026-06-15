@@ -10,6 +10,16 @@ import {
   uploadProductImageApi,
   updateProductApi,
 } from '../../api/operation'
+import { WEIGHT_UNITS, COUNT_UNITS, allowedUnitsFor } from '../../utils/units'
+
+// 单位下拉随品类类型联动
+const unitOptions = computed(() => allowedUnitsFor(form.standard_type))
+const onStandardTypeChange = () => {
+  const allowed = allowedUnitsFor(form.standard_type)
+  if (!allowed.includes(form.unit)) {
+    form.unit = form.standard_type === 'non_standard' ? '斤' : '件'
+  }
+}
 
 const list = ref([])
 const categories = ref([])
@@ -32,7 +42,7 @@ const form = reactive({
   name: '',
   category1_id: null,
   category2_id: null,
-  unit: 'kg',
+  unit: '件',
   reference_price: 1,
   spec: '',
   origin: '',
@@ -44,6 +54,7 @@ const form = reactive({
   volume_adjust_factor: null,
   is_designated_factory: false,
   designated_factory_id: null,
+  quality_report_mode: 'batch',
   status: 'active',
   logo: '',
   image_list_json: [],
@@ -78,7 +89,7 @@ const resetForm = () => {
     name: '',
     category1_id: null,
     category2_id: null,
-    unit: 'kg',
+    unit: '件',
     reference_price: 1,
     spec: '',
     origin: '',
@@ -90,6 +101,7 @@ const resetForm = () => {
     volume_adjust_factor: null,
     is_designated_factory: false,
     designated_factory_id: null,
+    quality_report_mode: 'batch',
     status: 'active',
     logo: '',
     image_list_json: [],
@@ -157,6 +169,7 @@ const submit = async () => {
     volume_adjust_factor: form.volume_adjust_factor,
     is_designated_factory: form.is_designated_factory,
     designated_factory_id: form.designated_factory_id,
+    quality_report_mode: form.quality_report_mode || 'batch',
     status: form.status,
     logo: form.logo || null,
     image_list_json: (form.image_list_json || []).filter(Boolean),
@@ -184,6 +197,7 @@ const edit = (row) => {
   isEditing.value = true
   Object.assign(form, {
     ...row,
+    quality_report_mode: row.quality_report_mode || 'batch',
     logo: row.logo || '',
     image_list_json: Array.isArray(row.image_list_json) ? [...row.image_list_json] : [],
   })
@@ -318,6 +332,13 @@ onMounted(async () => {
           {{ !row.is_designated_factory ? '—' : (factoryNameMap[row.designated_factory_id] || '未设置') }}
         </template>
       </el-table-column>
+      <el-table-column label="质检模式" width="130">
+        <template #default="{ row }">
+          <el-tag :type="row.quality_report_mode === 'periodic' ? 'warning' : 'info'">
+            {{ row.quality_report_mode === 'periodic' ? '周期报告' : '批次报告' }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column prop="status" label="状态" width="110">
         <template #default="{ row }">
           <el-tag :type="row.status === 'active' ? 'success' : 'info'">{{ productStatusLabel(row.status) }}</el-tag>
@@ -359,7 +380,14 @@ onMounted(async () => {
           <el-option v-for="item in level2Options" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
       </el-form-item>
-      <el-form-item label="单位"><el-input v-model="form.unit" /></el-form-item>
+      <el-form-item label="单位">
+        <el-select v-model="form.unit" style="width: 100%">
+          <el-option v-for="u in unitOptions" :key="u" :value="u" :label="u" />
+        </el-select>
+        <div class="field-tip">
+          {{ form.standard_type === 'non_standard' ? '非标品按重量收货，单位为 kg / 斤。' : '标品按件清点，单位为计件单位（件 / 袋 / 箱…）。' }}
+        </div>
+      </el-form-item>
       <el-form-item label="参考价"><el-input-number v-model="form.reference_price" :min="0" /></el-form-item>
       <el-form-item label="规格"><el-input v-model="form.spec" /></el-form-item>
       <el-form-item label="产地"><el-input v-model="form.origin" /></el-form-item>
@@ -383,11 +411,11 @@ onMounted(async () => {
         </div>
       </el-form-item>
       <el-form-item label="品类类型">
-        <el-select v-model="form.standard_type">
+        <el-select v-model="form.standard_type" @change="onStandardTypeChange">
           <el-option value="standard" label="标品" />
           <el-option value="non_standard" label="非标品" />
         </el-select>
-        <div class="field-tip">标品尺寸较稳定；非标品尺寸可能波动。仅用于后续排线估算，不填也不影响下单。</div>
+        <div class="field-tip">决定收货方式：标品按件清点、非标品过磅净重，并影响账单计量口径。请按商品实际形态选择（会联动上方单位）。</div>
       </el-form-item>
       <el-form-item label="是否指定厂家">
         <el-select v-model="form.is_designated_factory" @change="onDesignatedFactoryChange">
@@ -408,6 +436,13 @@ onMounted(async () => {
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="质检模式">
+        <el-select v-model="form.quality_report_mode">
+          <el-option value="batch" label="批次报告" />
+          <el-option value="periodic" label="周期报告" />
+        </el-select>
+        <div class="field-tip">批次报告按分单上传；周期报告需供货主体上传并经运营审核通过后，在有效期内覆盖该商品分单。</div>
+      </el-form-item>
       <el-form-item label="长(cm)">
         <el-input-number v-model="form.length_cm" :min="0" :precision="2" />
         <div class="field-tip">单件商品长度。建议填写外包装尺寸，不填则不参与体积计算。</div>
@@ -422,7 +457,7 @@ onMounted(async () => {
       </el-form-item>
       <el-form-item label="单件重量(kg)">
         <el-input-number v-model="form.unit_weight_kg" :min="0" :precision="3" />
-        <div class="field-tip">用于估算车辆载重占用。非必填，建议优先给高价值/大件商品填写。</div>
+        <div class="field-tip">单件净重。标品收货/对账会按「单件净重 × 件数」换算总重，建议填写；也用于车辆载重估算。</div>
       </el-form-item>
       <el-form-item label="体积修正系数">
         <el-input-number v-model="form.volume_adjust_factor" :min="0" :precision="3" />
